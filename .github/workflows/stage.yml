@@ -1,0 +1,125 @@
+# GitHub Actions WorkFlow Name
+
+name: Release to Staging environment
+
+#Event Trigger for this Workflow
+
+on:
+  workflow_dispatch:
+  push:
+    # branches: [ 'trunk' ]
+    branches: [ 'feature/**' ]
+    
+
+#Jobs to perform based on event occurred
+
+jobs:
+  release-stage:
+    name: release-stage
+    runs-on: ubuntu-latest
+
+    #Global Env variables declare here
+    env:
+      REGION : ap-southeast-2
+      ENV : stage # Valid values are sandbox,stage,live only
+      STACK_NAME: stage # Valid values are au,us,uk,p2,lf,nu,sandbox,stage only
+      SUBDOMAIN: devops-infra
+      CFN_S3_BUCKET_NAME: devops-cfn-templates1
+      S3BucketNameKeyPair: devops-ec2-keypair1
+
+    # Steps to execute in this job
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+
+      # - name: Set up Python 3.8
+      #   uses: actions/setup-python@v2
+      #   with:
+      #     python-version: 3.8
+
+      # - name: Install Python dependencies
+      #   run: |
+      #     python -m pip install --upgrade pip
+      #     pip install cfn-lint
+
+  
+      # - name: Run cloudformation template Lint test
+      #   run: |
+      #     cfn-lint -t '**/*.yml'
+      
+      
+      # - name: Run cloudformation template static analysis test
+      #   uses: stelligent/cfn_nag@master
+      #   with:
+      #     input_path: cfn-templates
+      #     extra_args: --fail-on-warnings -o json
+
+
+      - name: Create cloudformation parameters for stack deployment
+        run: |
+          echo "CFN_PARAM="$(cat config/main.params) >> $GITHUB_ENV
+
+  
+      - name: Configure AWS credentials from ${{ env.STACK_NAME }} account in ${{ env.REGION }} region
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.DEVOPS_AWS_KEY }}
+          aws-secret-access-key: ${{ secrets.DEVOPS_SECRET_KEY }}
+          aws-region: ${{ env.REGION }}
+
+      
+      - name: Create AWS EC2 Key Pair Name for ${{ env.STACK_NAME }} account in ${{ env.REGION }} region
+        run: chmod +x scripts/ec2-key-pair.sh && scripts/ec2-key-pair.sh
+        env:
+          EC2_KEY_PAIR: ${{ env.STACK_NAME }}-${{ env.REGION }}
+
+      - name: AWS S3 Sync operation
+        run: |
+          aws s3 sync cfn-templates/ s3://${{env.CFN_S3_BUCKET_NAME}}/${{env.STACK_NAME}}/cfn-templates --delete --acl bucket-owner-full-control
+      
+      - name: AWS CloudFormation "Deploy CloudFormation Stack" Action for GitHub Actions
+        uses: aws-actions/aws-cloudformation-github-deploy@v1.0.3 
+        with:
+          name: ${{env.STACK_NAME}}-infra-${{env.ENV}}
+          template: cfn-templates/main.yml
+          no-fail-on-empty-changeset: "1"
+          parameter-overrides: >-
+            StackName=${{ env.STACK_NAME }},
+            Env=${{ env.ENV }},
+            KeyPairName=${{ env.STACK_NAME }}-${{ env.REGION }},
+            ${{env.CFN_PARAM}}
+            
+
+      # - name: Slack Notification
+      #   if: always() # Pick up events even if the job fails or is canceled.
+      #   uses: 8398a7/action-slack@v3
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      #     MATRIX_CONTEXT: ${{ toJson(matrix) }} # required
+      #   with:
+      #     status: ${{ job.status }}
+      #     author_name: ${{ env.SUBDOMAIN }} deployed to ${{ env.ENV }} environemnt in ${{ env.STACK_NAME }} AWS account
+      #     mention: 'here'
+      #     if_mention: failure,cancelled
+      #     job_name: release-stage # Match the name above.
+      #     fields: repo,commit,eventName,ref,workflow,message,author,job,took
+      #     custom_payload: |
+      #       {
+      #       username: 'GitHub Action CI WorkFlow',
+      #       icon_emoji: ':github:',
+      #       attachments: [{
+      #         color: '${{ job.status }}' === 'success' ? 'good' : ${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+      #         text:
+      #        `${process.env.AS_REPO}\n
+      #         ${process.env.AS_COMMIT}\n
+      #         ${process.env.AS_EVENT_NAME}\n
+      #         @${process.env.AS_REF}\n
+      #         @${process.env.AS_WORKFLOW}\n
+      #         ${process.env.AS_MESSAGE}\n
+      #         ${process.env.AS_AUTHOR}\n
+      #         ${process.env.AS_JOB}\n
+      #         ${process.env.AS_TOOK}`,
+      #       }]
+      #       }
