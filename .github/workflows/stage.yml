@@ -77,7 +77,7 @@ jobs:
 
       - name: AWS S3 Sync operation
         run: |
-          aws s3 sync cfn-templates/ s3://${{env.CFN_S3_BUCKET_NAME}}/${{env.STACK_NAME}}/cfn-templates --delete --acl bucket-owner-full-control
+          aws s3 sync cfn-templates/ s3://${{env.CFN_S3_BUCKET_NAME}}/${{env.STACK_NAME}}/cfn-templates --delete
       
       - name: AWS CloudFormation "Deploy CloudFormation Stack" Action for GitHub Actions
         uses: aws-actions/aws-cloudformation-github-deploy@v1.0.3 
