@@ -57,11 +57,18 @@ jobs:
       #     extra_args: --fail-on-warnings -o json
 
 
-      - name: Create cloudformation parameters for stack deployment
+      - name: Create cloudformation parameters and tags for stack deployment
         run: |
-          echo "CFN_PARAM="$(cat config/main.params) >> $GITHUB_ENV
-
+          cat <<EOF >> config/cfn.params
+          StackName=${{ env.STACK_NAME }}
+          Env=${{ env.ENV }}
+          KeyPairName=${{ env.STACK_NAME }}-${{ env.REGION }}
+          EOF
+          cd scripts
+          python3 cfn-param-json-convert.py ../config/cfn.params
+          python3 cfn-param-json-convert.py ../config/cfn.tags
   
+          
       - name: Configure AWS credentials from ${{ env.STACK_NAME }} account in ${{ env.REGION }} region
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -85,20 +92,6 @@ jobs:
         run: |
           pip install boto3 && cd scripts
           python3 cfn-create-update.py newvpc ../cfn-templates/main.yml ../config/param.json ../config/cfn-tags.json
-        env:
-          EC2_KEY_PAIR: ${{ env.STACK_NAME }}-${{ env.REGION }}
-
-      # - name: AWS CloudFormation "Deploy CloudFormation Stack" Action for GitHub Actions
-      #   uses: aws-actions/aws-cloudformation-github-deploy@v1.0.3 
-      #   with:
-      #     name: ${{env.STACK_NAME}}-infra-${{env.ENV}}
-      #     template: cfn-templates/main.yml
-      #     no-fail-on-empty-changeset: "1"
-      #     parameter-overrides: >-
-      #       StackName=${{ env.STACK_NAME }},
-      #       Env=${{ env.ENV }},
-      #       KeyPairName=${{ env.STACK_NAME }}-${{ env.REGION }},
-      #       ${{env.CFN_PARAM}}
             
 
       # - name: Slack Notification

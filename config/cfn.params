@@ -1,5 +1,6 @@
 VPCCIDR=10.0.0.0/16
-NumberOfAZs=3
+NumberOfAZs=3       
+AvailabilityZones=ap-southeast-2a,ap-southeast-2b,ap-southeast-2c
 BastionAMIOS=/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
 BastionInstanceType=t2.nano
 PublicSubnet1CIDR=10.0.1.0/24
@@ -34,9 +35,4 @@ NumBastionHosts=1
 DefaultRouteAccess=0.0.0.0/0
 CreateDNSStackCondition=false
 PublicDomainName=stage.practera.com
-AvailabilityZones=ap-southeast-2a/ap-southeast-2b/ap-southeast-2c
 PrivateDomainName=internal.stage.practera.com
-
-   
-   
-   

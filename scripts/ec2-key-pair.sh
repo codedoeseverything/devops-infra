@@ -10,5 +10,3 @@ else
   echo $EC2_KEY_PAIR "successfully created and copied to centralized S3 bucket"
   rm $EC2_KEY_PAIR.pem
 fi
-
-
