@@ -79,12 +79,6 @@ jobs:
       - name: AWS S3 Sync operation
         run: |
           aws s3 sync cfn-templates/ s3://${{env.CFN_S3_BUCKET_NAME}}/${{env.STACK_NAME}}/cfn-templates --delete
-      
-
-      - name: Create or Update Cloudformation script
-        run: chmod +x scripts/cfn-create-update.sh && chmod +x scripts/cfn-create-update.sh scripts/ec2-key-pair.sh
-        env:
-          EC2_KEY_PAIR: ${{ env.STACK_NAME }}-${{ env.REGION }}
 
 
       - name: Create or Update Cloudformation templates to AWS
