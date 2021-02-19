@@ -41,9 +41,7 @@ Parameters:
   AvailabilityZones:
     Description: 'List of Availability Zones to use for the subnets in the VPC. Note:
       The logical order is preserved.'
-    # Type: List<AWS::EC2::AvailabilityZone::Name>
-    Type: String
-    Default: ''
+    Type: List<AWS::EC2::AvailabilityZone::Name>
   CreateAdditionalPrivateSubnets:
     AllowedValues:
       - 'true'

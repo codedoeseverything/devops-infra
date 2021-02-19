@@ -39,9 +39,7 @@ Parameters:
   AvailabilityZones:
     Description: List of Availability Zones to use for the subnets in the VPC and the logical order of
       your selections is preserved.
-    # Type: List<AWS::EC2::AvailabilityZone::Name>
-    Type: String
-    Default: ''
+    Type: List<AWS::EC2::AvailabilityZone::Name>
   NumberOfAZs:
     AllowedValues:
       - '2'
@@ -309,9 +307,7 @@ Resources:
         AvailabilityZones:
           Fn::Join:
           - ','
-          - Fn::Split:
-            - '/'
-            - !Ref AvailabilityZones
+          - Ref: AvailabilityZones
         NumberOfAZs: !Ref NumberOfAZs
         VPCCIDR: !Ref VPCCIDR
         CreatePublicSubnets: !Ref CreatePublicSubnets
