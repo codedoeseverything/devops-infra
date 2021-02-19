@@ -19,10 +19,10 @@ json_dict = {}
 #Mandatory fields for cfn json parameters
 if 'params' in filename:
     cfn_json_key =['ParameterKey', 'ParameterValue']
-    cfn_outfile_file = '../config/cfn-params.json'
+    cfn_outfile_file = 'config/cfn-params.json'
 elif 'tags' in filename:
     cfn_json_key =['Key', 'Value']
-    cfn_outfile_file = '../config/cfn-tags.json'
+    cfn_outfile_file = 'config/cfn-tags.json'
 else:
     print("Not Valid file")
 
