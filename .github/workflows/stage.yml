@@ -83,8 +83,8 @@ jobs:
 
       - name: Create or Update Cloudformation templates to AWS
         run: |
-          pip install boto3
-          python3 scripts/cfn-create-update.py newvpc ../cfn-templates/main.yml ../config/param.json ../config/cfn-tags.json
+          pip install boto3 && cd scripts
+          python3 cfn-create-update.py newvpc ../cfn-templates/main.yml ../config/param.json ../config/cfn-tags.json
         env:
           EC2_KEY_PAIR: ${{ env.STACK_NAME }}-${{ env.REGION }}
 
