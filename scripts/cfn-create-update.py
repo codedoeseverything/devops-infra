@@ -1,28 +1,33 @@
-'Update or create a stack given a name and template + params'
-from __future__ import division, print_function, unicode_literals
+# The program will create or update cloudformation stack to AWS account
 
+# We need to pass four arguments stackname, template file path, parameter file path, and tag path
+
+# Import requried python modules
+from __future__ import division, print_function, unicode_literals
 from datetime import datetime
 import logging
 import json
 import sys
-
 import boto3
 import botocore
+
 
 cf = boto3.client('cloudformation')  # pylint: disable=C0103
 log = logging.getLogger('deploy.cf.create_or_update')  # pylint: disable=C0103
 
 
-def main(stack_name, template, parameters):
+def main(stack_name, template, parameters, tags):
     'Update or create stack'
 
     template_data = _parse_template(template)
     parameter_data = _parse_parameters(parameters)
+    tag_data = _parse_parameters(tags)
 
     params = {
         'StackName': stack_name,
         'TemplateBody': template_data,
         'Parameters': parameter_data,
+        'Tags': tag_data,
     }
 
     try:

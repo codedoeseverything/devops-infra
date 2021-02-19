@@ -34,10 +34,10 @@ jobs:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
 
-      # - name: Set up Python 3.8
-      #   uses: actions/setup-python@v2
-      #   with:
-      #     python-version: 3.8
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
 
       # - name: Install Python dependencies
       #   run: |
@@ -86,17 +86,24 @@ jobs:
         env:
           EC2_KEY_PAIR: ${{ env.STACK_NAME }}-${{ env.REGION }}
 
-      - name: AWS CloudFormation "Deploy CloudFormation Stack" Action for GitHub Actions
-        uses: aws-actions/aws-cloudformation-github-deploy@v1.0.3 
-        with:
-          name: ${{env.STACK_NAME}}-infra-${{env.ENV}}
-          template: cfn-templates/main.yml
-          no-fail-on-empty-changeset: "1"
-          parameter-overrides: >-
-            StackName=${{ env.STACK_NAME }},
-            Env=${{ env.ENV }},
-            KeyPairName=${{ env.STACK_NAME }}-${{ env.REGION }},
-            ${{env.CFN_PARAM}}
+
+      - name: Create or Update Cloudformation templates to AWS
+        run: |
+          python3 scripts/cfn-create-update.py newvpc ../cfn-templates/main.yml ../config/param.json ../config/cfn-tags.json
+        env:
+          EC2_KEY_PAIR: ${{ env.STACK_NAME }}-${{ env.REGION }}
+
+      # - name: AWS CloudFormation "Deploy CloudFormation Stack" Action for GitHub Actions
+      #   uses: aws-actions/aws-cloudformation-github-deploy@v1.0.3 
+      #   with:
+      #     name: ${{env.STACK_NAME}}-infra-${{env.ENV}}
+      #     template: cfn-templates/main.yml
+      #     no-fail-on-empty-changeset: "1"
+      #     parameter-overrides: >-
+      #       StackName=${{ env.STACK_NAME }},
+      #       Env=${{ env.ENV }},
+      #       KeyPairName=${{ env.STACK_NAME }}-${{ env.REGION }},
+      #       ${{env.CFN_PARAM}}
             
 
       # - name: Slack Notification

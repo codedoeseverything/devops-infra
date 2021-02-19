@@ -25,3 +25,5 @@ AWS Best Practise:
 ✅ Right: !Sub arn:aws:s3:::${Example.ParameterValue}/*
 
 8. Choose wisely parameters to be stored in System parameter store if values changes dynamically.
+
+9. Cfn-nag tool ensures any cloudformation format or syntax can be improved.

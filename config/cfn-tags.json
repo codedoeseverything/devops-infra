@@ -1,0 +1,10 @@
+[
+    {
+        "Key": "StackName",
+        "Value": "stage"
+    },
+    {
+        "Key": "Env",
+        "Value": "stage"
+    }
+]

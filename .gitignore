@@ -3,7 +3,11 @@ node_modules/
 .env
 *.DS_Store
 *.code-workspace
-
+issues
+issues/*
+cfn-flip-output
+cfn-flip-output/*
+upload.sh
 
 # Serverless directories
 .serverless
