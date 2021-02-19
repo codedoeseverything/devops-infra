@@ -121,7 +121,7 @@
     },
     {
         "ParameterKey": "CreatePrivateSubnets",
-        "ParameterValue": "false"
+        "ParameterValue": "true"
     },
     {
         "ParameterKey": "CreateAdditionalPrivateSubnets",
