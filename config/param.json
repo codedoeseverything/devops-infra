@@ -1,0 +1,166 @@
+[
+    {
+        "ParameterKey": "StackName",
+        "ParameterValue": "stage"
+    },
+    {
+        "ParameterKey": "Env",
+        "ParameterValue": "stage"
+    },
+    {
+        "ParameterKey": "VPCCIDR",
+        "ParameterValue": "10.0.0.0/16"
+    },
+    {
+        "ParameterKey": "AvailabilityZones",
+        "ParameterValue": "ap-southeast-2a,ap-southeast-2b,ap-southeast-2c"
+    },
+    {
+        "ParameterKey": "NumberOfAZs",
+        "ParameterValue": "3"
+    },
+    {
+        "ParameterKey": "BastionAMIOS",
+        "ParameterValue": "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+    },
+    {
+        "ParameterKey": "BastionInstanceType",
+        "ParameterValue": "t2.nano"
+    },
+    {
+        "ParameterKey": "KeyPairName",
+        "ParameterValue": "stage-ap-southeast-2"
+    },
+    {
+        "ParameterKey": "PublicSubnet1CIDR",
+        "ParameterValue": "10.0.1.0/24"
+    },
+    {
+        "ParameterKey": "PublicSubnet2CIDR",
+        "ParameterValue": "10.0.2.0/24"
+    },
+    {
+        "ParameterKey": "PublicSubnet3CIDR",
+        "ParameterValue": "10.0.3.0/24"
+    },
+    {
+        "ParameterKey": "PublicSubnet4CIDR",
+        "ParameterValue": "10.0.4.0/24"
+    },
+    {
+        "ParameterKey": "PublicSubnet5CIDR",
+        "ParameterValue": "10.0.5.0/24"
+    },
+    {
+        "ParameterKey": "PublicSubnet6CIDR",
+        "ParameterValue": "10.0.6.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubnet1ACIDR",
+        "ParameterValue": "10.0.11.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubnet1BCIDR",
+        "ParameterValue": "10.0.12.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubnet2ACIDR",
+        "ParameterValue": "10.0.13.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubnet2BCIDR",
+        "ParameterValue": "10.0.14.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubnet3ACIDR",
+        "ParameterValue": "10.0.15.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubnet3BCIDR",
+        "ParameterValue": "10.0.16.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubnet4ACIDR",
+        "ParameterValue": "10.0.17.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubnet4BCIDR",
+        "ParameterValue": "10.0.18.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubnet5ACIDR",
+        "ParameterValue": "10.0.19.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubnet5BCIDR",
+        "ParameterValue": "10.0.20.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubnet6ACIDR",
+        "ParameterValue": "10.0.21.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubnet6BCIDR",
+        "ParameterValue": "10.0.22.0/24"
+    },
+    {
+        "ParameterKey": "CFNS3BucketName",
+        "ParameterValue": "devops-cfn-templates1"
+    },
+    {
+        "ParameterKey": "CFNS3BucketRegion",
+        "ParameterValue": "ap-southeast-2"
+    },
+    {
+        "ParameterKey": "VPCTenancy",
+        "ParameterValue": "default"
+    },
+    {
+        "ParameterKey": "CreatePublicSubnets",
+        "ParameterValue": "true"
+    },
+    {
+        "ParameterKey": "CreatePrivateSubnets",
+        "ParameterValue": "false"
+    },
+    {
+        "ParameterKey": "CreateAdditionalPrivateSubnets",
+        "ParameterValue": "true"
+    },
+    {
+        "ParameterKey": "CreateNATGateways",
+        "ParameterValue": "false"
+    },
+    {
+        "ParameterKey": "CreateVPCS3Endpoint",
+        "ParameterValue": "false"
+    },
+    {
+        "ParameterKey": "CreateVPCDynamoDBEndpoint",
+        "ParameterValue": "false"
+    },
+    {
+        "ParameterKey": "CreateVPCFlowLogs",
+        "ParameterValue": "false"
+    },
+    {
+        "ParameterKey": "NumBastionHosts",
+        "ParameterValue": "1"
+    },
+    {
+        "ParameterKey": "DefaultRouteAccess",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    {
+        "ParameterKey": "CreateDNSStackCondition",
+        "ParameterValue": "false"
+    },
+    {
+        "ParameterKey": "PublicDomainName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "PrivateDomainName",
+        "ParameterValue": ""
+    }
+]
