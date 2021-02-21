@@ -24,7 +24,7 @@ jobs:
       ENV : stage # Valid values are sandbox,stage,live only
       STACK_NAME: stage # Valid values are au,us,uk,p2,lf,nu,sandbox,stage only
       SUBDOMAIN: devops-infra
-      CFN_S3_BUCKET_NAME: devops-cfn-templates1
+      CFNS3BucketName: devops-cfn-templates1
       S3BucketNameKeyPair: devops-ec2-keypair1
 
     # Steps to execute in this job
@@ -60,9 +60,12 @@ jobs:
       - name: Create cloudformation parameters and tags for stack deployment
         run: |
           cat <<EOF >> config/cfn.params
-          # StackName=${{ env.STACK_NAME }}
-          # Env=${{ env.ENV }}
+          StackName=${{ env.STACK_NAME }}
+          Env=${{ env.ENV }}
+          CFNS3BucketName= $ {{ env.CFNS3BucketName }}
+          CFNS3BucketRegion=ap-southeast-2
           # KeyPairName=${{ env.STACK_NAME }}-${{ env.REGION }}
+
           EOF
           python3 scripts/cfn-param-json-convert.py config/cfn.params
           python3 scripts/cfn-param-json-convert.py config/cfn.tags
@@ -92,8 +95,7 @@ jobs:
       - name: Create or Update Cloudformation templates to AWS
         run: |
           pip install boto3
-          #python3 scripts/cfn-create-update.py newvpc cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
-          python3 scripts/cfn-create-update.py newvpc cfn-templates/vpc.yml config/cfn-params.json config/cfn-tags.json
+          python3 scripts/cfn-create-update.py newvpc cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
             
 
       - name: Slack Notification
