@@ -89,7 +89,7 @@ jobs:
 
       - name: AWS S3 Sync operation
         run: |
-          aws s3 sync cfn-templates/ s3://${{env.CFN_S3_BUCKET_NAME}}/${{env.STACK_NAME}}/cfn-templates --delete
+          aws s3 sync cfn-templates/ s3://${{env.CFNS3BucketName}}/${{env.STACK_NAME}}/cfn-templates --delete
 
 
       - name: Create or Update Cloudformation templates to AWS
