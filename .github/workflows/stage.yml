@@ -62,10 +62,9 @@ jobs:
           cat <<EOF >> config/cfn.params
           StackName=${{ env.STACK_NAME }}
           Env=${{ env.ENV }}
-          CFNS3BucketName= $ {{ env.CFNS3BucketName }}
+          CFNS3BucketName= ${{ env.CFNS3BucketName }}
           CFNS3BucketRegion=ap-southeast-2
           # KeyPairName=${{ env.STACK_NAME }}-${{ env.REGION }}
-
           EOF
           python3 scripts/cfn-param-json-convert.py config/cfn.params
           python3 scripts/cfn-param-json-convert.py config/cfn.tags
@@ -81,10 +80,10 @@ jobs:
           aws-region: ${{ env.REGION }}
 
       
-      - name: Create AWS EC2 Key Pair Name for ${{ env.STACK_NAME }} account in ${{ env.REGION }} region
-        run: chmod +x scripts/ec2-key-pair.sh && scripts/ec2-key-pair.sh
-        env:
-          EC2_KEY_PAIR: ${{ env.STACK_NAME }}-${{ env.REGION }}
+      # - name: Create AWS EC2 Key Pair Name for ${{ env.STACK_NAME }} account in ${{ env.REGION }} region
+      #   run: chmod +x scripts/ec2-key-pair.sh && scripts/ec2-key-pair.sh
+      #   env:
+      #     EC2_KEY_PAIR: ${{ env.STACK_NAME }}-${{ env.REGION }}
 
 
       - name: AWS S3 Sync operation
