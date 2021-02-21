@@ -68,8 +68,8 @@ jobs:
           EOF
           python3 scripts/cfn-param-json-convert.py config/cfn.params
           python3 scripts/cfn-param-json-convert.py config/cfn.tags
-          cat config/cfn.params
-          cat config/cfn.tags
+          cat config/cfn-params.json
+          cat config/cfn-tags.json
   
 
       - name: Configure AWS credentials from ${{ env.STACK_NAME }} account in ${{ env.REGION }} region
