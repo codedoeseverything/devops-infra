@@ -60,9 +60,9 @@ jobs:
       - name: Create cloudformation parameters and tags for stack deployment
         run: |
           cat <<EOF >> config/cfn.params
-          StackName=${{ env.STACK_NAME }}
-          Env=${{ env.ENV }}
-          KeyPairName=${{ env.STACK_NAME }}-${{ env.REGION }}
+          # StackName=${{ env.STACK_NAME }}
+          # Env=${{ env.ENV }}
+          # KeyPairName=${{ env.STACK_NAME }}-${{ env.REGION }}
           EOF
           python3 scripts/cfn-param-json-convert.py config/cfn.params
           python3 scripts/cfn-param-json-convert.py config/cfn.tags
