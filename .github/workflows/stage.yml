@@ -64,10 +64,10 @@ jobs:
           Env=${{ env.ENV }}
           CFNS3BucketName= ${{ env.CFNS3BucketName }}
           CFNS3BucketRegion=ap-southeast-2
-          # KeyPairName=${{ env.STACK_NAME }}-${{ env.REGION }}
           EOF
           python3 scripts/cfn-param-json-convert.py config/cfn.params
           python3 scripts/cfn-param-json-convert.py config/cfn.tags
+          cat config/cfn.params
           cat config/cfn-params.json
           cat config/cfn-tags.json
   
