@@ -75,8 +75,7 @@ Resources:
       Dimensions: 
         - !If 
           - 3AZCondition
-          - - 
-              Name: NatGatewayA
+          - - Name: NatGatewayA
               Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
           - Name: NatGatewayId  
             Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
