@@ -717,16 +717,6 @@ Outputs:
   StackName:
     Description: 'Stack name.'
     Value: !Sub '${AWS::StackName}'
-  NumberOfAZs:
-    Description: 'Number of AZs'
-    Value: !Ref NumberOfAZs
-    Export:
-      Name: !Sub '${StackName}-NumberOfAZs-${Env}'
-  AZList:  # Better name would be AZs, but the name was already used
-    Description: 'List of AZs'
-    Value: !Join [',', [!Select [0, !GetAZs ''], !Select [1, !GetAZs ''], !Select [2, !GetAZs '']]]
-    Export:
-      Name: !Sub '${StackName}-AZList-${Env}'
   CidrBlock:
     Description: 'The set of IP addresses for the VPC.'
     Value: !GetAtt 'VPC.CidrBlock'
@@ -738,27 +728,229 @@ Outputs:
     Export:
       Name: !Sub '${StackName}-CidrBlockIPv6-${Env}'
   VPC:
-    Description: 'VPC.'
+    Description: 'VPC'
     Value: !Ref VPC
     Export:
       Name: !Sub '${StackName}-VPC-${Env}'
+  NumberOfAZs:
+    Description: 'Number of AZs'
+    Value: !Ref NumberOfAZs
+    Export:
+      Name: !Sub '${StackName}-NumberOfAZs-${Env}'
+  AZList:  # Better name would be AZs, but the name was already used
+    Description: 'List of AZs'
+    Value: !If
+      - 6AZCondition
+      - !Join [',', [!Select [0, !GetAZs ''], !Select [1, !GetAZs ''], !Select [2, !GetAZs ''], !Select [3, !GetAZs ''], !Select [4, !GetAZs ''], !Select [5, !GetAZs '']]]
+      - !If
+        - 5AZCondition
+        - !Join [',', [!Select [0, !GetAZs ''], !Select [1, !GetAZs ''], !Select [2, !GetAZs ''], !Select [3, !GetAZs ''], !Select [4, !GetAZs '']]]
+        - !If
+          - 4AZCondition
+          - !Join [',', [!Select [0, !GetAZs ''], !Select [1, !GetAZs ''], !Select [2, !GetAZs ''], !Select [3, !GetAZs '']]]
+          - !If
+            - 3AZCondition
+            - !Join [',', [!Select [0, !GetAZs ''], !Select [1, !GetAZs ''], !Select [2, !GetAZs '']]]
+            - !Ref 'AWS::NoValue'
+    Export:
+      Name: !Sub '${StackName}-AZList-${Env}'
   SubnetsPublic:
     Description: 'Subnets public.'
-    Value: !Join [',', [!Ref SubnetAPublic, !Ref SubnetBPublic, !Ref SubnetCPublic]]
+    Value: !If
+      - 6AZCondition
+      - !Join [',', [!Ref SubnetAPublic, !Ref SubnetBPublic, !Ref SubnetCPublic,!Ref SubnetDPublic, !Ref SubnetEPublic, !Ref SubnetFPublic]]
+      - !If
+        - 5AZCondition
+        - !Join [',', [!Ref SubnetAPublic, !Ref SubnetBPublic, !Ref SubnetCPublic,!Ref SubnetDPublic, !Ref SubnetEPublic]]
+        - !If
+          - 4AZCondition
+          - !Join [',', [!Ref SubnetAPublic, !Ref SubnetBPublic, !Ref SubnetCPublic,!Ref SubnetDPublic]]
+          - !If
+            - 3AZCondition
+            - !Join [',', [!Ref SubnetAPublic, !Ref SubnetBPublic, !Ref SubnetCPublic]]
+            - !Ref 'AWS::NoValue'
     Export:
       Name: !Sub '${StackName}-SubnetsPublic-${Env}'
   SubnetsPrivate:
     Description: 'Subnets private.'
-    Value: !Join [',', [!Ref SubnetAPrivate, !Ref SubnetBPrivate, !Ref SubnetCPrivate]]
+    Value: !If
+      - 6AZCondition
+      - !Join [',', [!Ref SubnetAPrivate, !Ref SubnetBPrivate, !Ref SubnetCPrivate,!Ref SubnetDPrivate, !Ref SubnetEPrivate, !Ref SubnetFPrivate]]
+      - !If
+        - 5AZCondition
+        - !Join [',', [!Ref SubnetAPrivate, !Ref SubnetBPrivate, !Ref SubnetCPrivate,!Ref SubnetDPrivate, !Ref SubnetEPrivate]]
+        - !If
+          - 4AZCondition
+          - !Join [',', [!Ref SubnetAPrivate, !Ref SubnetBPrivate, !Ref SubnetCPrivate,!Ref SubnetDPrivate]]
+          - !If
+            - 3AZCondition
+            - !Join [',', [!Ref SubnetAPrivate, !Ref SubnetBPrivate, !Ref SubnetCPrivate]]
+            - !Ref 'AWS::NoValue'
     Export:
       Name: !Sub '${StackName}-SubnetsPrivate-${Env}'
   RouteTablesPrivate:
     Description: 'Route tables private.'
-    Value: !Join [',', [!Ref RouteTableAPrivate, !Ref RouteTableBPrivate, !Ref RouteTableCPrivate]]
+    Value: !If
+      - 6AZCondition
+      - !Join [',', [!Ref RouteTableAPrivate, !Ref RouteTableBPrivate, !Ref RouteTableCPrivate, !Ref RouteTableDPrivate, !Ref RouteTableEPrivate, !Ref RouteTableFPrivate]]
+      - !If
+        - 5AZCondition
+        - !Join [',', [!Ref RouteTableAPrivate, !Ref RouteTableBPrivate, !Ref RouteTableCPrivate, !Ref RouteTableDPrivate, !Ref RouteTableEPrivate]]
+        - !If
+          - 4AZCondition
+          - !Join [',', [!Ref RouteTableAPrivate, !Ref RouteTableBPrivate, !Ref RouteTableCPrivate, !Ref RouteTableDPrivate]]
+          - !If
+            - 3AZCondition
+            - !Join [',', [!Ref RouteTableAPrivate, !Ref RouteTableBPrivate, !Ref RouteTableCPrivate]]
+            - !Ref 'AWS::NoValue'
     Export:
       Name: !Sub '${StackName}-RouteTablesPrivate-${Env}'
   RouteTablesPublic:
     Description: 'Route tables public.'
-    Value: !Join [',', [!Ref RouteTableAPublic, !Ref RouteTableBPublic, !Ref RouteTableCPublic]]
+    Value: !If
+      - 6AZCondition
+      - !Join [',', [!Ref RouteTableAPublic, !Ref RouteTableBPublic, !Ref RouteTableCPublic, !Ref RouteTableDPublic, !Ref RouteTableEPublic, !Ref RouteTableFPublic]]
+      - !If
+        - 5AZCondition
+        - !Join [',', [!Ref RouteTableAPublic, !Ref RouteTableBPublic, !Ref RouteTableCPublic, !Ref RouteTableDPublic, !Ref RouteTableEPublic]]
+        - !If
+          - 4AZCondition
+          - !Join [',', [!Ref RouteTableAPublic, !Ref RouteTableBPublic, !Ref RouteTableCPublic, !Ref RouteTableDPublic]]
+          - !If
+            - 3AZCondition
+            - !Join [',', [!Ref RouteTableAPublic, !Ref RouteTableBPublic, !Ref RouteTableCPublic]]
+            - !Ref 'AWS::NoValue'
     Export:
       Name: !Sub '${StackName}-RouteTablesPublic-${Env}'
+  SubnetAPublic:
+    Description: 'Subnet A public.'
+    Value: !Ref SubnetAPublic
+    Export:
+      Name: !Sub '${StackName}-SubnetAPublic-${Env}'
+  RouteTableAPublic:
+    Description: 'Route table A public.'
+    Value: !Ref RouteTableAPublic
+    Export:
+      Name: !Sub '${StackName}-RouteTableAPublic-${Env}'
+  SubnetAPrivate:
+    Description: 'Subnet A private.'
+    Value: !Ref SubnetAPrivate
+    Export:
+      Name: !Sub '${StackName}-SubnetAPrivate-${Env}'
+  RouteTableAPrivate:
+    Description: 'Route table A private.'
+    Value: !Ref RouteTableAPrivate
+    Export:
+      Name: !Sub '${StackName}-RouteTableAPrivate-${Env}'
+  SubnetBPublic:
+    Description: 'Subnet B public.'
+    Value: !Ref SubnetBPublic
+    Export:
+      Name: !Sub '${StackName}-SubnetBPublic-${Env}'
+  RouteTableBPublic:
+    Description: 'Route table B public.'
+    Value: !Ref RouteTableBPublic
+    Export:
+      Name: !Sub '${StackName}-RouteTableBPublic-${Env}'
+  SubnetBPrivate:
+    Description: 'Subnet B private.'
+    Value: !Ref SubnetBPrivate
+    Export:
+      Name: !Sub '${StackName}-SubnetBPrivate-${Env}'
+  RouteTableBPrivate:
+    Description: 'Route table B private.'
+    Value: !Ref RouteTableBPrivate
+    Export:
+      Name: !Sub '${StackName}-RouteTableBPrivate-${Env}'
+  SubnetCPublic:
+    Description: 'Subnet C public.'
+    Value: !Ref SubnetCPublic
+    Export:
+      Name: !Sub '${StackName}-SubnetCPublic-${Env}'
+  RouteTableCPublic:
+    Description: 'Route table C public.'
+    Value: !Ref RouteTableCPublic
+    Export:
+      Name: !Sub '${StackName}-RouteTableCPublic-${Env}'
+  SubnetCPrivate:
+    Description: 'Subnet C private.'
+    Value: !Ref SubnetCPrivate
+    Export:
+      Name: !Sub '${StackName}-SubnetCPrivate-${Env}'
+  RouteTableCPrivate:
+    Description: 'Route table C private.'
+    Value: !Ref RouteTableCPrivate
+    Export:
+      Name: !Sub '${StackName}-RouteTableCPrivate-${Env}'
+  SubnetDPublic:
+    Condition: 4AZCondition
+    Description: 'Subnet D public.'
+    Value: !Ref SubnetDPublic
+    Export:
+      Name: !Sub '${StackName}-SubnetDPublic-${Env}'
+  RouteTableDPublic:
+    Condition: 4AZCondition
+    Description: 'Route table D public.'
+    Value: !Ref RouteTableDPublic
+    Export:
+      Name: !Sub '${StackName}-RouteTableDPublic-${Env}'
+  SubnetDPrivate:
+    Condition: 4AZCondition
+    Description: 'Subnet D private.'
+    Value: !Ref SubnetDPrivate
+    Export:
+      Name: !Sub '${StackName}-SubnetDPrivate-${Env}'
+  RouteTableDPrivate:
+    Condition: 4AZCondition
+    Description: 'Route table D private.'
+    Value: !Ref RouteTableDPrivate
+    Export:
+      Name: !Sub '${StackName}-RouteTableDPrivate-${Env}'
+  SubnetEPublic:
+    Condition: 5AZCondition
+    Description: 'Subnet E public.'
+    Value: !Ref SubnetEPublic
+    Export:
+      Name: !Sub '${StackName}-SubnetEPublic-${Env}'
+  RouteTableEPublic:
+    Condition: 5AZCondition
+    Description: 'Route table E public.'
+    Value: !Ref RouteTableEPublic
+    Export:
+      Name: !Sub '${StackName}-RouteTableEPublic-${Env}'
+  SubnetEPrivate:
+    Condition: 5AZCondition
+    Description: 'Subnet E private.'
+    Value: !Ref SubnetEPrivate
+    Export:
+      Name: !Sub '${StackName}-SubnetEPrivate-${Env}'
+  RouteTableEPrivate:
+    Condition: 5AZCondition
+    Description: 'Route table E private.'
+    Value: !Ref RouteTableEPrivate
+    Export:
+      Name: !Sub '${StackName}-RouteTableEPrivate-${Env}'
+  SubnetFPublic:
+    Condition: 6AZCondition
+    Description: 'Subnet F public.'
+    Value: !Ref SubnetFPublic
+    Export:
+      Name: !Sub '${StackName}-SubnetFPublic-${Env}'
+  RouteTableFPublic:
+    Condition: 6AZCondition
+    Description: 'Route table F public.'
+    Value: !Ref RouteTableFPublic
+    Export:
+      Name: !Sub '${StackName}-RouteTableFPublic-${Env}'
+  SubnetFPrivate:
+    Condition: 6AZCondition
+    Description: 'Subnet F private.'
+    Value: !Ref SubnetFPrivate
+    Export:
+      Name: !Sub '${StackName}-SubnetFPrivate-${Env}'
+  RouteTableFPrivate:
+    Condition: 6AZCondition
+    Description: 'Route table F private.'
+    Value: !Ref RouteTableFPrivate
+    Export:
+      Name: !Sub '${StackName}-RouteTableFPrivate-${Env}'
