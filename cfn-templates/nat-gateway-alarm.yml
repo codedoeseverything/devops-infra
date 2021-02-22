@@ -80,7 +80,7 @@ Resources:
           - Name: NatGatewayId
             Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
           - Name: NatGatewayId
-            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
       # - !If
       #   - 6AZCondition
       #   - - 
