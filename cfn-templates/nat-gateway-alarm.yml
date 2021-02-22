@@ -76,9 +76,9 @@ Resources:
         - !If 
           - 3AZCondition
           - Name: NatGatewayId
-            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
-          - Name: NatGatewayId
             Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
+          - Name: NatGatewayId
+            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
       # - !If
       #   - 6AZCondition
       #   - - 
