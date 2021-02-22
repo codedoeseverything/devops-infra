@@ -1,0 +1,257 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: "This is Security Group cloudformation template for core Practera infrastructure design." 
+
+# TODO:
+# 1. Plan to add requried security group.
+# 2. Validate if any secuirty group needs more attention 
+# 3. DBServerSecurityGroup commented code will be sample code if we want to allow access within entire VPC CIDR Range..!!
+# 4. Add on more parameter as CustomIPAddress to update Security Group to allow access to that particular IP.
+# 5. ECSClientSecurityGroup can be source SG for ECSServerSecurityGroup with desired port and other resources can assume ECSClientSecurityGroup to enter.
+# 6. For ECSServerSecurityGroup the port 32768-65535 should use SecurityGroupEgress not SecurityGroupIngress. Need to verify before I modify.
+
+Metadata:
+  Authors:
+    Description: Sunil and Mihai (sunil@practera.com/mihai@practera.com) based on AWS quickstart/widdix and best practise.
+  License:
+    Description: 'Copyright 2020 Intersective PTY LTD and its affiliates. All Rights Reserved.'
+
+Parameters:
+  StackName:
+    ConstraintDescription: This will be unique string to represent our stack.
+    Default: sandbox
+    Description: A client/project/product unique name for the stack to idnetify later.
+      This string can include numbers, lowercase letters, uppercase letters, and hyphens
+      (-). It cannot start or end with a hyphen (-).
+    Type: String
+    AllowedValues: [au,us,uk,p2,lf,nu,sandbox,stage]
+  Env:
+    Description: Environment type.
+    Default: stage
+    Type: String
+    AllowedValues:
+      - sandbox
+      - stage
+      - live
+  DefaultRouteAccess:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
+    Description: Allowed CIDR block for external SSH access to the bastions.
+    Type: String
+Resources:
+
+  DBClientSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: A client security group for RDS DB instance
+      GroupName: !Sub '${StackName}-DBClientSecurityGroup-${Env}'
+      VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
+      Tags:
+        - Key: Name
+          Value: DBClientSecurityGroup
+        - Key: NetworkType
+          Value: AssumeThisSGToAllowAccessToDB
+
+  DBServerSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: A server security group for RDS DB instance
+      GroupName: !Sub '${StackName}-DBServerSecurityGroup-${Env}'
+      VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          Description: !Sub 'To allow port 3306 open to DBClientSecurityGroup id ", ${DBClientSecurityGroup}'
+          SourceSecurityGroupId: !Ref DBClientSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          Description: !Sub 'To allow port 5432 open to DBClientSecurityGroup id ", ${DBClientSecurityGroup}'
+          SourceSecurityGroupId: !Ref DBClientSecurityGroup     
+      Tags:
+        - Key: Name
+          Value: DBServerSecurityGroup
+        - Key: NetworkType
+          Value: AssumeThisSGToAllowAccessToDB
+          
+
+  CacheClientSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: A client security group for Cache DB instance
+      GroupName: !Sub '${StackName}-CacheClientSecurityGroup-${Env}'
+      VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
+      Tags:
+        - Key: Name
+          Value: CacheClientSecurityGroup
+        - Key: NetworkType
+          Value: AssumeThisSGToAllowAccessToCacheDB
+  
+  CacheServerSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: A server security group for Cache DB instance
+      GroupName: !Sub '${StackName}-CacheServerSecurityGroup-${Env}'
+      VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          Description: !Sub 'To allow Redis cache port 6379 open to CacheClientSecurityGroup id ", ${CacheClientSecurityGroup}'
+          SourceSecurityGroupId: !Ref CacheClientSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          Description: !Sub 'To allow Redis cache port 6379 open to BastionSecurityGroup id ", ${BastionSecurityGroup}'
+          SourceSecurityGroupId: !Ref BastionSecurityGroup   
+      Tags:
+        - Key: Name
+          Value: CacheServerSecurityGroup
+        - Key: NetworkType
+          Value: AssumeThisSGToAllowAccessToCacheDB
+
+  ALBClientSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: A client security group for ALB
+      GroupName: !Sub '${StackName}-ALBClientSecurityGroup-${Env}'
+      VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          Description: !Sub 'To allow port 80 open to publicly accessible via a default route, ${DefaultRouteAccess}'
+          CidrIp: !Ref DefaultRouteAccess
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          Description: !Sub 'To allow port 443 open to publicly accessible via a default route, ${DefaultRouteAccess}'
+          CidrIp: !Ref DefaultRouteAccess
+      Tags:
+        - Key: Name
+          Value: ALBClientSecurityGroup
+        - Key: NetworkType
+          Value: AssumeThisSGToAllowAccessToALB
+
+  ECSClientSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: A client security group for ECS EC2 instance
+      GroupName: !Sub '${StackName}-ECSClientSecurityGroup-${Env}'
+      VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
+      Tags:
+        - Key: Name
+          Value: ECSClientSecurityGroup
+        - Key: NetworkType
+          Value: AssumeThisSGToAllowAccessToECS
+  
+  ECSServerSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: A server security group for ECS EC2 instance
+      GroupName: !Sub '${StackName}-ECSServerSecurityGroup-${Env}'
+      VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          Description: !Sub 'To allow port 80 open to ALBClientSecurityGroup id, ${ALBClientSecurityGroup}'
+          SourceSecurityGroupId: !Ref ALBClientSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          Description: !Sub 'To allow port 443 open to ALBClientSecurityGroup id, ${ALBClientSecurityGroup}'
+          SourceSecurityGroupId: !Ref ALBClientSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 32768
+          ToPort: 65535
+          Description: !Sub 'To allow port range between 32768 - 65535 open to ALBClientSecurityGroup id, ${ALBClientSecurityGroup}'
+          SourceSecurityGroupId: !Ref ALBClientSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          Description: !Sub 'To allow SSH port 22 open to BastionSecurityGroup id, ${BastionSecurityGroup}'
+          SourceSecurityGroupId: !Ref BastionSecurityGroup 
+      Tags:
+        - Key: Name
+          Value: ECSServerSecurityGroup
+        - Key: NetworkType
+          Value: AssumeThisSGToAllowAccessToECS
+
+  BastionSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: A security group for bastion linux machine.
+      GroupName: !Sub '${StackName}-BastionSecurityGroup-${Env}'
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: {'Fn::ImportValue': !Sub '${StackName}-CidrBlock-${Env}'}
+        Description: 'To allow port 22 open to existing private VPC CIDR range'
+      - IpProtocol: icmp
+        FromPort: -1
+        ToPort: -1
+        CidrIp: {'Fn::ImportValue': !Sub '${StackName}-CidrBlock-${Env}'}
+        Description: 'To allow ICMP packet open to existing private VPC CIDR range'
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: !Ref DefaultRouteAccess
+        Description: !Sub 'To allow port 22 open to CIDR range , ${DefaultRouteAccess}' 
+      - IpProtocol: icmp
+        FromPort: -1
+        ToPort: -1
+        CidrIp: !Ref DefaultRouteAccess
+        Description: !Sub 'To allow ICMP packets open to CIDR range , ${DefaultRouteAccess}' 
+      VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
+      Tags:
+        - Key: Name
+          Value: BastionSecurityGroup
+        - Key: NetworkType
+          Value: PublicAccessAllowed
+Outputs:
+  StackName:
+    Description: 'Stack name.'
+    Value: !Sub '${AWS::StackName}'
+  DBClientSecurityGroup:
+    Description: 'A client security group for RDS DB instance'
+    Value: !Ref DBClientSecurityGroup
+    Export:
+      Name: !Sub '${StackName}-DBClientSecurityGroup-${Env}'
+  DBServerSecurityGroup:
+    Description: 'A server security group for RDS DB instance'
+    Value: !Ref DBServerSecurityGroup
+    Export:
+      Name: !Sub '${StackName}-DBServerSecurityGroup-${Env}'
+  CacheClientSecurityGroup:
+    Description: 'A client security group for Cache DB instance'
+    Value: !Ref CacheClientSecurityGroup
+    Export:
+      Name: !Sub '${StackName}-CacheClientSecurityGroup-${Env}'
+  CacheServerSecurityGroup:
+    Description: 'A server security group for Cache DB instance'
+    Value: !Ref CacheServerSecurityGroup
+    Export:
+      Name: !Sub '${StackName}-CacheServerSecurityGroup-${Env}'
+  BastionSecurityGroupID:
+    Description: 'Use this Security Group to reference incoming traffic from the SSH bastion host/instance.'
+    Value: !Ref BastionSecurityGroup
+    Export:
+      Name: !Sub '${StackName}-BastionSecurityGroupID-${Env}'
+  ALBClientSecurityGroup:
+    Description: 'A client security group for ALB'
+    Value: !Ref ALBClientSecurityGroup
+    Export:
+      Name: !Sub '${StackName}-ALBClientSecurityGroup-${Env}'
+  ECSClientSecurityGroup:
+    Description: 'A client security group for ECS EC2 instance'
+    Value: !Ref ECSClientSecurityGroup
+    Export:
+      Name: !Sub '${StackName}-ECSClientSecurityGroup-${Env}'
+  ECSServerSecurityGroup:
+    Description: 'A server security group for ECS EC2 instance'
+    Value: !Ref ECSServerSecurityGroup
+    Export:
+      Name: !Sub '${StackName}-ECSServerSecurityGroup-${Env}'
