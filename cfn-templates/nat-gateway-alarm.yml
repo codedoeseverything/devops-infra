@@ -75,8 +75,12 @@ Resources:
       # Dimensions:
       # - !If [HasLambdaFunctionArn, {Event: !Ref LambdaFunctionEvent, Function: !Ref LambdaFunctionArn, Filter: !If [HasLambdaFunctionFilterPrefix, {S3Key: {Rules: [{Name: prefix, Value: !Ref LambdaFunctionFilterPrefix}]}}, !Ref 'AWS::NoValue']}, !Ref 'AWS::NoValue']
       Dimensions: 
-        - Name: NatGatewayId
-          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+        - !If 
+          - 3AZCondition
+          - Name: NatGatewayId
+            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+          - Name: NatGatewayId
+            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
       # - !If
       #   - 6AZCondition
       #   - - 
