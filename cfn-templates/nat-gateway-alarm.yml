@@ -73,11 +73,11 @@ Resources:
       AlarmActions:
       - {'Fn::ImportValue': !Sub '${StackName}-TopicARN-${Env}'}
       Dimensions: 
-        - Name: NatGatewayId
+        - Name: NatGatewayA
           Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
-        - Name: NatGatewayId
+        - Name: NatGatewayB
           Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
-        - Name: NatGatewayId
+        - Name: NatGatewayC
           Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
         
       # Dimensions: 
