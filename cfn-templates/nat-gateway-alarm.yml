@@ -73,14 +73,20 @@ Resources:
       AlarmActions:
       - {'Fn::ImportValue': !Sub '${StackName}-TopicARN-${Env}'}
       Dimensions: 
-        - !If 
-          - 3AZCondition
-          - - Name: NatGatewayId
-              Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
-            - Name: NatGatewayId
-              Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
-          - Name: NatGatewayId
-            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+        - Name: NatGatewayId
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+        - Name: NatGatewayId
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
+        - Name: NatGatewayId
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+        
+      # Dimensions: 
+      #   - !If 
+      #     - 3AZCondition
+      #     - Name: NatGatewayId
+      #       Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+      #     - Name: NatGatewayId
+      #       Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
       # - !If
       #   - 6AZCondition
       #   - - 
