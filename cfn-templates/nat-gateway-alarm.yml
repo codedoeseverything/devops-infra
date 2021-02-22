@@ -81,22 +81,22 @@ Resources:
         Value: !If
           - 3AZCondition
           - {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
-          - !Ref 'AWS::NoValue'
+          - {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
       - Name: NatGatewayId
         Value: !If
           - 4AZCondition
           - {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
-          - !Ref 'AWS::NoValue'
+          - {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
       - Name: NatGatewayId
         Value: !If
           - 5AZCondition
           - {'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}
-          - !Ref 'AWS::NoValue'
+          - {'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}
       - Name: NatGatewayId
         Value: !If
           - 6AZCondition
           - {'Fn::ImportValue': !Sub '${StackName}-NatGatewayF-${Env}'}
-          - !Ref 'AWS::NoValue'
+          - {'Fn::ImportValue': !Sub '${StackName}-NatGatewayF-${Env}'}
   # AlarmNatGatewayPacketsDropCount:
   #   Type: 'AWS::CloudWatch::Alarm'
   #   Properties:
