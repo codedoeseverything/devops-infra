@@ -102,7 +102,7 @@ Resources:
     Properties:
       #AssignIpv6AddressOnCreation: true # TODO can not be set if MapPublicIpOnLaunch is true as well
       AvailabilityZone: !Select [0, !GetAZs '']
-      CidrBlock: !Sub '10.${ClassB}.10.0/20'
+      CidrBlock: !Sub '10.${ClassB}.0.0/20'
       Ipv6CidrBlock: !Select [0, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 6, 64]]
       MapPublicIpOnLaunch: true
       VpcId: !Ref VPC
@@ -117,7 +117,7 @@ Resources:
     Properties:
       AssignIpv6AddressOnCreation: false
       AvailabilityZone: !Select [0, !GetAZs '']
-      CidrBlock: !Sub '10.${ClassB}.20.0/20'
+      CidrBlock: !Sub '10.${ClassB}.16.0/20'
       Ipv6CidrBlock: !Select [1, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 6, 64]]
       VpcId: !Ref VPC
       Tags:
@@ -131,7 +131,7 @@ Resources:
     Properties:
       #AssignIpv6AddressOnCreation: true # TODO can not be set if MapPublicIpOnLaunch is true as well
       AvailabilityZone: !Select [1, !GetAZs '']
-      CidrBlock: !Sub '10.${ClassB}.30.0/20'
+      CidrBlock: !Sub '10.${ClassB}.32.0/20'
       Ipv6CidrBlock: !Select [2, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 6, 64]]
       MapPublicIpOnLaunch: true
       VpcId: !Ref VPC
@@ -146,7 +146,7 @@ Resources:
     Properties:
       AssignIpv6AddressOnCreation: false
       AvailabilityZone: !Select [1, !GetAZs '']
-      CidrBlock: !Sub '10.${ClassB}.40.0/20'
+      CidrBlock: !Sub '10.${ClassB}.48.0/20'
       Ipv6CidrBlock: !Select [3, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 6, 64]]
       VpcId: !Ref VPC
       Tags:
@@ -160,7 +160,7 @@ Resources:
     Properties:
       #AssignIpv6AddressOnCreation: true # TODO can not be set if MapPublicIpOnLaunch is true as well
       AvailabilityZone: !Select [2, !GetAZs '']
-      CidrBlock: !Sub '10.${ClassB}.50.0/20'
+      CidrBlock: !Sub '10.${ClassB}.64.0/20'
       Ipv6CidrBlock: !Select [4, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 6, 64]]
       MapPublicIpOnLaunch: true
       VpcId: !Ref VPC
@@ -175,7 +175,7 @@ Resources:
     Properties:
       AssignIpv6AddressOnCreation: false
       AvailabilityZone: !Select [2, !GetAZs '']
-      CidrBlock: !Sub '10.${ClassB}.60.0/20'
+      CidrBlock: !Sub '10.${ClassB}.80.0/20'
       Ipv6CidrBlock: !Select [5, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 6, 64]]
       VpcId: !Ref VPC
       Tags:
@@ -190,7 +190,7 @@ Resources:
     Properties:
       #AssignIpv6AddressOnCreation: true # TODO can not be set if MapPublicIpOnLaunch is true as well
       AvailabilityZone: !Select [3, !GetAZs '']
-      CidrBlock: !Sub '10.${ClassB}.70.0/20'
+      CidrBlock: !Sub '10.${ClassB}.96.0/20'
       Ipv6CidrBlock: !Select [6, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 6, 64]]
       MapPublicIpOnLaunch: true
       VpcId: !Ref VPC
@@ -206,7 +206,7 @@ Resources:
     Properties:
       AssignIpv6AddressOnCreation: false
       AvailabilityZone: !Select [3, !GetAZs '']
-      CidrBlock: !Sub '10.${ClassB}.80.0/20'
+      CidrBlock: !Sub '10.${ClassB}.112.0/20'
       Ipv6CidrBlock: !Select [7, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 6, 64]]
       VpcId: !Ref VPC
       Tags:
@@ -221,7 +221,7 @@ Resources:
     Properties:
       #AssignIpv6AddressOnCreation: true # TODO can not be set if MapPublicIpOnLaunch is true as well
       AvailabilityZone: !Select [4, !GetAZs '']
-      CidrBlock: !Sub '10.${ClassB}.90.0/20'
+      CidrBlock: !Sub '10.${ClassB}.128.0/20'
       Ipv6CidrBlock: !Select [8, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 6, 64]]
       MapPublicIpOnLaunch: true
       VpcId: !Ref VPC
@@ -237,7 +237,7 @@ Resources:
     Properties:
       AssignIpv6AddressOnCreation: false
       AvailabilityZone: !Select [4, !GetAZs '']
-      CidrBlock: !Sub '10.${ClassB}.100.0/20'
+      CidrBlock: !Sub '10.${ClassB}.144.0/20'
       Ipv6CidrBlock: !Select [9, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 6, 64]]
       VpcId: !Ref VPC
       Tags:
@@ -252,7 +252,7 @@ Resources:
     Properties:
       #AssignIpv6AddressOnCreation: true # TODO can not be set if MapPublicIpOnLaunch is true as well
       AvailabilityZone: !Select [5, !GetAZs '']
-      CidrBlock: !Sub '10.${ClassB}.110.0/20'
+      CidrBlock: !Sub '10.${ClassB}.160.0/20'
       Ipv6CidrBlock: !Select [10, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 6, 64]]
       MapPublicIpOnLaunch: true
       VpcId: !Ref VPC
@@ -268,7 +268,7 @@ Resources:
     Properties:
       AssignIpv6AddressOnCreation: false
       AvailabilityZone: !Select [5, !GetAZs '']
-      CidrBlock: !Sub '10.${ClassB}.120.0/20'
+      CidrBlock: !Sub '10.${ClassB}.176.0/20'
       Ipv6CidrBlock: !Select [11, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 6, 64]]
       VpcId: !Ref VPC
       Tags:
