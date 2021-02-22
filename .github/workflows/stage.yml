@@ -103,7 +103,9 @@ jobs:
 
       - name: Create or Update Cloudformation templates to AWS
         run: |
-          python3 scripts/cfn-create-update.py ${{ env.SUBDOMAIN }} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
+          cat config/cfn-params.json
+          cat config/cfn-tags.json
+          # python3 scripts/cfn-create-update.py ${{ env.SUBDOMAIN }} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
             
 
       - name: Slack Notification

@@ -39,6 +39,7 @@ Parameters:
     Description: CIDR IP range that is permitted to access the bastions. We recommend
       that you set this value to a trusted IP range.
     Type: String
+    
 Resources:
 
   DBClientSecurityGroup:
