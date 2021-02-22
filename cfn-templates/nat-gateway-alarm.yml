@@ -72,8 +72,6 @@ Resources:
       Threshold: 0
       AlarmActions:
       - {'Fn::ImportValue': !Sub '${StackName}-TopicARN-${Env}'}
-      # Dimensions:
-      # - !If [HasLambdaFunctionArn, {Event: !Ref LambdaFunctionEvent, Function: !Ref LambdaFunctionArn, Filter: !If [HasLambdaFunctionFilterPrefix, {S3Key: {Rules: [{Name: prefix, Value: !Ref LambdaFunctionFilterPrefix}]}}, !Ref 'AWS::NoValue']}, !Ref 'AWS::NoValue']
       Dimensions: 
         - !If 
           - 3AZCondition
