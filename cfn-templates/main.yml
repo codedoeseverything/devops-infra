@@ -119,28 +119,28 @@ Resources:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
         NumberOfAZs: !Ref 'NumberOfAZs'
-  NATGatewayAlarmStack:
-    DependsOn: [NATGatewayStack]
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway-alarm.yml'
-      Parameters:
-        StackName: !Ref 'StackName'
-        Env: !Ref 'Env'
-        NumberOfAZs: !Ref 'NumberOfAZs'
-  AWSChatBotSlackStack:
-    Condition: CreateChatBotStackCondition
-    DependsOn: [AlertStack, NATGatewayAlarmStack]
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/aws-chatbot.yml'
-      Parameters:
-        StackName: !Ref 'StackName'
-        Env: !Ref 'Env'
-        NumberOfAZs: !Ref 'NumberOfAZs'
-        ChatBotConfigurationName: !Ref 'ChatBotConfigurationName'
-        ChatBotLoggingLevel: !Ref 'ChatBotLoggingLevel'
-        SlackChannelId: !Ref 'SlackChannelId'
-        SlackWorkspaceId: !Ref 'SlackWorkspaceId'
+  # NATGatewayAlarmStack:
+  #   DependsOn: [NATGatewayStack]
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway-alarm.yml'
+  #     Parameters:
+  #       StackName: !Ref 'StackName'
+  #       Env: !Ref 'Env'
+  #       NumberOfAZs: !Ref 'NumberOfAZs'
+  # AWSChatBotSlackStack:
+  #   Condition: CreateChatBotStackCondition
+  #   DependsOn: [AlertStack, NATGatewayAlarmStack]
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/aws-chatbot.yml'
+  #     Parameters:
+  #       StackName: !Ref 'StackName'
+  #       Env: !Ref 'Env'
+  #       NumberOfAZs: !Ref 'NumberOfAZs'
+  #       ChatBotConfigurationName: !Ref 'ChatBotConfigurationName'
+  #       ChatBotLoggingLevel: !Ref 'ChatBotLoggingLevel'
+  #       SlackChannelId: !Ref 'SlackChannelId'
+  #       SlackWorkspaceId: !Ref 'SlackWorkspaceId'
  
         
