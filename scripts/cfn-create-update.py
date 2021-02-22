@@ -28,6 +28,7 @@ def main(stack_name, template, parameters, tags):
         'TemplateBody': template_data,
         'Parameters': parameter_data,
         'Tags': tag_data,
+        'Capabilities': 'CAPABILITY_NAMED_IAM',
     }
 
     try:
