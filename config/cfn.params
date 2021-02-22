@@ -5,4 +5,4 @@ ChatBotConfigurationName=""
 ChatBotLoggingLevel=""
 SlackChannelId=""
 SlackWorkspaceId=""
-DefaultRouteAccess="0.0.0.0/0"
+DefaultRouteAccess=0.0.0.0/0
