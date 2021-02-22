@@ -72,31 +72,60 @@ Resources:
       Threshold: 0
       AlarmActions:
       - {'Fn::ImportValue': !Sub '${StackName}-TopicARN-${Env}'}
-      Dimensions:
-      - Name: NatGatewayId
-        Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
-      - Name: NatGatewayId
-        Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
-      - Name: NatGatewayId
-        Value: !If
-          - 3AZCondition
-          - {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
-          - {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
-      - Name: NatGatewayId
-        Value: !If
-          - 4AZCondition
-          - {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
-          - {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
-      - Name: NatGatewayId
-        Value: !If
+      Dimensions: !If 
+        - 6AZCondition
+        - - Name: NatGatewayId
+            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+          - Name: NatGatewayId
+            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
+          - Name: NatGatewayId
+            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+          - Name: NatGatewayId
+            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
+          - Name: NatGatewayId
+            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}
+          - Name: NatGatewayId
+            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayF-${Env}'}
+        - !If 
           - 5AZCondition
-          - {'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}
-          - {'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}
-      - Name: NatGatewayId
-        Value: !If
-          - 6AZCondition
-          - {'Fn::ImportValue': !Sub '${StackName}-NatGatewayF-${Env}'}
-          - {'Fn::ImportValue': !Sub '${StackName}-NatGatewayF-${Env}'}
+          - - Name: NatGatewayId
+              Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+            - Name: NatGatewayId
+              Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
+            - Name: NatGatewayId
+              Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+            - Name: NatGatewayId
+              Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
+            - Name: NatGatewayId
+              Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}
+          - !If 
+            - 4AZCondition
+            - - Name: NatGatewayId
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+              - Name: NatGatewayId
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
+              - Name: NatGatewayId
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+              - Name: NatGatewayId
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
+              - !If
+                - 3AZCondition
+                - - Name: NatGatewayId
+                    Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+                  - Name: NatGatewayId
+                    Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
+                  - Name: NatGatewayId
+                    Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+                  - - Name: NatGatewayId
+                      Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+                    - Name: NatGatewayId
+                      Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
+                    - Name: NatGatewayId
+                      Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+
+
+
+
   # AlarmNatGatewayPacketsDropCount:
   #   Type: 'AWS::CloudWatch::Alarm'
   #   Properties:
