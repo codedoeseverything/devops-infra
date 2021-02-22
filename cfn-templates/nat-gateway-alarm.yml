@@ -72,7 +72,10 @@ Resources:
       Threshold: 0
       AlarmActions:
       - {'Fn::ImportValue': !Sub '${StackName}-TopicARN-${Env}'}
-      Dimensions: !If 
+      # Dimensions:
+      # - !If [HasLambdaFunctionArn, {Event: !Ref LambdaFunctionEvent, Function: !Ref LambdaFunctionArn, Filter: !If [HasLambdaFunctionFilterPrefix, {S3Key: {Rules: [{Name: prefix, Value: !Ref LambdaFunctionFilterPrefix}]}}, !Ref 'AWS::NoValue']}, !Ref 'AWS::NoValue']
+      Dimensions: 
+      - !If
         - 6AZCondition
         - - Name: NatGatewayId
             Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
@@ -86,7 +89,7 @@ Resources:
             Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}
           - Name: NatGatewayId
             Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayF-${Env}'}
-        - !If 
+        - !If
           - 5AZCondition
           - - Name: NatGatewayId
               Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
@@ -108,20 +111,20 @@ Resources:
                 Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
               - Name: NatGatewayId
                 Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
-              - !If
-                - 3AZCondition
-                - - Name: NatGatewayId
-                    Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
-                  - Name: NatGatewayId
-                    Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
-                  - Name: NatGatewayId
-                    Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
-                  - - Name: NatGatewayId
-                      Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
-                    - Name: NatGatewayId
-                      Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
-                    - Name: NatGatewayId
-                      Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+            - !If
+              - 3AZCondition
+              - - Name: NatGatewayId
+                  Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+                - Name: NatGatewayId
+                  Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
+                - Name: NatGatewayId
+                  Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+              - - Name: NatGatewayId
+                  Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+                - Name: NatGatewayId
+                  Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
+                - Name: NatGatewayId
+                  Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
 
 
 
