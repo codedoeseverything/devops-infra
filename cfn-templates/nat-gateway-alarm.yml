@@ -78,53 +78,53 @@ Resources:
       - !If
         - 6AZCondition
         - - Name: NatGatewayId
-            Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}]
+            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
           - Name: NatGatewayId
-            Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}]
+            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
           - Name: NatGatewayId
-            Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}]
+            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
           - Name: NatGatewayId
-            Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}]
+            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
           - Name: NatGatewayId
-            Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}]
+            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}
           - Name: NatGatewayId
-            Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayF-${Env}'}]
+            Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayF-${Env}'}
         - !If
           - 5AZCondition
           - - Name: NatGatewayId
-              Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}]
+              Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
             - Name: NatGatewayId
-              Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}]
+              Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
             - Name: NatGatewayId
-              Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}]
+              Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
             - Name: NatGatewayId
-              Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}]
+              Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
             - Name: NatGatewayId
-              Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}]
+              Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}
           - !If 
             - 4AZCondition
             - - Name: NatGatewayId
-                Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}]
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
               - Name: NatGatewayId
-                Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}]
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
               - Name: NatGatewayId
-                Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}]
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
               - Name: NatGatewayId
-                Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}]
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
             - !If
               - 3AZCondition
               - - Name: NatGatewayId
-                  Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}]
+                  Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
                 - Name: NatGatewayId
-                  Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}]
+                  Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
                 - Name: NatGatewayId
-                  Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}]
+                  Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
               - - Name: NatGatewayId
-                  Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}]
+                  Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
                 - Name: NatGatewayId
-                  Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}]
+                  Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
                 - Name: NatGatewayId
-                  Value: [{'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}]
+                  Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
 
 
 
