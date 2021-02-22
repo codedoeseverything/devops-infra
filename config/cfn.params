@@ -1,2 +1,7 @@
 ClassB=0
-NumberOfAZs=3       
+NumberOfAZs=3
+CreateChatBotStackCondition=false      
+ChatBotConfigurationName=
+ChatBotLoggingLevel=
+SlackChannelId=
+SlackWorkspaceId=
