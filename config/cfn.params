@@ -1,8 +1,8 @@
 ClassB=0
 NumberOfAZs=3
 DefaultRouteAccess=0.0.0.0/0
-CreateChatBotStackCondition=false      
-ChatBotConfigurationName=
-ChatBotLoggingLevel=
-SlackChannelId=
-SlackWorkspaceId=
+CreateChatBotStackCondition=true      
+ChatBotConfigurationName=AWSSlackNotifyTest
+ChatBotLoggingLevel=INFO
+SlackChannelId=C01NPT2PTMG
+SlackWorkspaceId=T01NQ3FPC7M
