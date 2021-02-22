@@ -22,14 +22,13 @@ def main(stack_name, template, parameters, tags):
     template_data = _parse_template(template)
     parameter_data = _parse_parameters(parameters)
     tag_data = _parse_parameters(tags)
-    iam_access = "CAPABILITY_NAMED_IAM"
 
     params = {
         'StackName': stack_name,
         'TemplateBody': template_data,
         'Parameters': parameter_data,
         'Tags': tag_data,
-        'Capabilities': iam_access,
+        'Capabilities': ["CAPABILITY_NAMED_IAM"],
     }
 
     try:
