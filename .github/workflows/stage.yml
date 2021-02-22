@@ -57,13 +57,22 @@ jobs:
       #     extra_args: --fail-on-warnings -o json
 
 
-      - name: Create additional cloudformation parameters and tags for stack deployment
+      - name: Create additional cloudformation parameters for stack deployment
         run: |
           cat >> config/cfn.params <<EOF 
           StackName=${{ env.STACK_NAME }}
           Env=${{ env.ENV }}
           CFNS3BucketName=${{ env.CFNS3BucketName }}
           CFNS3BucketRegion=ap-southeast-2
+          EOF
+
+      
+      - name: Create additional cloudformation tags for stack deployment
+        run: |
+          cat >> config/cfn.tags <<EOF 
+          StackName=${{ env.STACK_NAME }}
+          Env=${{ env.ENV }}
+          RootStack=${{ env.SUBDOMAIN }}
           EOF
          
 

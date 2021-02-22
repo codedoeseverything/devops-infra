@@ -1,3 +1,1 @@
-STACKNAME=STAGE
-ENV=STAGE 
-MYSTACK=AWESOME
+DeploymentType=Automated
