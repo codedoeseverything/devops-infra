@@ -113,6 +113,7 @@ Resources:
         NumberOfAZs: !Ref 'NumberOfAZs'
         ClassB: !Ref 'ClassB'
   SecurityGroupStack:
+    Condition: CreateNATGatewayStackCondition
     DependsOn: [VPCStack]
     Type: AWS::CloudFormation::Stack
     Properties:
