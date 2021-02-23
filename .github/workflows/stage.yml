@@ -75,6 +75,7 @@ jobs:
           cat >> config/cfn.params <<EOF 
           StackName=${{ env.STACK_NAME }}
           Env=${{ env.ENV }}
+          KeyName=${{ env.STACK_NAME }}-${{ env.REGION }}
           CFNS3BucketName=${{ env.CFNS3BucketName }}
           CFNS3BucketRegion=ap-southeast-2
           EOF

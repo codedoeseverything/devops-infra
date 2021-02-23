@@ -67,6 +67,33 @@ Parameters:
     Description: CIDR IP range that is permitted to access the bastions. We recommend
       that you set this value to a trusted IP range.
     Type: String
+  NumBastionHosts:
+    AllowedValues:
+      - '1'
+      - '2'
+      - '3'
+      - '4'
+    Default: '1'
+    Description: The number of bastion hosts to create. The maximum number is four.
+    Type: String
+  BastionAMIOS:
+    Type : "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
+    Default: "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+    Description: Linux distribution for the AMI to be used for the bastion instances.
+  BastionInstanceType:
+    AllowedValues:
+    - t2.nano
+    - t2.micro
+    - t2.small
+    - t2.medium
+    - t2.large
+    Default: t2.nano
+    Description: Amazon EC2 instance type for the bastion instances.
+    Type: String
+  KeyName:
+    Description: 'Optional key pair of the ec2-user to establish a SSH connection to the SSH bastion host/instance.'
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: ''
   VPCInterfaceServiceName:
     Description: 'The name of the service supported for VPC interface endpoint'
     Type: String
@@ -133,6 +160,31 @@ Resources:
       Parameters:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
+  AWSChatBotSlackStack:
+    Condition: CreateChatBotStackCondition
+    DependsOn: [SNSSlackAlertStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/chatbot.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        ChatBotConfigurationName: !Ref 'ChatBotConfigurationName'
+        ChatBotLoggingLevel: !Ref 'ChatBotLoggingLevel'
+        SlackChannelId: !Ref 'SlackChannelId'
+        SlackWorkspaceId: !Ref 'SlackWorkspaceId'
+  BastionServerStack:
+    DependsOn: [VPCStack, SecurityGroupStack, SNSSlackAlertStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/bastion.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        KeyName: !Ref 'KeyName'
+        BastionAMIOS: !Ref 'BastionAMIOS'
+        NumBastionHosts: !Ref 'NumBastionHosts'
+        BastionInstanceType: !Ref 'BastionInstanceType'
   NATGatewayStack:
     Condition: CreateNATGatewayStackCondition
     DependsOn: [VPCStack]
@@ -162,18 +214,6 @@ Resources:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
         NumberOfAZs: !Ref 'NumberOfAZs'
-  AWSChatBotSlackStack:
-    Condition: CreateChatBotStackCondition
-    DependsOn: [SNSSlackAlertStack]
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/chatbot.yml'
-      Parameters:
-        StackName: !Ref 'StackName'
-        Env: !Ref 'Env'
-        ChatBotConfigurationName: !Ref 'ChatBotConfigurationName'
-        ChatBotLoggingLevel: !Ref 'ChatBotLoggingLevel'
-        SlackChannelId: !Ref 'SlackChannelId'
-        SlackWorkspaceId: !Ref 'SlackWorkspaceId'
+  
  
         

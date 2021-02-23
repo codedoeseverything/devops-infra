@@ -53,7 +53,7 @@ Resources:
       SlackWorkspaceId: !Ref SlackWorkspaceId
       IamRoleArn: !GetAtt ChatbotIamRole.Arn
       SnsTopicArns: 
-        - {'Fn::ImportValue': !Sub '${StackName}-TopicARN-${Env}'}
+        - {'Fn::ImportValue': !Sub '${StackName}-ChatBotSNSTopicARN-${Env}'}
 
   ChatbotIamRole:
     Type: AWS::IAM::Role

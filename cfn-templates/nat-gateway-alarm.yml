@@ -94,7 +94,7 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       Threshold: 0
       AlarmActions:
-      - {'Fn::ImportValue': !Sub '${StackName}-TopicARN-${Env}'}
+      - {'Fn::ImportValue': !Sub '${StackName}-ChatBotSNSTopicARN-${Env}'}
       Dimensions: 
         - Name: NatGatewayA
           Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
@@ -116,7 +116,7 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       Threshold: 0
       AlarmActions:
-      - {'Fn::ImportValue': !Sub '${StackName}-TopicARN-${Env}'}
+      - {'Fn::ImportValue': !Sub '${StackName}-ChatBotSNSTopicARN-${Env}'}
       Dimensions: 
         - Name: NatGatewayA
           Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
@@ -128,7 +128,7 @@ Resources:
     Type: 'AWS::CloudWatch::Alarm'
     Properties:
       AlarmActions:
-      - {'Fn::ImportValue': !Sub '${StackName}-TopicARN-${Env}'}
+      - {'Fn::ImportValue': !Sub '${StackName}-ChatBotSNSTopicARN-${Env}'}
       AlarmDescription: 'NAT gateway A bandwidth utilization is over 80%'
       AlarmName: !Sub '${StackName}-AlarmNatGatewayBandwidth-${Env}'
       ComparisonOperator: GreaterThanThreshold
