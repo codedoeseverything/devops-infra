@@ -1,2 +1,4 @@
 cfn-lint 
 boto3
+ruamel.yaml
+tabulate
