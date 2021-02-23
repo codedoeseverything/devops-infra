@@ -53,6 +53,19 @@ Resources:
           Value: !Sub '${StackName}-DBClientSecurityGroup-${Env}'
         - Key: NetworkType
           Value: AssumeThisSGToAllowAccessToDB
+
+  DBClientSecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    DependsOn: DBClientSecurityGroup
+    Properties:
+      GroupId:
+        Ref: DBClientSecurityGroup
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId:
+        Ref: DBClientSecurityGroup
+
   DBServerSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -69,12 +82,13 @@ Resources:
           FromPort: 5432
           ToPort: 5432
           Description: !Sub 'To allow port 5432 open to DBClientSecurityGroup id, ${DBClientSecurityGroup}'
-          SourceSecurityGroupId: !Ref DBClientSecurityGroup     
+          SourceSecurityGroupId: !Ref DBClientSecurityGroup
       Tags:
         - Key: Name
           Value: !Sub '${StackName}-DBServerSecurityGroup-${Env}'
         - Key: NetworkType
           Value: AssumeThisSGToAllowAccessToDB
+
   CacheClientSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -86,6 +100,19 @@ Resources:
           Value: !Sub '${StackName}-CacheClientSecurityGroup-${Env}'
         - Key: NetworkType
           Value: AssumeThisSGToAllowAccessToCacheDB
+
+  CacheClientSecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    DependsOn: CacheClientSecurityGroup
+    Properties:
+      GroupId:
+        Ref: CacheClientSecurityGroup
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId:
+        Ref: CacheClientSecurityGroup
+
   CacheServerSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -102,17 +129,23 @@ Resources:
           FromPort: 6379
           ToPort: 6379
           Description: !Sub 'To allow Redis cache port 6379 open to BastionSecurityGroup id, ${BastionSecurityGroup}'
-          SourceSecurityGroupId: !Ref BastionSecurityGroup   
+          SourceSecurityGroupId: !Ref BastionSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          Description: !Sub 'To allow SSH port 22 open to BastionSecurityGroup id, ${BastionSecurityGroup}'
+          SourceSecurityGroupId: !Ref BastionSecurityGroup 
       Tags:
         - Key: Name
           Value: !Sub '${StackName}-CacheServerSecurityGroup-${Env}'
         - Key: NetworkType
           Value: AssumeThisSGToAllowAccessToCacheDB
-  ALBClientSecurityGroup:
+
+  ALBPublicSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: A client security group for ALB
-      GroupName: !Sub '${StackName}-ALBClientSecurityGroup-${Env}'
+      GroupName: !Sub '${StackName}-ALBPublicSecurityGroup-${Env}'
       VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -127,20 +160,24 @@ Resources:
           CidrIp: !Ref DefaultRouteAccess
       Tags:
         - Key: Name
-          Value: !Sub '${StackName}-ALBClientSecurityGroup-${Env}'
+          Value: !Sub '${StackName}-ALBPublicSecurityGroup-${Env}'
         - Key: NetworkType
           Value: AssumeThisSGToAllowAccessToALB
-  ECSClientSecurityGroup:
-    Type: 'AWS::EC2::SecurityGroup'
+  
+
+  ALBPublicSecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    DependsOn: ALBPublicSecurityGroup
     Properties:
-      GroupDescription: A client security group for ECS EC2 instance
-      GroupName: !Sub '${StackName}-ECSClientSecurityGroup-${Env}'
-      VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
-      Tags:
-        - Key: Name
-          Value: !Sub '${StackName}-ECSClientSecurityGroup-${Env}'
-        - Key: NetworkType
-          Value: AssumeThisSGToAllowAccessToECS
+      GroupId:
+        Ref: ALBPublicSecurityGroup
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId:
+        Ref: ALBPublicSecurityGroup
+
+
   ECSServerSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -151,18 +188,18 @@ Resources:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          Description: !Sub 'To allow port 80 open to ALBClientSecurityGroup id, ${ALBClientSecurityGroup}'
-          SourceSecurityGroupId: !Ref ALBClientSecurityGroup
+          Description: !Sub 'To allow port 80 open to ALBPublicSecurityGroup id, ${ALBPublicSecurityGroup}'
+          SourceSecurityGroupId: !Ref ALBPublicSecurityGroup
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443
-          Description: !Sub 'To allow port 443 open to ALBClientSecurityGroup id, ${ALBClientSecurityGroup}'
-          SourceSecurityGroupId: !Ref ALBClientSecurityGroup
+          Description: !Sub 'To allow port 443 open to ALBPublicSecurityGroup id, ${ALBPublicSecurityGroup}'
+          SourceSecurityGroupId: !Ref ALBPublicSecurityGroup
         - IpProtocol: tcp
           FromPort: 32768
           ToPort: 65535
-          Description: !Sub 'To allow port range between 32768 - 65535 open to ALBClientSecurityGroup id, ${ALBClientSecurityGroup}'
-          SourceSecurityGroupId: !Ref ALBClientSecurityGroup
+          Description: !Sub 'To allow port range between 32768 - 65535 open to ALBPublicSecurityGroup id, ${ALBPublicSecurityGroup}'
+          SourceSecurityGroupId: !Ref ALBPublicSecurityGroup
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
@@ -173,6 +210,7 @@ Resources:
           Value: !Sub '${StackName}-ECSServerSecurityGroup-${Env}'
         - Key: NetworkType
           Value: AssumeThisSGToAllowAccessToECS
+
   BastionSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -205,26 +243,29 @@ Resources:
           Value: !Sub '${StackName}-BastionSecurityGroup-${Env}'
         - Key: NetworkType
           Value: PublicAccessAllowed
-  LambdaClientSecurityGroup:
+  
+  SNSEndpointClientSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub '${StackName}-LambdaClientSecurityGroup-${Env}'
-      GroupDescription: A client security group for Lambda VPC Functions
+      GroupName: !Sub '${StackName}-SNSEndpointClientSecurityGroup-${Env}'
+      GroupDescription: A client security group for SNS Endpoint Interface
       VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
       Tags:
         - Key: Name
-          Value: !Sub '${StackName}-LambdaClientSecurityGroup-${Env}'
-  LambdaClientSecurityGroupIngress:
+          Value: !Sub '${StackName}-SNSEndpointClientSecurityGroup-${Env}'
+          
+  SNSEndpointClientSecurityGroupIngress:
     Type: AWS::EC2::SecurityGroupIngress
-    DependsOn: LambdaClientSecurityGroup
+    DependsOn: SNSEndpointClientSecurityGroup
     Properties:
       GroupId:
-        Ref: LambdaClientSecurityGroup
+        Ref: SNSEndpointClientSecurityGroup
       IpProtocol: tcp
       FromPort: 0
       ToPort: 65535
       SourceSecurityGroupId:
-        Ref: LambdaClientSecurityGroup
+        Ref: SNSEndpointClientSecurityGroup
+
 Outputs:
   StackName:
     Description: 'Stack name.'
@@ -254,18 +295,18 @@ Outputs:
     Value: !Ref BastionSecurityGroup
     Export:
       Name: !Sub '${StackName}-BastionSecurityGroupID-${Env}'
-  ALBClientSecurityGroup:
+  ALBPublicSecurityGroup:
     Description: 'A client security group for ALB'
-    Value: !Ref ALBClientSecurityGroup
+    Value: !Ref ALBPublicSecurityGroup
     Export:
-      Name: !Sub '${StackName}-ALBClientSecurityGroup-${Env}'
-  ECSClientSecurityGroup:
-    Description: 'A client security group for ECS EC2 instance'
-    Value: !Ref ECSClientSecurityGroup
-    Export:
-      Name: !Sub '${StackName}-ECSClientSecurityGroup-${Env}'
+      Name: !Sub '${StackName}-ALBPublicSecurityGroup-${Env}'
   ECSServerSecurityGroup:
     Description: 'A server security group for ECS EC2 instance'
     Value: !Ref ECSServerSecurityGroup
     Export:
       Name: !Sub '${StackName}-ECSServerSecurityGroup-${Env}'
+  SNSEndpointClientSecurityGroup:
+    Description: 'A server security group for SNS Endpoint Client SecurityGroup'
+    Value: !Ref SNSEndpointClientSecurityGroup
+    Export:
+      Name: !Sub '${StackName}-SNSEndpointClientSecurityGroup-${Env}'
