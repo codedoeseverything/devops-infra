@@ -45,43 +45,47 @@ Parameters:
     MinValue: 0
     MaxValue: 255
 
-    
+
 Conditions:
-  3AZConditionCheck: !Or
-    - !Equals
-      - !Ref 'NumberOfAZs'
-      - '3'
-    - !Condition '4AZConditionCheck'
-  4AZConditionCheck: !Or
-    - !Equals
-      - !Ref 'NumberOfAZs'
-      - '4'
-    - !Condition '5AZConditionCheck'
-  5AZConditionCheck: !Or
-    - !Equals
-      - !Ref 'NumberOfAZs'
-      - '5'
-    - !Condition '6AZConditionCheck'
-  6AZConditionCheck: !Equals
-    - !Ref 'NumberOfAZs'
-    - '6'
+
+  1AZConditionCheck:
+      !Equals [ '1', !Ref NumberOfAZs ]
+  2AZConditionCheck:
+      !Equals [ '2', !Ref NumberOfAZs ]
+  3AZConditionCheck:
+      !Equals [ '3', !Ref NumberOfAZs ]
+  4AZConditionCheck:
+      !Equals [ '4', !Ref NumberOfAZs ]
+  5AZConditionCheck:
+      !Equals [ '5', !Ref NumberOfAZs ]
+  6AZConditionCheck:
+      !Equals [ '6', !Ref NumberOfAZs ]
+  1AZCondition: !Or
+    - !Condition 1AZConditionCheck
+    - !Condition 2AZConditionCheck
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  2AZCondition: !Or
+    - !Condition 2AZConditionCheck
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
   3AZCondition: !Or
-    - !Condition '3AZConditionCheck'
-    - !Equals
-      - !Ref 'NumberOfAZs'
-      - '3'
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
   4AZCondition: !Or
-    - !Condition '4AZConditionCheck'
-    - !Condition '5AZConditionCheck'
-    - !Condition '6AZConditionCheck'
-  5AZCondition: !Or 
-    - !Condition '5AZConditionCheck'
-    - !Condition '6AZConditionCheck'
-  6AZCondition: !Or
-    - !Condition '6AZConditionCheck'
-    - !Equals
-      - !Ref 'NumberOfAZs'
-      - '6'
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  5AZCondition: !Or
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  6AZCondition: !Condition 6AZConditionCheck
     
 
 Resources:
