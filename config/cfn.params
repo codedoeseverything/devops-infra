@@ -7,3 +7,4 @@ ChatBotConfigurationName=AWSSlackNotifyTest
 ChatBotLoggingLevel=INFO
 SlackChannelId=C01NPT2PTMG
 SlackWorkspaceId=T01NQ3FPC7M
+
