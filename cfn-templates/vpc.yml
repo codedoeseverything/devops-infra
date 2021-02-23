@@ -46,17 +46,17 @@ Parameters:
     MaxValue: 255
 
 Conditions:
-  3AZCondition: !Or
+  3AZCondition: !And
     - !Equals
       - !Ref 'NumberOfAZs'
       - '3'
     - !Condition '4AZCondition'
-  4AZCondition: !Or
+  4AZCondition: !And
     - !Equals
       - !Ref 'NumberOfAZs'
       - '4'
     - !Condition '5AZCondition'
-  5AZCondition: !Or
+  5AZCondition: !And
     - !Equals
       - !Ref 'NumberOfAZs'
       - '5'
