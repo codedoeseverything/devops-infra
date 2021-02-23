@@ -51,17 +51,17 @@ Conditions:
     - !Equals
       - !Ref 'NumberOfAZs'
       - '3'
-    - !Condition '4AZCondition'
+    - !Condition '4AZConditionCheck'
   4AZConditionCheck: !Or
     - !Equals
       - !Ref 'NumberOfAZs'
       - '4'
-    - !Condition '5AZCondition'
+    - !Condition '5AZConditionCheck'
   5AZConditionCheck: !Or
     - !Equals
       - !Ref 'NumberOfAZs'
       - '5'
-    - !Condition '6AZCondition'
+    - !Condition '6AZConditionCheck'
   6AZConditionCheck: !Equals
     - !Ref 'NumberOfAZs'
     - '6'
