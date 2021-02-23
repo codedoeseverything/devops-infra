@@ -130,38 +130,38 @@ Resources:
       Parameters:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
-  NATGatewayStack:
-    Condition: CreateNATGatewayStackCondition
-    DependsOn: [VPCStack]
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway.yml'
-      Parameters:
-        StackName: !Ref 'StackName'
-        Env: !Ref 'Env'
-        NumberOfAZs: !Ref 'NumberOfAZs'
-  NATGatewayAlarmStack:
-    Condition: CreateNATGatewayStackCondition
-    DependsOn: [NATGatewayStack, SNSSlackAlertStack]
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway-alarm.yml'
-      Parameters:
-        StackName: !Ref 'StackName'
-        Env: !Ref 'Env'
-        NumberOfAZs: !Ref 'NumberOfAZs'
-  AWSChatBotSlackStack:
-    Condition: CreateChatBotStackCondition
-    DependsOn: [SNSSlackAlertStack]
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/chatbot.yml'
-      Parameters:
-        StackName: !Ref 'StackName'
-        Env: !Ref 'Env'
-        ChatBotConfigurationName: !Ref 'ChatBotConfigurationName'
-        ChatBotLoggingLevel: !Ref 'ChatBotLoggingLevel'
-        SlackChannelId: !Ref 'SlackChannelId'
-        SlackWorkspaceId: !Ref 'SlackWorkspaceId'
+  # NATGatewayStack:
+  #   Condition: CreateNATGatewayStackCondition
+  #   DependsOn: [VPCStack]
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway.yml'
+  #     Parameters:
+  #       StackName: !Ref 'StackName'
+  #       Env: !Ref 'Env'
+  #       NumberOfAZs: !Ref 'NumberOfAZs'
+  # NATGatewayAlarmStack:
+  #   Condition: CreateNATGatewayStackCondition
+  #   DependsOn: [NATGatewayStack, SNSSlackAlertStack]
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway-alarm.yml'
+  #     Parameters:
+  #       StackName: !Ref 'StackName'
+  #       Env: !Ref 'Env'
+  #       NumberOfAZs: !Ref 'NumberOfAZs'
+  # AWSChatBotSlackStack:
+  #   Condition: CreateChatBotStackCondition
+  #   DependsOn: [SNSSlackAlertStack]
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/chatbot.yml'
+  #     Parameters:
+  #       StackName: !Ref 'StackName'
+  #       Env: !Ref 'Env'
+  #       ChatBotConfigurationName: !Ref 'ChatBotConfigurationName'
+  #       ChatBotLoggingLevel: !Ref 'ChatBotLoggingLevel'
+  #       SlackChannelId: !Ref 'SlackChannelId'
+  #       SlackWorkspaceId: !Ref 'SlackWorkspaceId'
  
         
