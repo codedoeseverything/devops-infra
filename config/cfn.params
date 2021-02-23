@@ -1,5 +1,5 @@
 ClassB=0
-NumberOfAZs=6
+NumberOfAZs=5
 DefaultRouteAccess=0.0.0.0/0
 CreateChatBotStackCondition=true
 CreateNATGatewayStackCondition=true     
