@@ -72,16 +72,16 @@ Conditions:
       - '3'
   4AZCondition: !Or
     - !Condition '4AZConditionCheck'
-    - !Condition '3AZConditionCheck'
+    - !Condition '5AZConditionCheck'
+    - !Condition '6AZConditionCheck'
   5AZCondition: !Or 
     - !Condition '5AZConditionCheck'
-    - !Condition '4AZConditionCheck'
-    - !Condition '3AZConditionCheck'
+    - !Condition '6AZConditionCheck'
   6AZCondition: !Or
     - !Condition '6AZConditionCheck'
-    - !Condition '5AZConditionCheck'
-    - !Condition '4AZConditionCheck'
-    - !Condition '3AZConditionCheck'
+    - !Equals
+      - !Ref 'NumberOfAZs'
+      - '6'
     
 
 Resources:
