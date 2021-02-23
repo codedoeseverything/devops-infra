@@ -17,7 +17,7 @@ Parameters:
       This string can include numbers, lowercase letters, uppercase letters, and hyphens
       (-). It cannot start or end with a hyphen (-).
     Type: String
-    AllowedValues: [au,us,uk,p2,lf,nu,sandbox,stage]
+    AllowedValues: [au,us,uk,p2,lf,nu,sandbox,stage,qa]
   Env:
     Description: Environment type.
     Default: stage

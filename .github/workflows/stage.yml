@@ -22,7 +22,7 @@ jobs:
     env:
       REGION : us-east-1 #ap-southeast-2
       ENV : stage # Valid values are sandbox,stage,live only
-      STACK_NAME: stage # Valid values are au,us,uk,p2,lf,nu,sandbox,stage only
+      STACK_NAME: qa # Valid values are au,us,uk,p2,lf,nu,sandbox,qa only
       SUBDOMAIN: devops-infra
       CFNS3BucketName: devops-cfn-templates1
       S3BucketNameKeyPair: devops-ec2-keypair1
@@ -103,7 +103,7 @@ jobs:
           aws-region: ${{ env.REGION }}
 
       
-      - name: Create AWS EC2 Key Pair Name for ${{ env.STACK_NAME }} account in ${{ env.REGION }} region
+      - name: Create AWS EC2 Key Pair Name for ${{ env.STACK_NAME }} account in ${{ env.REGION }} region if not exist
         run: chmod +x scripts/ec2-key-pair.sh && scripts/ec2-key-pair.sh
         env:
           EC2KEYPAIR: ${{ env.STACK_NAME }}-${{ env.REGION }}
@@ -114,10 +114,8 @@ jobs:
           aws s3 sync cfn-templates/ s3://${{env.CFNS3BucketName}}/${{env.STACK_NAME}}/cfn-templates --delete
 
 
-      - name: Create or Update Cloudformation templates to AWS
+      - name: Create or Update cloudformation templates to AWS
         run: |
-          cat config/cfn-params.json
-          cat config/cfn-tags.json
           python3 scripts/cfn-create-update.py ${{ env.SUBDOMAIN }} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
             
 

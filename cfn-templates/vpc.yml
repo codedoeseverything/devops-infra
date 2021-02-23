@@ -17,7 +17,7 @@ Parameters:
       This string can include numbers, lowercase letters, uppercase letters, and hyphens
       (-). It cannot start or end with a hyphen (-).
     Type: String
-    AllowedValues: [au,us,uk,p2,lf,nu,sandbox,stage]
+    AllowedValues: [au,us,uk,p2,lf,nu,sandbox,stage,qa]
   Env:
     Description: Environment type.
     Default: stage
@@ -29,6 +29,8 @@ Parameters:
     ConstraintDescription: must specify sandbox,stage,live.
   NumberOfAZs:
     AllowedValues:
+      - '1'
+      - '2'
       - '3'
       - '4'
       - '5'
@@ -120,6 +122,7 @@ Resources:
       VpcId: !Ref VPC
       InternetGatewayId: !Ref InternetGateway
   SubnetAPublic:
+    Condition: 1AZCondition
     DependsOn: VPCCidrBlock
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -135,6 +138,7 @@ Resources:
       - Key: Reach
         Value: public
   SubnetAPrivate:
+    Condition: 1AZCondition
     DependsOn: VPCCidrBlock
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -149,6 +153,7 @@ Resources:
       - Key: Reach
         Value: private
   SubnetBPublic:
+    Condition: 2AZCondition
     DependsOn: VPCCidrBlock
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -164,6 +169,7 @@ Resources:
       - Key: Reach
         Value: public
   SubnetBPrivate:
+    Condition: 2AZCondition
     DependsOn: VPCCidrBlock
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -178,6 +184,7 @@ Resources:
       - Key: Reach
         Value: private
   SubnetCPublic:
+    Condition: 3AZCondition
     DependsOn: VPCCidrBlock
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -193,6 +200,7 @@ Resources:
       - Key: Reach
         Value: public
   SubnetCPrivate:
+    Condition: 3AZCondition
     DependsOn: VPCCidrBlock
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -300,13 +308,15 @@ Resources:
       - Key: Reach
         Value: private
   RouteTableAPublic:
+    Condition: 1AZCondition
     Type: 'AWS::EC2::RouteTable'
     Properties:
       VpcId: !Ref VPC
       Tags:
       - Key: Name
         Value: !Sub '${StackName}-A-public-rt-${Env}'
-  RouteTableAPrivate: 
+  RouteTableAPrivate:
+    Condition: 1AZCondition
     Type: 'AWS::EC2::RouteTable'
     Properties:
       VpcId: !Ref VPC
@@ -314,6 +324,7 @@ Resources:
       - Key: Name
         Value: !Sub '${StackName}-A-private-rt-${Env}'
   RouteTableBPublic:
+    Condition: 2AZCondition
     Type: 'AWS::EC2::RouteTable'
     Properties:
       VpcId: !Ref VPC
@@ -321,6 +332,7 @@ Resources:
       - Key: Name
         Value: !Sub '${StackName}-B-public-rt-${Env}'
   RouteTableBPrivate:
+    Condition: 2AZCondition
     Type: 'AWS::EC2::RouteTable'
     Properties:
       VpcId: !Ref VPC
@@ -328,6 +340,7 @@ Resources:
       - Key: Name
         Value: !Sub '${StackName}-B-private-rt-${Env}'
   RouteTableCPublic:
+    Condition: 3AZCondition
     Type: 'AWS::EC2::RouteTable'
     Properties:
       VpcId: !Ref VPC
@@ -335,6 +348,7 @@ Resources:
       - Key: Name
         Value: !Sub '${StackName}-C-public-rt-${Env}'
   RouteTableCPrivate:
+    Condition: 3AZCondition
     Type: 'AWS::EC2::RouteTable'
     Properties:
       VpcId: !Ref VPC
@@ -390,31 +404,37 @@ Resources:
       - Key: Name
         Value: !Sub '${StackName}-F-private-rt-${Env}'
   RouteTableAssociationAPublic:
+    Condition: 1AZCondition
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref SubnetAPublic
       RouteTableId: !Ref RouteTableAPublic
   RouteTableAssociationAPrivate:
+    Condition: 1AZCondition
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref SubnetAPrivate
       RouteTableId: !Ref RouteTableAPrivate
   RouteTableAssociationBPublic:
+    Condition: 2AZCondition
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref SubnetBPublic
       RouteTableId: !Ref RouteTableBPublic
   RouteTableAssociationBPrivate:
+    Condition: 2AZCondition
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref SubnetBPrivate
       RouteTableId: !Ref RouteTableBPrivate
   RouteTableAssociationCPublic:
+    Condition: 3AZCondition
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref SubnetCPublic
       RouteTableId: !Ref RouteTableCPublic
   RouteTableAssociationCPrivate:
+    Condition: 3AZCondition
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref SubnetCPrivate
@@ -456,6 +476,7 @@ Resources:
       SubnetId: !Ref SubnetFPrivate
       RouteTableId: !Ref RouteTableFPrivate
   RouteTablePublicAInternetRoute: # should be RouteTablePublicAInternetRoute, but logical id was not changed for backward compatibility
+    Condition: 1AZCondition
     Type: 'AWS::EC2::Route'
     DependsOn: VPCGatewayAttachment
     Properties:
@@ -463,6 +484,7 @@ Resources:
       DestinationCidrBlock: '0.0.0.0/0'
       GatewayId: !Ref InternetGateway
   RouteTablePublicAInternetRouteIPv6:
+    Condition: 1AZCondition
     Type: 'AWS::EC2::Route'
     DependsOn: VPCGatewayAttachment
     Properties:
@@ -470,12 +492,14 @@ Resources:
       DestinationIpv6CidrBlock: '::/0'
       GatewayId: !Ref InternetGateway
   RouteTablePrivateAInternetRouteIPv6:
+    Condition: 1AZCondition
     Type: 'AWS::EC2::Route'
     Properties:
       RouteTableId: !Ref RouteTableAPrivate
       DestinationIpv6CidrBlock: '::/0'
       EgressOnlyInternetGatewayId: !Ref EgressOnlyInternetGateway
   RouteTablePublicBInternetRoute:
+    Condition: 2AZCondition
     Type: 'AWS::EC2::Route'
     DependsOn: VPCGatewayAttachment
     Properties:
@@ -483,6 +507,7 @@ Resources:
       DestinationCidrBlock: '0.0.0.0/0'
       GatewayId: !Ref InternetGateway
   RouteTablePublicBInternetRouteIPv6:
+    Condition: 2AZCondition
     Type: 'AWS::EC2::Route'
     DependsOn: VPCGatewayAttachment
     Properties:
@@ -490,12 +515,14 @@ Resources:
       DestinationIpv6CidrBlock: '::/0'
       GatewayId: !Ref InternetGateway
   RouteTablePrivateBInternetRouteIPv6:
+    Condition: 2AZCondition
     Type: 'AWS::EC2::Route'
     Properties:
       RouteTableId: !Ref RouteTableBPrivate
       DestinationIpv6CidrBlock: '::/0'
       EgressOnlyInternetGatewayId: !Ref EgressOnlyInternetGateway
   RouteTablePublicCInternetRoute:
+    Condition: 3AZCondition
     Type: 'AWS::EC2::Route'
     DependsOn: VPCGatewayAttachment
     Properties:
@@ -503,6 +530,7 @@ Resources:
       DestinationCidrBlock: '0.0.0.0/0'
       GatewayId: !Ref InternetGateway
   RouteTablePublicCInternetRouteIPv6:
+    Condition: 3AZCondition
     Type: 'AWS::EC2::Route'
     DependsOn: VPCGatewayAttachment
     Properties:
@@ -510,6 +538,7 @@ Resources:
       DestinationIpv6CidrBlock: '::/0'
       GatewayId: !Ref InternetGateway
   RouteTablePrivateCInternetRouteIPv6:
+    Condition: 3AZCondition
     Type: 'AWS::EC2::Route'
     Properties:
       RouteTableId: !Ref RouteTableCPrivate
@@ -599,31 +628,37 @@ Resources:
       - Key: Name
         Value: !Sub '${StackName}-private-nacl-${Env}'
   SubnetNetworkAclAssociationAPublic:
+    Condition: 1AZCondition
     Type: 'AWS::EC2::SubnetNetworkAclAssociation'
     Properties:
       SubnetId: !Ref SubnetAPublic
       NetworkAclId: !Ref NetworkAclPublic
   SubnetNetworkAclAssociationAPrivate:
+    Condition: 1AZCondition
     Type: 'AWS::EC2::SubnetNetworkAclAssociation'
     Properties:
       SubnetId: !Ref SubnetAPrivate
       NetworkAclId: !Ref NetworkAclPrivate
   SubnetNetworkAclAssociationBPublic:
+    Condition: 2AZCondition
     Type: 'AWS::EC2::SubnetNetworkAclAssociation'
     Properties:
       SubnetId: !Ref SubnetBPublic
       NetworkAclId: !Ref NetworkAclPublic
   SubnetNetworkAclAssociationBPrivate:
+    Condition: 2AZCondition
     Type: 'AWS::EC2::SubnetNetworkAclAssociation'
     Properties:
       SubnetId: !Ref SubnetBPrivate
       NetworkAclId: !Ref NetworkAclPrivate
   SubnetNetworkAclAssociationCPublic:
+    Condition: 3AZCondition
     Type: 'AWS::EC2::SubnetNetworkAclAssociation'
     Properties:
       SubnetId: !Ref SubnetCPublic
       NetworkAclId: !Ref NetworkAclPublic
   SubnetNetworkAclAssociationCPrivate:
+    Condition: 3AZCondition
     Type: 'AWS::EC2::SubnetNetworkAclAssociation'
     Properties:
       SubnetId: !Ref SubnetCPrivate
@@ -774,7 +809,13 @@ Outputs:
           - !If
             - 3AZCondition
             - !Join [',', [!Select [0, !GetAZs ''], !Select [1, !GetAZs ''], !Select [2, !GetAZs '']]]
-            - !Ref 'AWS::NoValue'
+            - !If
+              - 2AZCondition
+              - !Join [',', [!Select [0, !GetAZs ''], !Select [1, !GetAZs '']]]
+              - !If
+                - 1AZCondition
+                - [!Select [0, !GetAZs '']]
+                - !Ref 'AWS::NoValue'
     Export:
       Name: !Sub '${StackName}-AZList-${Env}'
   SubnetsPublic:
@@ -791,7 +832,13 @@ Outputs:
           - !If
             - 3AZCondition
             - !Join [',', [!Ref SubnetAPublic, !Ref SubnetBPublic, !Ref SubnetCPublic]]
-            - !Ref 'AWS::NoValue'
+            - !If
+              - 2AZCondition
+              - !Join [',', [!Ref SubnetAPublic, !Ref SubnetBPublic]]
+              - !If
+                - 1AZCondition
+                - !Ref SubnetAPublic
+                - !Ref 'AWS::NoValue'
     Export:
       Name: !Sub '${StackName}-SubnetsPublic-${Env}'
   SubnetsPrivate:
@@ -808,99 +855,83 @@ Outputs:
           - !If
             - 3AZCondition
             - !Join [',', [!Ref SubnetAPrivate, !Ref SubnetBPrivate, !Ref SubnetCPrivate]]
-            - !Ref 'AWS::NoValue'
+            - !If
+              - 2AZCondition
+              - !Join [',', [!Ref SubnetAPrivate, !Ref SubnetBPrivate ]]
+              - !If
+                - 1AZCondition
+                - !Ref SubnetAPrivate
+                - !Ref 'AWS::NoValue'
     Export:
       Name: !Sub '${StackName}-SubnetsPrivate-${Env}'
-  RouteTablesPrivate:
-    Description: 'Route tables private.'
-    Value: !If
-      - 6AZCondition
-      - !Join [',', [!Ref RouteTableAPrivate, !Ref RouteTableBPrivate, !Ref RouteTableCPrivate, !Ref RouteTableDPrivate, !Ref RouteTableEPrivate, !Ref RouteTableFPrivate]]
-      - !If
-        - 5AZCondition
-        - !Join [',', [!Ref RouteTableAPrivate, !Ref RouteTableBPrivate, !Ref RouteTableCPrivate, !Ref RouteTableDPrivate, !Ref RouteTableEPrivate]]
-        - !If
-          - 4AZCondition
-          - !Join [',', [!Ref RouteTableAPrivate, !Ref RouteTableBPrivate, !Ref RouteTableCPrivate, !Ref RouteTableDPrivate]]
-          - !If
-            - 3AZCondition
-            - !Join [',', [!Ref RouteTableAPrivate, !Ref RouteTableBPrivate, !Ref RouteTableCPrivate]]
-            - !Ref 'AWS::NoValue'
-    Export:
-      Name: !Sub '${StackName}-RouteTablesPrivate-${Env}'
-  RouteTablesPublic:
-    Description: 'Route tables public.'
-    Value: !If
-      - 6AZCondition
-      - !Join [',', [!Ref RouteTableAPublic, !Ref RouteTableBPublic, !Ref RouteTableCPublic, !Ref RouteTableDPublic, !Ref RouteTableEPublic, !Ref RouteTableFPublic]]
-      - !If
-        - 5AZCondition
-        - !Join [',', [!Ref RouteTableAPublic, !Ref RouteTableBPublic, !Ref RouteTableCPublic, !Ref RouteTableDPublic, !Ref RouteTableEPublic]]
-        - !If
-          - 4AZCondition
-          - !Join [',', [!Ref RouteTableAPublic, !Ref RouteTableBPublic, !Ref RouteTableCPublic, !Ref RouteTableDPublic]]
-          - !If
-            - 3AZCondition
-            - !Join [',', [!Ref RouteTableAPublic, !Ref RouteTableBPublic, !Ref RouteTableCPublic]]
-            - !Ref 'AWS::NoValue'
-    Export:
-      Name: !Sub '${StackName}-RouteTablesPublic-${Env}'
   SubnetAPublic:
+    Condition: 1AZCondition
     Description: 'Subnet A public.'
     Value: !Ref SubnetAPublic
     Export:
       Name: !Sub '${StackName}-SubnetAPublic-${Env}'
   RouteTableAPublic:
+    Condition: 1AZCondition
     Description: 'Route table A public.'
     Value: !Ref RouteTableAPublic
     Export:
       Name: !Sub '${StackName}-RouteTableAPublic-${Env}'
   SubnetAPrivate:
+    Condition: 1AZCondition
     Description: 'Subnet A private.'
     Value: !Ref SubnetAPrivate
     Export:
       Name: !Sub '${StackName}-SubnetAPrivate-${Env}'
   RouteTableAPrivate:
+    Condition: 1AZCondition
     Description: 'Route table A private.'
     Value: !Ref RouteTableAPrivate
     Export:
       Name: !Sub '${StackName}-RouteTableAPrivate-${Env}'
   SubnetBPublic:
+    Condition: 2AZCondition
     Description: 'Subnet B public.'
     Value: !Ref SubnetBPublic
     Export:
       Name: !Sub '${StackName}-SubnetBPublic-${Env}'
   RouteTableBPublic:
+    Condition: 2AZCondition
     Description: 'Route table B public.'
     Value: !Ref RouteTableBPublic
     Export:
       Name: !Sub '${StackName}-RouteTableBPublic-${Env}'
   SubnetBPrivate:
+    Condition: 2AZCondition
     Description: 'Subnet B private.'
     Value: !Ref SubnetBPrivate
     Export:
       Name: !Sub '${StackName}-SubnetBPrivate-${Env}'
   RouteTableBPrivate:
+    Condition: 2AZCondition
     Description: 'Route table B private.'
     Value: !Ref RouteTableBPrivate
     Export:
       Name: !Sub '${StackName}-RouteTableBPrivate-${Env}'
   SubnetCPublic:
+    Condition: 3AZCondition
     Description: 'Subnet C public.'
     Value: !Ref SubnetCPublic
     Export:
       Name: !Sub '${StackName}-SubnetCPublic-${Env}'
   RouteTableCPublic:
+    Condition: 3AZCondition
     Description: 'Route table C public.'
     Value: !Ref RouteTableCPublic
     Export:
       Name: !Sub '${StackName}-RouteTableCPublic-${Env}'
   SubnetCPrivate:
+    Condition: 3AZCondition
     Description: 'Subnet C private.'
     Value: !Ref SubnetCPrivate
     Export:
       Name: !Sub '${StackName}-SubnetCPrivate-${Env}'
   RouteTableCPrivate:
+    Condition: 3AZCondition
     Description: 'Route table C private.'
     Value: !Ref RouteTableCPrivate
     Export:

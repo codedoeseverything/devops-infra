@@ -17,7 +17,7 @@ Parameters:
       This string can include numbers, lowercase letters, uppercase letters, and hyphens
       (-). It cannot start or end with a hyphen (-).
     Type: String
-    AllowedValues: [au,us,uk,p2,lf,nu,sandbox,stage]
+    AllowedValues: [au,us,uk,p2,lf,nu,sandbox,stage,qa]
   Env:
     Description: Environment type.
     Default: stage
@@ -28,6 +28,8 @@ Parameters:
       - live
   NumberOfAZs:
     AllowedValues:
+      - '1'
+      - '2'
       - '3'
       - '4'
       - '5'
@@ -38,51 +40,78 @@ Parameters:
     Type: String
 
 Conditions:
+
+  1AZConditionCheck:
+      !Equals [ '1', !Ref NumberOfAZs ]
+  2AZConditionCheck:
+      !Equals [ '2', !Ref NumberOfAZs ]
+  3AZConditionCheck:
+      !Equals [ '3', !Ref NumberOfAZs ]
+  4AZConditionCheck:
+      !Equals [ '4', !Ref NumberOfAZs ]
+  5AZConditionCheck:
+      !Equals [ '5', !Ref NumberOfAZs ]
+  6AZConditionCheck:
+      !Equals [ '6', !Ref NumberOfAZs ]
+  1AZCondition: !Or
+    - !Condition 1AZConditionCheck
+    - !Condition 2AZConditionCheck
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  2AZCondition: !Or
+    - !Condition 2AZConditionCheck
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
   3AZCondition: !Or
-    - !Equals
-      - !Ref 'NumberOfAZs'
-      - '3'
-    - !Condition '4AZCondition'
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
   4AZCondition: !Or
-    - !Equals
-      - !Ref 'NumberOfAZs'
-      - '4'
-    - !Condition '5AZCondition'
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
   5AZCondition: !Or
-    - !Equals
-      - !Ref 'NumberOfAZs'
-      - '5'
-    - !Condition '6AZCondition'
-  6AZCondition: !Equals
-    - !Ref 'NumberOfAZs'
-    - '6'
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  6AZCondition: !Condition 6AZConditionCheck
 
 Resources:
   EIPA:
+    Condition: 1AZCondition
     Type: 'AWS::EC2::EIP'
     Properties:
       Domain: vpc
   NatGatewayA:
+    Condition: 1AZCondition
     Type: 'AWS::EC2::NatGateway'
     Properties:
       AllocationId: !GetAtt 'EIPA.AllocationId'
       SubnetId: {'Fn::ImportValue': !Sub '${StackName}-SubnetAPublic-${Env}'}
   RouteA:
+    Condition: 1AZCondition
     Type: 'AWS::EC2::Route'
     Properties:
       RouteTableId: {'Fn::ImportValue': !Sub '${StackName}-RouteTableAPrivate-${Env}'}
       DestinationCidrBlock: '0.0.0.0/0'
       NatGatewayId: !Ref NatGatewayA
   EIPB:
+    Condition: 2AZCondition
     Type: 'AWS::EC2::EIP'
     Properties:
       Domain: vpc
   NatGatewayB:
+    Condition: 2AZCondition
     Type: 'AWS::EC2::NatGateway'
     Properties:
       AllocationId: !GetAtt 'EIPB.AllocationId'
       SubnetId: {'Fn::ImportValue': !Sub '${StackName}-SubnetBPublic-${Env}'}
   RouteB:
+    Condition: 2AZCondition
     Type: 'AWS::EC2::Route'
     Properties:
       RouteTableId: {'Fn::ImportValue': !Sub '${StackName}-RouteTableBPrivate-${Env}'}
@@ -166,11 +195,13 @@ Outputs:
     Description: 'Stack name.'
     Value: !Sub '${AWS::StackName}'
   NatGatewayA:
+    Condition: 1AZCondition
     Description: 'NatGatewayA ID'
     Value: !Ref NatGatewayA
     Export:
       Name: !Sub '${StackName}-NatGatewayA-${Env}'
   NatGatewayB:
+    Condition: 2AZCondition
     Description: 'NatGatewayB ID'
     Value: !Ref NatGatewayB
     Export:

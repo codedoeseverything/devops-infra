@@ -17,7 +17,7 @@ Parameters:
       This string can include numbers, lowercase letters, uppercase letters, and hyphens
       (-). It cannot start or end with a hyphen (-).
     Type: String
-    AllowedValues: [au,us,uk,p2,lf,nu,sandbox,stage]
+    AllowedValues: [au,us,uk,p2,lf,nu,sandbox,stage,qa]
   Env:
     Description: Environment type.
     Default: stage
@@ -28,6 +28,8 @@ Parameters:
       - live
   NumberOfAZs:
     AllowedValues:
+      - '1'
+      - '2'
       - '3'
       - '4'
       - '5'
@@ -38,24 +40,45 @@ Parameters:
     Type: String
 
 Conditions:
+
+  1AZConditionCheck:
+      !Equals [ '1', !Ref NumberOfAZs ]
+  2AZConditionCheck:
+      !Equals [ '2', !Ref NumberOfAZs ]
+  3AZConditionCheck:
+      !Equals [ '3', !Ref NumberOfAZs ]
+  4AZConditionCheck:
+      !Equals [ '4', !Ref NumberOfAZs ]
+  5AZConditionCheck:
+      !Equals [ '5', !Ref NumberOfAZs ]
+  6AZConditionCheck:
+      !Equals [ '6', !Ref NumberOfAZs ]
+  1AZCondition: !Or
+    - !Condition 1AZConditionCheck
+    - !Condition 2AZConditionCheck
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  2AZCondition: !Or
+    - !Condition 2AZConditionCheck
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
   3AZCondition: !Or
-    - !Equals
-      - !Ref 'NumberOfAZs'
-      - '3'
-    - !Condition '4AZCondition'
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
   4AZCondition: !Or
-    - !Equals
-      - !Ref 'NumberOfAZs'
-      - '4'
-    - !Condition '5AZCondition'
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
   5AZCondition: !Or
-    - !Equals
-      - !Ref 'NumberOfAZs'
-      - '5'
-    - !Condition '6AZCondition'
-  6AZCondition: !Equals
-    - !Ref 'NumberOfAZs'
-    - '6'
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  6AZCondition: !Condition 6AZConditionCheck
 
 Resources:
   AlarmNatGatewayErrorPortAllocation:
