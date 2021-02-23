@@ -44,26 +44,50 @@ Parameters:
     ConstraintDescription: 'Must be in the range [0-255]'
     MinValue: 0
     MaxValue: 255
+  CreateAZDynamic:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+    Description: Set to false to not create AWS chat Bot stack
+    Type: String
 
+    
 Conditions:
-  3AZCondition: !And
+  AZCreateCondition: !Equals
+    - !Ref 'CreateAZDynamic'
+    - 'true'
+  3AZConditionCheck: !Or
     - !Equals
       - !Ref 'NumberOfAZs'
       - '3'
     - !Condition '4AZCondition'
-  4AZCondition: !And
+  4AZConditionCheck: !Or
     - !Equals
       - !Ref 'NumberOfAZs'
       - '4'
     - !Condition '5AZCondition'
-  5AZCondition: !And
+  5AZConditionCheck: !Or
     - !Equals
       - !Ref 'NumberOfAZs'
       - '5'
     - !Condition '6AZCondition'
-  6AZCondition: !Equals
+  6AZConditionCheck: !Equals
     - !Ref 'NumberOfAZs'
     - '6'
+  3AZCondition: !And
+    - !Condition 'AZCreateCondition'
+    - !Condition '3AZConditionCheck'
+  4AZCondition: !And
+    - !Condition 'AZCreateCondition'
+    - !Condition '4AZConditionCheck'
+  5AZCondition: !And
+    - !Condition 'AZCreateCondition'
+    - !Condition '5AZConditionCheck'
+  6AZCondition: !And
+    - !Condition 'AZCreateCondition'
+    - !Condition '6AZConditionCheck'
+    
 
 Resources:
   VPC:
