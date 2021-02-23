@@ -243,27 +243,27 @@ Resources:
         - Key: NetworkType
           Value: PublicAccessAllowed
   
-  SNSEndpointClientSecurityGroup:
+  VPCEndpointClientSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub '${StackName}-SNSEndpointClientSecurityGroup-${Env}'
+      GroupName: !Sub '${StackName}-VPCEndpointClientSecurityGroup-${Env}'
       GroupDescription: A client security group for SNS Endpoint Interface
       VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
       Tags:
         - Key: Name
-          Value: !Sub '${StackName}-SNSEndpointClientSecurityGroup-${Env}'
+          Value: !Sub '${StackName}-VPCEndpointClientSecurityGroup-${Env}'
           
-  SNSEndpointClientSecurityGroupIngress:
+  VPCEndpointClientSecurityGroupIngress:
     Type: AWS::EC2::SecurityGroupIngress
-    DependsOn: SNSEndpointClientSecurityGroup
+    DependsOn: VPCEndpointClientSecurityGroup
     Properties:
       GroupId:
-        Ref: SNSEndpointClientSecurityGroup
+        Ref: VPCEndpointClientSecurityGroup
       IpProtocol: tcp
       FromPort: 0
       ToPort: 65535
       SourceSecurityGroupId:
-        Ref: SNSEndpointClientSecurityGroup
+        Ref: VPCEndpointClientSecurityGroup
 
 Outputs:
   StackName:
@@ -304,8 +304,8 @@ Outputs:
     Value: !Ref ECSServerSecurityGroup
     Export:
       Name: !Sub '${StackName}-ECSServerSecurityGroup-${Env}'
-  SNSEndpointClientSecurityGroup:
+  VPCEndpointClientSecurityGroup:
     Description: 'A server security group for SNS Endpoint Client SecurityGroup'
-    Value: !Ref SNSEndpointClientSecurityGroup
+    Value: !Ref VPCEndpointClientSecurityGroup
     Export:
-      Name: !Sub '${StackName}-SNSEndpointClientSecurityGroup-${Env}'
+      Name: !Sub '${StackName}-VPCEndpointClientSecurityGroup-${Env}'

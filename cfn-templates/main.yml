@@ -67,6 +67,9 @@ Parameters:
     Description: CIDR IP range that is permitted to access the bastions. We recommend
       that you set this value to a trusted IP range.
     Type: String
+  VPCInterfaceServiceName:
+    Description: 'The name of the service supported for VPC interface endpoint'
+    Type: String
   CreateChatBotStackCondition:
     AllowedValues:
       - 'true'
@@ -140,6 +143,15 @@ Resources:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
         NumberOfAZs: !Ref 'NumberOfAZs'
+  VPCEndpointInterfaceStack:
+    DependsOn: [VPCStack, SecurityGroupStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/vpc-endpoints.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        VPCInterfaceServiceName: !Ref 'VPCInterfaceServiceName'
   NATGatewayAlarmStack:
     Condition: CreateNATGatewayStackCondition
     DependsOn: [NATGatewayStack, SNSSlackAlertStack]

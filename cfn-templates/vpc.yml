@@ -72,7 +72,7 @@ Conditions:
   2AZCondition: !Or
     - !Condition 2AZConditionCheck
     - !Condition 3AZConditionCheck
-    - !Condition 4AZConditionCheck
+    - !Condition 4AZConditionesses has been reached. (Service: Amazonheck
     - !Condition 5AZConditionCheck
     - !Condition 6AZConditionCheck
   3AZCondition: !Or
