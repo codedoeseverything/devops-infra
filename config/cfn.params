@@ -1,7 +1,8 @@
 ClassB=0
 NumberOfAZs=3
 DefaultRouteAccess=0.0.0.0/0
-CreateChatBotStackCondition=true      
+CreateChatBotStackCondition=false
+CreateNATGatewayStackCondition=false     
 ChatBotConfigurationName=AWSSlackNotifyTest
 ChatBotLoggingLevel=INFO
 SlackChannelId=C01NPT2PTMG

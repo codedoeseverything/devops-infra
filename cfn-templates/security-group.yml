@@ -50,10 +50,9 @@ Resources:
       VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
       Tags:
         - Key: Name
-          Value: DBClientSecurityGroup
+          Value: !Sub '${StackName}-DBClientSecurityGroup-${Env}'
         - Key: NetworkType
           Value: AssumeThisSGToAllowAccessToDB
-
   DBServerSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -73,11 +72,9 @@ Resources:
           SourceSecurityGroupId: !Ref DBClientSecurityGroup     
       Tags:
         - Key: Name
-          Value: DBServerSecurityGroup
+          Value: !Sub '${StackName}-DBServerSecurityGroup-${Env}'
         - Key: NetworkType
           Value: AssumeThisSGToAllowAccessToDB
-          
-
   CacheClientSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -86,10 +83,9 @@ Resources:
       VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
       Tags:
         - Key: Name
-          Value: CacheClientSecurityGroup
+          Value: !Sub '${StackName}-CacheClientSecurityGroup-${Env}'
         - Key: NetworkType
           Value: AssumeThisSGToAllowAccessToCacheDB
-  
   CacheServerSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -109,10 +105,9 @@ Resources:
           SourceSecurityGroupId: !Ref BastionSecurityGroup   
       Tags:
         - Key: Name
-          Value: CacheServerSecurityGroup
+          Value: !Sub '${StackName}-CacheServerSecurityGroup-${Env}'
         - Key: NetworkType
           Value: AssumeThisSGToAllowAccessToCacheDB
-
   ALBClientSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -132,10 +127,9 @@ Resources:
           CidrIp: !Ref DefaultRouteAccess
       Tags:
         - Key: Name
-          Value: ALBClientSecurityGroup
+          Value: !Sub '${StackName}-ALBClientSecurityGroup-${Env}'
         - Key: NetworkType
           Value: AssumeThisSGToAllowAccessToALB
-
   ECSClientSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -144,10 +138,9 @@ Resources:
       VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
       Tags:
         - Key: Name
-          Value: ECSClientSecurityGroup
+          Value: !Sub '${StackName}-ECSClientSecurityGroup-${Env}'
         - Key: NetworkType
           Value: AssumeThisSGToAllowAccessToECS
-  
   ECSServerSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -177,10 +170,9 @@ Resources:
           SourceSecurityGroupId: !Ref BastionSecurityGroup 
       Tags:
         - Key: Name
-          Value: ECSServerSecurityGroup
+          Value: !Sub '${StackName}-ECSServerSecurityGroup-${Env}'
         - Key: NetworkType
           Value: AssumeThisSGToAllowAccessToECS
-
   BastionSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -210,9 +202,29 @@ Resources:
       VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
       Tags:
         - Key: Name
-          Value: BastionSecurityGroup
+          Value: !Sub '${StackName}-BastionSecurityGroup-${Env}'
         - Key: NetworkType
           Value: PublicAccessAllowed
+  LambdaClientSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub '${StackName}-LambdaClientSecurityGroup-${Env}'
+      GroupDescription: A client security group for Lambda VPC Functions
+      VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-LambdaClientSecurityGroup-${Env}'
+  LambdaClientSecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    DependsOn: LambdaClientSecurityGroup
+    Properties:
+      GroupId:
+        Ref: LambdaClientSecurityGroup
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId:
+        Ref: LambdaClientSecurityGroup
 Outputs:
   StackName:
     Description: 'Stack name.'
