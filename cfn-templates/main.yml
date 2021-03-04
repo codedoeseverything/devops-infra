@@ -33,15 +33,15 @@ Parameters:
       (-). It cannot start or end with a hyphen (-).
     Type: String
     AllowedValues: [au,us,uk,p2,lf,nu,sandbox,stage,qa]
-  Env:
-    Description: Environment type.
-    Default: stage
-    Type: String
-    AllowedValues:
-      - sandbox
-      - stage
-      - live
-    ConstraintDescription: must specify sandbox,stage,live.
+  # Env:
+  #   Description: Environment type.
+  #   Default: stage
+  #   Type: String
+  #   AllowedValues:
+  #     - sandbox
+  #     - stage
+  #     - live
+  #   ConstraintDescription: must specify sandbox,stage,live.
   NumberOfAZs:
     AllowedValues:
       - '1'
