@@ -160,28 +160,28 @@ Resources:
       Parameters:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
-  BastionServerStack:
-    DependsOn: [VPCStack, SecurityGroupStack, SNSSlackAlertStack]
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/bastion.yml'
-      Parameters:
-        StackName: !Ref 'StackName'
-        Env: !Ref 'Env'
-        KeyName: !Ref 'KeyName'
-        BastionAMIOS: !Ref 'BastionAMIOS'
-        NumBastionHosts: !Ref 'NumBastionHosts'
-        BastionInstanceType: !Ref 'BastionInstanceType'
-  # NATGatewayStack:
-  #   Condition: CreateNATGatewayStackCondition
-  #   DependsOn: [VPCStack]
+  # BastionServerStack:
+  #   DependsOn: [VPCStack, SecurityGroupStack, SNSSlackAlertStack]
   #   Type: AWS::CloudFormation::Stack
   #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway.yml'
+  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/bastion.yml'
   #     Parameters:
   #       StackName: !Ref 'StackName'
   #       Env: !Ref 'Env'
-  #       NumberOfAZs: !Ref 'NumberOfAZs'
+  #       KeyName: !Ref 'KeyName'
+  #       BastionAMIOS: !Ref 'BastionAMIOS'
+  #       NumBastionHosts: !Ref 'NumBastionHosts'
+  #       BastionInstanceType: !Ref 'BastionInstanceType'
+  NATGatewayStack:
+    Condition: CreateNATGatewayStackCondition
+    DependsOn: [VPCStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        NumberOfAZs: !Ref 'NumberOfAZs'
   # VPCEndpointInterfaceStack:
   #   DependsOn: [VPCStack, SecurityGroupStack]
   #   Type: AWS::CloudFormation::Stack

@@ -143,8 +143,12 @@ Resources:
         - Name: NatGatewayB
           Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
         - !Ref 'AWS::NoValue'
-      - Name: NatGatewayA
-        Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+      - !If
+        - 1AZCondition
+        - Name: NatGatewayB
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+        - !Ref 'AWS::NoValue'
+      - !Ref 'AWS::NoValue'
 
   AlarmNatGatewayBandwidth:
     Type: 'AWS::CloudWatch::Alarm'
