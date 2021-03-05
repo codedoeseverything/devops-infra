@@ -29,7 +29,6 @@ def main(stack_name, template, parameters, tags):
         'Parameters': parameter_data,
         'Tags': tag_data,
         'Capabilities': ["CAPABILITY_NAMED_IAM"],
-        'OnFailure': 'DO_NOTHING',
     }
 
     try:
