@@ -1,0 +1,236 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This is VPC NAT Gateway Alarm cloudformation template for core Practera infrastructure
+  design.
+Metadata:
+  Authors:
+    Description: Sunil and Mihai (sunil@practera.com/mihai@practera.com) based on
+      AWS quickstart/widdix and best practise.
+  License:
+    Description: Copyright 2020 Intersective PTY LTD and its affiliates. All Rights
+      Reserved.
+
+Parameters:
+  StackName:
+    ConstraintDescription: This will be unique string to represent our stack.
+    Default: beta
+    Description: A client/project/product unique name for the stack to idnetify later.
+      This string can include numbers, lowercase letters, uppercase letters, and hyphens
+      (-). It cannot start or end with a hyphen (-).
+    Type: String
+    AllowedValues: [au,us,uk,p2,lf,nu,alpha,beta]
+  Env:
+    Description: Environment type.
+    Default: stage
+    Type: String
+    AllowedValues:
+      - sandbox
+      - stage
+      - live
+  NumberOfAZs:
+    AllowedValues:
+      - '1'
+      - '2'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+    Default: '3'
+    Description: Number of Availability Zones to use in the VPC. This must match your
+      selections in the list of Availability Zones parameter.
+    Type: String
+
+Conditions:
+
+  1AZConditionCheck:
+      !Equals [ '1', !Ref NumberOfAZs ]
+  2AZConditionCheck:
+      !Equals [ '2', !Ref NumberOfAZs ]
+  3AZConditionCheck:
+      !Equals [ '3', !Ref NumberOfAZs ]
+  4AZConditionCheck:
+      !Equals [ '4', !Ref NumberOfAZs ]
+  5AZConditionCheck:
+      !Equals [ '5', !Ref NumberOfAZs ]
+  6AZConditionCheck:
+      !Equals [ '6', !Ref NumberOfAZs ]
+  1AZCondition: !Or
+    - !Condition 1AZConditionCheck
+    - !Condition 2AZConditionCheck
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  2AZCondition: !Or
+    - !Condition 2AZConditionCheck
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  3AZCondition: !Or
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  4AZCondition: !Or
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  5AZCondition: !Or
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  6AZCondition: !Condition 6AZConditionCheck
+
+Resources:
+  AlarmNatGatewayErrorPortAllocation:
+    Type: 'AWS::CloudWatch::Alarm'
+    Properties:
+      AlarmDescription: 'NAT gateway A could not allocate a source port'
+      AlarmName: !Sub '${StackName}-AlarmNatGatewayErrorPortAllocation-${Env}'
+      Namespace: 'AWS/NATGateway'
+      MetricName: ErrorPortAllocation
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 0
+      AlarmActions:
+      - {'Fn::ImportValue': !Sub '${StackName}-ChatBotSNSTopicARN-${Env}'}
+      Dimensions: 
+        - Name: NatGatewayA
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+        - Name: NatGatewayB
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
+        - Name: NatGatewayc
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+
+  AlarmNatGatewayPacketsDropCount:
+    Type: 'AWS::CloudWatch::Alarm'
+    Properties:
+      AlarmDescription: 'NAT gateway A dropped packets'
+      AlarmName: !Sub '${StackName}-AlarmNatGatewayPacketsDropCount-${Env}'
+      Namespace: 'AWS/NATGateway'
+      MetricName: PacketsDropCount
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 0
+      AlarmActions:
+      - {'Fn::ImportValue': !Sub '${StackName}-ChatBotSNSTopicARN-${Env}'}
+      Dimensions: 
+      - !If
+        - 6AZCondition
+        - Name: NatGatewayF
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayF-${Env}'}
+        - !Ref 'AWS::NoValue'
+      - !If
+        - 5AZCondition
+        - Name: NatGatewayE
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}
+        - !Ref 'AWS::NoValue'
+      - !If
+        - 4AZCondition
+        - Name: NatGatewayD
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
+        - !Ref 'AWS::NoValue'
+      - !If
+        - 3AZCondition
+        - Name: NatGatewayC
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+        - !Ref 'AWS::NoValue'
+      - !If
+        - 2AZCondition
+        - Name: NatGatewayB
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
+        - !Ref 'AWS::NoValue'
+      - Name: NatGatewayA
+        Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+
+  AlarmNatGatewayBandwidth:
+    Type: 'AWS::CloudWatch::Alarm'
+    Properties:
+      AlarmActions:
+      - {'Fn::ImportValue': !Sub '${StackName}-ChatBotSNSTopicARN-${Env}'}
+      AlarmDescription: 'NAT gateway A bandwidth utilization is over 80%'
+      AlarmName: !Sub '${StackName}-AlarmNatGatewayBandwidth-${Env}'
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 1
+      Metrics:
+      - Id: 'in1'
+        Label: 'InFromDestination'
+        MetricStat:
+          Metric:
+            Namespace: 'AWS/NATGateway'
+            MetricName: BytesInFromDestination # bytes per minute
+            Dimensions: 
+              - Name: NatGatewayA
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+              - Name: NatGatewayB
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
+              - Name: NatGatewayc
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+          Period: 60
+          Stat: Sum
+          Unit: Bytes
+        ReturnData: false
+      - Id: 'in2'
+        Label: 'InFromSource'
+        MetricStat:
+          Metric:
+            Namespace: 'AWS/NATGateway'
+            MetricName: BytesInFromSource # bytes per minute
+            Dimensions: 
+              - Name: NatGatewayA
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+              - Name: NatGatewayB
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
+              - Name: NatGatewayc
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+          Period: 60
+          Stat: Sum
+          Unit: Bytes
+        ReturnData: false
+      - Id: 'out1'
+        Label: 'OutToDestination'
+        MetricStat:
+          Metric:
+            Namespace: 'AWS/NATGateway'
+            MetricName: BytesOutToDestination # bytes per minute
+            Dimensions: 
+              - Name: NatGatewayA
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+              - Name: NatGatewayB
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
+              - Name: NatGatewayc
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+          Period: 60
+          Stat: Sum
+          Unit: Bytes
+        ReturnData: false
+      - Id: 'out2'
+        Label: 'OutToSource'
+        MetricStat:
+          Metric:
+            Namespace: 'AWS/NATGateway'
+            MetricName: BytesOutToSource # bytes per minute
+            Dimensions: 
+              - Name: NatGatewayA
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+              - Name: NatGatewayB
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
+              - Name: NatGatewayc
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+          Period: 60
+          Stat: Sum
+          Unit: Bytes
+        ReturnData: false
+      - Expression: '(in1+in2+out1+out2)/2/60*8/1000/1000/1000' # to Gbit/s
+        Id: 'bandwidth'
+        Label: 'Bandwidth'
+        ReturnData: true
+      Threshold: 36 # hard limit is 45 Gbit/s
+      TreatMissingData: notBreaching
+Outputs:
+  StackName:
+    Description: 'Stack name.'
+    Value: !Sub '${AWS::StackName}'

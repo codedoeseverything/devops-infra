@@ -1,0 +1,7 @@
+cfn-lint 
+boto3
+ruamel.yaml
+tabulate
+diagrams
+graphviz
+pydot

@@ -1,0 +1,45 @@
+W2506 Parameter BastionAMIOS should be of type [AWS::EC2::Image::Id, AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>]
+cfn-templates/bastion.yml:34:3
+
+W8001 Condition 1AZCondition not used
+cfn-templates/nat-gateway-alarm.yml:56:3
+
+W8001 Condition 2AZCondition not used
+cfn-templates/nat-gateway-alarm.yml:63:3
+
+W8001 Condition 3AZCondition not used
+cfn-templates/nat-gateway-alarm.yml:69:3
+
+W8001 Condition 4AZCondition not used
+cfn-templates/nat-gateway-alarm.yml:74:3
+
+W8001 Condition 5AZCondition not used
+cfn-templates/nat-gateway-alarm.yml:78:3
+
+W8001 Condition 6AZCondition not used
+cfn-templates/nat-gateway-alarm.yml:81:3
+
+W3005 Obsolete DependsOn on resource (DBClientSecurityGroup), dependency already enforced by a "Ref" at Resources/DBClientSecurityGroupIngress/Properties/GroupId/Ref
+cfn-templates/security-group.yml:58:5
+
+W3005 Obsolete DependsOn on resource (DBClientSecurityGroup), dependency already enforced by a "Ref" at Resources/DBClientSecurityGroupIngress/Properties/SourceSecurityGroupId/Ref
+cfn-templates/security-group.yml:58:5
+
+W3005 Obsolete DependsOn on resource (CacheClientSecurityGroup), dependency already enforced by a "Ref" at Resources/CacheClientSecurityGroupIngress/Properties/GroupId/Ref
+cfn-templates/security-group.yml:105:5
+
+W3005 Obsolete DependsOn on resource (CacheClientSecurityGroup), dependency already enforced by a "Ref" at Resources/CacheClientSecurityGroupIngress/Properties/SourceSecurityGroupId/Ref
+cfn-templates/security-group.yml:105:5
+
+W3005 Obsolete DependsOn on resource (ALBPublicSecurityGroup), dependency already enforced by a "Ref" at Resources/ALBPublicSecurityGroupIngress/Properties/GroupId/Ref
+cfn-templates/security-group.yml:169:5
+
+W3005 Obsolete DependsOn on resource (ALBPublicSecurityGroup), dependency already enforced by a "Ref" at Resources/ALBPublicSecurityGroupIngress/Properties/SourceSecurityGroupId/Ref
+cfn-templates/security-group.yml:169:5
+
+W3005 Obsolete DependsOn on resource (VPCEndpointClientSecurityGroup), dependency already enforced by a "Ref" at Resources/VPCEndpointClientSecurityGroupIngress/Properties/GroupId/Ref
+cfn-templates/security-group.yml:258:5
+
+W3005 Obsolete DependsOn on resource (VPCEndpointClientSecurityGroup), dependency already enforced by a "Ref" at Resources/VPCEndpointClientSecurityGroupIngress/Properties/SourceSecurityGroupId/Ref
+cfn-templates/security-group.yml:258:5
+

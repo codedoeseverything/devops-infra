@@ -1,0 +1,80 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: This is AWS CHATBOT SLACK Notify cloudformation template for core Practera infrastructure
+  design.
+
+Metadata:
+
+  Authors:
+    Description: Sunil and Mihai (sunil@practera.com/mihai@practera.com) based on
+      AWS quickstart/widdix and best practise.
+  License:
+    Description: Copyright 2020 Intersective PTY LTD and its affiliates. All Rights
+      Reserved.
+
+Parameters:
+  StackName:
+    ConstraintDescription: This will be unique string to represent our stack.
+    Default: beta
+    Description: A client/project/product unique name for the stack to idnetify later.
+      This string can include numbers, lowercase letters, uppercase letters, and hyphens
+      (-). It cannot start or end with a hyphen (-).
+    Type: String
+    AllowedValues: [au,us,uk,p2,lf,nu,alpha,beta]
+  Env:
+    Description: Environment type.
+    Default: stage
+    Type: String
+    AllowedValues:
+      - sandbox
+      - stage
+      - live
+    ConstraintDescription: must specify sandbox,stage,live.
+  ChatBotConfigurationName:
+    Description: A Slack Configuration Name
+    Type: String
+  ChatBotLoggingLevel:
+    Description: A Cloudwatch Logging level
+    Type: String
+  SlackChannelId:
+    Description: A Slack Channel ID 
+    Type: String
+  SlackWorkspaceId:
+    Description: A Slack Workspace ID 
+    Type: String
+
+Resources:
+  TestChatbot:
+    Type: AWS::Chatbot::SlackChannelConfiguration
+    Properties: 
+      ConfigurationName: !Ref ChatBotConfigurationName
+      LoggingLevel: !Ref ChatBotLoggingLevel
+      SlackChannelId: !Ref SlackChannelId
+      SlackWorkspaceId: !Ref SlackWorkspaceId
+      IamRoleArn: !GetAtt ChatbotIamRole.Arn
+      SnsTopicArns: 
+        - {'Fn::ImportValue': !Sub '${StackName}-ChatBotSNSTopicARN-${Env}'}
+
+  ChatbotIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${StackName}-chatbot-iam-role-${Env}'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: chatbot.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub '${StackName}-chatbot-iam-policy-${Env}'
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudwatch:Describe*
+                  - cloudwatch:Get*
+                  - cloudwatch:List*
+                Resource:
+                  - "*"

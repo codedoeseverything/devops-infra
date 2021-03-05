@@ -1,0 +1,351 @@
+[
+  {
+    "filename": "cfn-templates/bastion.yml",
+    "file_results": {
+      "failure_count": 1,
+      "violations": [
+        {
+          "id": "F3",
+          "type": "FAIL",
+          "message": "IAM role should not allow * action on its permissions policy",
+          "logical_resource_ids": [
+            "IAMRole"
+          ],
+          "line_numbers": [
+            91
+          ]
+        },
+        {
+          "id": "W11",
+          "type": "WARN",
+          "message": "IAM role should not allow * resource on its permissions policy",
+          "logical_resource_ids": [
+            "IAMRole"
+          ],
+          "line_numbers": [
+            91
+          ]
+        },
+        {
+          "id": "W84",
+          "type": "WARN",
+          "message": "CloudWatchLogs LogGroup should specify a KMS Key Id to encrypt the log data",
+          "logical_resource_ids": [
+            "Logs"
+          ],
+          "line_numbers": [
+            80
+          ]
+        },
+        {
+          "id": "W28",
+          "type": "WARN",
+          "message": "Resource found with an explicit name, this disallows updates that require replacement of this resource",
+          "logical_resource_ids": [
+            "IAMRole"
+          ],
+          "line_numbers": [
+            91
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "filename": "cfn-templates/vpc-endpoints.yml",
+    "file_results": {
+      "failure_count": 0,
+      "violations": [
+
+      ]
+    }
+  },
+  {
+    "filename": "cfn-templates/main.yml",
+    "file_results": {
+      "failure_count": 0,
+      "violations": [
+
+      ]
+    }
+  },
+  {
+    "filename": "cfn-templates/nat-gateway.yml",
+    "file_results": {
+      "failure_count": 0,
+      "violations": [
+
+      ]
+    }
+  },
+  {
+    "filename": "cfn-templates/nat-gateway-alarm.yml",
+    "file_results": {
+      "failure_count": 0,
+      "violations": [
+        {
+          "id": "W28",
+          "type": "WARN",
+          "message": "Resource found with an explicit name, this disallows updates that require replacement of this resource",
+          "logical_resource_ids": [
+            "AlarmNatGatewayErrorPortAllocation",
+            "AlarmNatGatewayPacketsDropCount",
+            "AlarmNatGatewayBandwidth"
+          ],
+          "line_numbers": [
+            85,
+            107,
+            128
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "filename": "cfn-templates/vpc.yml",
+    "file_results": {
+      "failure_count": 0,
+      "violations": [
+        {
+          "id": "W66",
+          "type": "WARN",
+          "message": "To avoid opening all ports for Allow rules, EC2 NetworkACL Entry Protocol should be either 6 (for TCP), 17 (for UDP), 1 (for ICMP), or 58 (for ICMPv6, which must include an IPv6 CIDR block, ICMP type, and code).",
+          "logical_resource_ids": [
+            "NetworkAclEntryInPublicAllowAll",
+            "NetworkAclEntryInPublicAllowAllIPv6",
+            "NetworkAclEntryOutPublicAllowAll",
+            "NetworkAclEntryOutPublicAllowAllIPv6",
+            "NetworkAclEntryInPrivateAllowAll",
+            "NetworkAclEntryInPrivateAllowAllIPv6",
+            "NetworkAclEntryOutPrivateAllowAll",
+            "NetworkAclEntryOutPrivateAllowAllIPv6"
+          ],
+          "line_numbers": [
+            703,
+            712,
+            721,
+            730,
+            739,
+            748,
+            757,
+            766
+          ]
+        },
+        {
+          "id": "W33",
+          "type": "WARN",
+          "message": "EC2 Subnet should not have MapPublicIpOnLaunch set to true",
+          "logical_resource_ids": [
+            "SubnetAPublic",
+            "SubnetBPublic",
+            "SubnetCPublic",
+            "SubnetDPublic",
+            "SubnetEPublic",
+            "SubnetFPublic"
+          ],
+          "line_numbers": [
+            127,
+            158,
+            189,
+            220,
+            251,
+            282
+          ]
+        },
+        {
+          "id": "W60",
+          "type": "WARN",
+          "message": "VPC should have a flow log attached",
+          "logical_resource_ids": [
+            "VPC"
+          ],
+          "line_numbers": [
+            95
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "filename": "cfn-templates/security-group.yml",
+    "file_results": {
+      "failure_count": 8,
+      "violations": [
+        {
+          "id": "W28",
+          "type": "WARN",
+          "message": "Resource found with an explicit name, this disallows updates that require replacement of this resource",
+          "logical_resource_ids": [
+            "DBClientSecurityGroup",
+            "DBServerSecurityGroup",
+            "CacheClientSecurityGroup",
+            "CacheServerSecurityGroup",
+            "ALBPublicSecurityGroup",
+            "ECSServerSecurityGroup",
+            "BastionSecurityGroup",
+            "VPCEndpointClientSecurityGroup"
+          ],
+          "line_numbers": [
+            45,
+            69,
+            92,
+            116,
+            144,
+            181,
+            214,
+            247
+          ]
+        },
+        {
+          "id": "W9",
+          "type": "WARN",
+          "message": "Security Groups found with ingress cidr that is not /32",
+          "logical_resource_ids": [
+            "ALBPublicSecurityGroup",
+            "BastionSecurityGroup"
+          ],
+          "line_numbers": [
+            144,
+            214
+          ]
+        },
+        {
+          "id": "W2",
+          "type": "WARN",
+          "message": "Security Groups found with cidr open to world on ingress.  This should never be true on instance.  Permissible on ELB",
+          "logical_resource_ids": [
+            "ALBPublicSecurityGroup",
+            "BastionSecurityGroup"
+          ],
+          "line_numbers": [
+            144,
+            214
+          ]
+        },
+        {
+          "id": "W27",
+          "type": "WARN",
+          "message": "Security Groups found ingress with port range instead of just a single port",
+          "logical_resource_ids": [
+            "DBClientSecurityGroup",
+            "CacheClientSecurityGroup",
+            "ALBPublicSecurityGroup",
+            "ECSServerSecurityGroup",
+            "VPCEndpointClientSecurityGroup"
+          ],
+          "line_numbers": [
+            45,
+            92,
+            144,
+            181,
+            247
+          ]
+        },
+        {
+          "id": "F1000",
+          "type": "FAIL",
+          "message": "Missing egress rule means all traffic is allowed outbound.  Make this explicit if it is desired configuration",
+          "logical_resource_ids": [
+            "DBClientSecurityGroup",
+            "DBServerSecurityGroup",
+            "CacheClientSecurityGroup",
+            "CacheServerSecurityGroup",
+            "ALBPublicSecurityGroup",
+            "ECSServerSecurityGroup",
+            "BastionSecurityGroup",
+            "VPCEndpointClientSecurityGroup"
+          ],
+          "line_numbers": [
+            45,
+            69,
+            92,
+            116,
+            144,
+            181,
+            214,
+            247
+          ]
+        },
+        {
+          "id": "W36",
+          "type": "WARN",
+          "message": "Security group rules without a description obscure their purpose and may lead to bad practices in ensuring they only allow traffic from the ports and sources/destinations required.",
+          "logical_resource_ids": [
+            "DBClientSecurityGroupIngress",
+            "CacheClientSecurityGroupIngress",
+            "ALBPublicSecurityGroupIngress",
+            "VPCEndpointClientSecurityGroupIngress"
+          ],
+          "line_numbers": [
+            57,
+            104,
+            168,
+            257
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "filename": "cfn-templates/sns-slack.yml",
+    "file_results": {
+      "failure_count": 1,
+      "violations": [
+        {
+          "id": "W47",
+          "type": "WARN",
+          "message": "SNS Topic should specify KmsMasterKeyId property",
+          "logical_resource_ids": [
+            "Topic",
+            "FallbackTopic"
+          ],
+          "line_numbers": [
+            35,
+            81
+          ]
+        },
+        {
+          "id": "F18",
+          "type": "FAIL",
+          "message": "SNS topic policy should not allow * principal",
+          "logical_resource_ids": [
+            "TopicPolicy"
+          ],
+          "line_numbers": [
+            42
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "filename": "cfn-templates/chatbot.yml",
+    "file_results": {
+      "failure_count": 0,
+      "violations": [
+        {
+          "id": "W11",
+          "type": "WARN",
+          "message": "IAM role should not allow * resource on its permissions policy",
+          "logical_resource_ids": [
+            "ChatbotIamRole"
+          ],
+          "line_numbers": [
+            59
+          ]
+        },
+        {
+          "id": "W28",
+          "type": "WARN",
+          "message": "Resource found with an explicit name, this disallows updates that require replacement of this resource",
+          "logical_resource_ids": [
+            "ChatbotIamRole"
+          ],
+          "line_numbers": [
+            59
+          ]
+        }
+      ]
+    }
+  }
+]

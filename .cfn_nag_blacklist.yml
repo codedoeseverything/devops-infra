@@ -1,0 +1,5 @@
+#Blacklisted Rules ID here
+---
+RulesToSuppress:
+- id: W3
+  reason: W3 is something we never care about at enterprise X

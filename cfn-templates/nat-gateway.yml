@@ -1,0 +1,232 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This is VPC NAT Gateway cloudformation template for core Practera infrastructure
+  design.
+Metadata:
+  Authors:
+    Description: Sunil and Mihai (sunil@practera.com/mihai@practera.com) based on
+      AWS quickstart/widdix and best practise.
+  License:
+    Description: Copyright 2020 Intersective PTY LTD and its affiliates. All Rights
+      Reserved.
+
+Parameters:
+  StackName:
+    ConstraintDescription: This will be unique string to represent our stack.
+    Default: beta
+    Description: A client/project/product unique name for the stack to idnetify later.
+      This string can include numbers, lowercase letters, uppercase letters, and hyphens
+      (-). It cannot start or end with a hyphen (-).
+    Type: String
+    AllowedValues: [au,us,uk,p2,lf,nu,alpha,beta]
+  Env:
+    Description: Environment type.
+    Default: stage
+    Type: String
+    AllowedValues:
+      - sandbox
+      - stage
+      - live
+  NumberOfAZs:
+    AllowedValues:
+      - '1'
+      - '2'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+    Default: '3'
+    Description: Number of Availability Zones to use in the VPC. This must match your
+      selections in the list of Availability Zones parameter.
+    Type: String
+
+Conditions:
+
+  1AZConditionCheck:
+      !Equals [ '1', !Ref NumberOfAZs ]
+  2AZConditionCheck:
+      !Equals [ '2', !Ref NumberOfAZs ]
+  3AZConditionCheck:
+      !Equals [ '3', !Ref NumberOfAZs ]
+  4AZConditionCheck:
+      !Equals [ '4', !Ref NumberOfAZs ]
+  5AZConditionCheck:
+      !Equals [ '5', !Ref NumberOfAZs ]
+  6AZConditionCheck:
+      !Equals [ '6', !Ref NumberOfAZs ]
+  1AZCondition: !Or
+    - !Condition 1AZConditionCheck
+    - !Condition 2AZConditionCheck
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  2AZCondition: !Or
+    - !Condition 2AZConditionCheck
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  3AZCondition: !Or
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  4AZCondition: !Or
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  5AZCondition: !Or
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  6AZCondition: !Condition 6AZConditionCheck
+
+Resources:
+  EIPA:
+    Condition: 1AZCondition
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+  NatGatewayA:
+    Condition: 1AZCondition
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt 'EIPA.AllocationId'
+      SubnetId: {'Fn::ImportValue': !Sub '${StackName}-SubnetAPublic-${Env}'}
+  RouteA:
+    Condition: 1AZCondition
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: {'Fn::ImportValue': !Sub '${StackName}-RouteTableAPrivate-${Env}'}
+      DestinationCidrBlock: '0.0.0.0/0'
+      NatGatewayId: !Ref NatGatewayA
+  EIPB:
+    Condition: 2AZCondition
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+  NatGatewayB:
+    Condition: 2AZCondition
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt 'EIPB.AllocationId'
+      SubnetId: {'Fn::ImportValue': !Sub '${StackName}-SubnetBPublic-${Env}'}
+  RouteB:
+    Condition: 2AZCondition
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: {'Fn::ImportValue': !Sub '${StackName}-RouteTableBPrivate-${Env}'}
+      DestinationCidrBlock: '0.0.0.0/0'
+      NatGatewayId: !Ref NatGatewayB
+  EIPC:
+    Condition: 3AZCondition
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+  NatGatewayC:
+    Condition: 3AZCondition
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt 'EIPC.AllocationId'
+      SubnetId: {'Fn::ImportValue': !Sub '${StackName}-SubnetCPublic-${Env}'}
+  RouteC:
+    Condition: 3AZCondition
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: {'Fn::ImportValue': !Sub '${StackName}-RouteTableCPrivate-${Env}'}
+      DestinationCidrBlock: '0.0.0.0/0'
+      NatGatewayId: !Ref NatGatewayC
+  EIPD:
+    Condition: 4AZCondition
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+  NatGatewayD:
+    Condition: 4AZCondition
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt 'EIPD.AllocationId'
+      SubnetId: {'Fn::ImportValue': !Sub '${StackName}-SubnetDPublic-${Env}'}
+  RouteD:
+    Condition: 4AZCondition
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: {'Fn::ImportValue': !Sub '${StackName}-RouteTableDPrivate-${Env}'}
+      DestinationCidrBlock: '0.0.0.0/0'
+      NatGatewayId: !Ref NatGatewayD
+  EIPE:
+    Condition: 5AZCondition
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+  NatGatewayE:
+    Condition: 5AZCondition
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt 'EIPE.AllocationId'
+      SubnetId: {'Fn::ImportValue': !Sub '${StackName}-SubnetEPublic-${Env}'}
+  RouteE:
+    Condition: 5AZCondition
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: {'Fn::ImportValue': !Sub '${StackName}-RouteTableEPrivate-${Env}'}
+      DestinationCidrBlock: '0.0.0.0/0'
+      NatGatewayId: !Ref NatGatewayE
+  EIPF:
+    Condition: 6AZCondition
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+  NatGatewayF:
+    Condition: 6AZCondition
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt 'EIPF.AllocationId'
+      SubnetId: {'Fn::ImportValue': !Sub '${StackName}-SubnetFPublic-${Env}'}
+  RouteF:
+    Condition: 6AZCondition
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: {'Fn::ImportValue': !Sub '${StackName}-RouteTableFPrivate-${Env}'}
+      DestinationCidrBlock: '0.0.0.0/0'
+      NatGatewayId: !Ref NatGatewayF
+  
+Outputs:
+  StackName:
+    Description: 'Stack name.'
+    Value: !Sub '${AWS::StackName}'
+  NatGatewayA:
+    Condition: 1AZCondition
+    Description: 'NatGatewayA ID'
+    Value: !Ref NatGatewayA
+    Export:
+      Name: !Sub '${StackName}-NatGatewayA-${Env}'
+  NatGatewayB:
+    Condition: 2AZCondition
+    Description: 'NatGatewayB ID'
+    Value: !Ref NatGatewayB
+    Export:
+      Name: !Sub '${StackName}-NatGatewayB-${Env}'
+  NatGatewayC:
+    Condition: 3AZCondition
+    Description: 'NatGatewayC ID'
+    Value: !Ref NatGatewayC
+    Export:
+      Name: !Sub '${StackName}-NatGatewayC-${Env}'
+  NatGatewayD:
+    Condition: 4AZCondition
+    Description: 'NatGatewayD ID'
+    Value: !Ref NatGatewayD
+    Export:
+      Name: !Sub '${StackName}-NatGatewayD-${Env}'
+  NatGatewayE:
+    Condition: 5AZCondition
+    Description: 'NatGatewayE ID'
+    Value: !Ref NatGatewayE
+    Export:
+      Name: !Sub '${StackName}-NatGatewayE-${Env}'
+  NatGatewayF:
+    Condition: 6AZCondition
+    Description: 'NatGatewayF ID'
+    Value: !Ref NatGatewayF
+    Export:
+      Name: !Sub '${StackName}-NatGatewayF-${Env}'

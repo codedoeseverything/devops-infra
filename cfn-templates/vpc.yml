@@ -1,0 +1,1010 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This is VPC cloudformation template for core Practera infrastructure
+  design.
+Metadata:
+  Authors:
+    Description: Sunil and Mihai (sunil@practera.com/mihai@practera.com) based on
+      AWS quickstart/widdix and best practise.
+  License:
+    Description: Copyright 2020 Intersective PTY LTD and its affiliates. All Rights
+      Reserved.
+
+Parameters:
+  StackName:
+    ConstraintDescription: This will be unique string to represent our stack.
+    Default: beta
+    Description: A client/project/product unique name for the stack to idnetify later.
+      This string can include numbers, lowercase letters, uppercase letters, and hyphens
+      (-). It cannot start or end with a hyphen (-).
+    Type: String
+    AllowedValues: [au,us,uk,p2,lf,nu,alpha,beta]
+  Env:
+    Description: Environment type.
+    Default: stage
+    Type: String
+    AllowedValues:
+      - sandbox
+      - stage
+      - live
+    ConstraintDescription: must specify sandbox,stage,live.
+  NumberOfAZs:
+    AllowedValues:
+      - '1'
+      - '2'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+    Default: '3'
+    Description: Number of Availability Zones to use in the VPC. This must match your
+      selections in the list of Availability Zones parameter.
+    Type: String
+  ClassB:
+    Description: 'Class B of VPC (10.XXX.0.0/16)'
+    Type: Number
+    Default: 0
+    ConstraintDescription: 'Must be in the range [0-255]'
+    MinValue: 0
+    MaxValue: 255
+
+
+Conditions:
+
+  1AZConditionCheck:
+      !Equals [ '1', !Ref NumberOfAZs ]
+  2AZConditionCheck:
+      !Equals [ '2', !Ref NumberOfAZs ]
+  3AZConditionCheck:
+      !Equals [ '3', !Ref NumberOfAZs ]
+  4AZConditionCheck:
+      !Equals [ '4', !Ref NumberOfAZs ]
+  5AZConditionCheck:
+      !Equals [ '5', !Ref NumberOfAZs ]
+  6AZConditionCheck:
+      !Equals [ '6', !Ref NumberOfAZs ]
+  1AZCondition: !Or
+    - !Condition 1AZConditionCheck
+    - !Condition 2AZConditionCheck
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  2AZCondition: !Or
+    - !Condition 2AZConditionCheck
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  3AZCondition: !Or
+    - !Condition 3AZConditionCheck
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  4AZCondition: !Or
+    - !Condition 4AZConditionCheck
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  5AZCondition: !Or
+    - !Condition 5AZConditionCheck
+    - !Condition 6AZConditionCheck
+  6AZCondition: !Condition 6AZConditionCheck
+    
+
+Resources:
+  VPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: !Sub '10.${ClassB}.0.0/16'
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      InstanceTenancy: default
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-vpc-${Env}'
+  VPCCidrBlock:
+    Type: 'AWS::EC2::VPCCidrBlock'
+    Properties:
+      AmazonProvidedIpv6CidrBlock: true
+      VpcId: !Ref VPC
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-igw-${Env}'
+  EgressOnlyInternetGateway:
+    Type: 'AWS::EC2::EgressOnlyInternetGateway'
+    Properties:
+      VpcId: !Ref VPC
+  VPCGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+  SubnetAPublic:
+    Condition: 1AZCondition
+    DependsOn: VPCCidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      #AssignIpv6AddressOnCreation: true # TODO can not be set if MapPublicIpOnLaunch is true as well
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Sub '10.${ClassB}.0.0/20'
+      Ipv6CidrBlock: !Select [0, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 12, 64]]
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-A-public-${Env}'
+      - Key: Reach
+        Value: public
+  SubnetAPrivate:
+    Condition: 1AZCondition
+    DependsOn: VPCCidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AssignIpv6AddressOnCreation: false
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Sub '10.${ClassB}.16.0/20'
+      Ipv6CidrBlock: !Select [1, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 12, 64]]
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-A-private-${Env}'
+      - Key: Reach
+        Value: private
+  SubnetBPublic:
+    Condition: 2AZCondition
+    DependsOn: VPCCidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      #AssignIpv6AddressOnCreation: true # TODO can not be set if MapPublicIpOnLaunch is true as well
+      AvailabilityZone: !Select [1, !GetAZs '']
+      CidrBlock: !Sub '10.${ClassB}.32.0/20'
+      Ipv6CidrBlock: !Select [2, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 12, 64]]
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-B-public-${Env}'
+      - Key: Reach
+        Value: public
+  SubnetBPrivate:
+    Condition: 2AZCondition
+    DependsOn: VPCCidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AssignIpv6AddressOnCreation: false
+      AvailabilityZone: !Select [1, !GetAZs '']
+      CidrBlock: !Sub '10.${ClassB}.48.0/20'
+      Ipv6CidrBlock: !Select [3, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 12, 64]]
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-B-private-${Env}'
+      - Key: Reach
+        Value: private
+  SubnetCPublic:
+    Condition: 3AZCondition
+    DependsOn: VPCCidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      #AssignIpv6AddressOnCreation: true # TODO can not be set if MapPublicIpOnLaunch is true as well
+      AvailabilityZone: !Select [2, !GetAZs '']
+      CidrBlock: !Sub '10.${ClassB}.64.0/20'
+      Ipv6CidrBlock: !Select [4, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 12, 64]]
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-C-public-${Env}'
+      - Key: Reach
+        Value: public
+  SubnetCPrivate:
+    Condition: 3AZCondition
+    DependsOn: VPCCidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AssignIpv6AddressOnCreation: false
+      AvailabilityZone: !Select [2, !GetAZs '']
+      CidrBlock: !Sub '10.${ClassB}.80.0/20'
+      Ipv6CidrBlock: !Select [5, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 12, 64]]
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-C-private-${Env}'
+      - Key: Reach
+        Value: private
+  SubnetDPublic:
+    Condition: 4AZCondition
+    DependsOn: VPCCidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      #AssignIpv6AddressOnCreation: true # TODO can not be set if MapPublicIpOnLaunch is true as well
+      AvailabilityZone: !Select [3, !GetAZs '']
+      CidrBlock: !Sub '10.${ClassB}.96.0/20'
+      Ipv6CidrBlock: !Select [6, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 12, 64]]
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-D-public-${Env}'
+      - Key: Reach
+        Value: public
+  SubnetDPrivate:
+    Condition: 4AZCondition
+    DependsOn: VPCCidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AssignIpv6AddressOnCreation: false
+      AvailabilityZone: !Select [3, !GetAZs '']
+      CidrBlock: !Sub '10.${ClassB}.112.0/20'
+      Ipv6CidrBlock: !Select [7, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 12, 64]]
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-D-private-${Env}'
+      - Key: Reach
+        Value: private
+  SubnetEPublic:
+    Condition: 5AZCondition
+    DependsOn: VPCCidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      #AssignIpv6AddressOnCreation: true # TODO can not be set if MapPublicIpOnLaunch is true as well
+      AvailabilityZone: !Select [4, !GetAZs '']
+      CidrBlock: !Sub '10.${ClassB}.128.0/20'
+      Ipv6CidrBlock: !Select [8, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 12, 64]]
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-E-public-${Env}'
+      - Key: Reach
+        Value: public
+  SubnetEPrivate:
+    Condition: 5AZCondition
+    DependsOn: VPCCidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AssignIpv6AddressOnCreation: false
+      AvailabilityZone: !Select [4, !GetAZs '']
+      CidrBlock: !Sub '10.${ClassB}.144.0/20'
+      Ipv6CidrBlock: !Select [9, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 12, 64]]
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-E-private-${Env}'
+      - Key: Reach
+        Value: private
+  SubnetFPublic:
+    Condition: 6AZCondition
+    DependsOn: VPCCidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      #AssignIpv6AddressOnCreation: true # TODO can not be set if MapPublicIpOnLaunch is true as well
+      AvailabilityZone: !Select [5, !GetAZs '']
+      CidrBlock: !Sub '10.${ClassB}.160.0/20'
+      Ipv6CidrBlock: !Select [10, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 12, 64]]
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-F-public-${Env}'
+      - Key: Reach
+        Value: public
+  SubnetFPrivate:
+    Condition: 6AZCondition
+    DependsOn: VPCCidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AssignIpv6AddressOnCreation: false
+      AvailabilityZone: !Select [5, !GetAZs '']
+      CidrBlock: !Sub '10.${ClassB}.176.0/20'
+      Ipv6CidrBlock: !Select [11, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 12, 64]]
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-F-private-${Env}'
+      - Key: Reach
+        Value: private
+  RouteTableAPublic:
+    Condition: 1AZCondition
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-A-public-rt-${Env}'
+  RouteTableAPrivate:
+    Condition: 1AZCondition
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-A-private-rt-${Env}'
+  RouteTableBPublic:
+    Condition: 2AZCondition
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-B-public-rt-${Env}'
+  RouteTableBPrivate:
+    Condition: 2AZCondition
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-B-private-rt-${Env}'
+  RouteTableCPublic:
+    Condition: 3AZCondition
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-C-public-rt-${Env}'
+  RouteTableCPrivate:
+    Condition: 3AZCondition
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-C-private-rt-${Env}'
+  RouteTableDPublic:
+    Condition: 4AZCondition
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-D-public-rt-${Env}'
+  RouteTableDPrivate:
+    Condition: 4AZCondition
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-D-private-rt-${Env}'
+  RouteTableEPublic:
+    Condition: 5AZCondition
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-E-public-rt-${Env}'
+  RouteTableEPrivate:
+    Condition: 5AZCondition
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-E-private-rt-${Env}'
+  RouteTableFPublic:
+    Condition: 6AZCondition
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-F-public-rt-${Env}'
+  RouteTableFPrivate:
+    Condition: 6AZCondition
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-F-private-rt-${Env}'
+  RouteTableAssociationAPublic:
+    Condition: 1AZCondition
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref SubnetAPublic
+      RouteTableId: !Ref RouteTableAPublic
+  RouteTableAssociationAPrivate:
+    Condition: 1AZCondition
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref SubnetAPrivate
+      RouteTableId: !Ref RouteTableAPrivate
+  RouteTableAssociationBPublic:
+    Condition: 2AZCondition
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref SubnetBPublic
+      RouteTableId: !Ref RouteTableBPublic
+  RouteTableAssociationBPrivate:
+    Condition: 2AZCondition
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref SubnetBPrivate
+      RouteTableId: !Ref RouteTableBPrivate
+  RouteTableAssociationCPublic:
+    Condition: 3AZCondition
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref SubnetCPublic
+      RouteTableId: !Ref RouteTableCPublic
+  RouteTableAssociationCPrivate:
+    Condition: 3AZCondition
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref SubnetCPrivate
+      RouteTableId: !Ref RouteTableCPrivate
+  RouteTableAssociationDPublic:
+    Condition: 4AZCondition
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref SubnetDPublic
+      RouteTableId: !Ref RouteTableDPublic
+  RouteTableAssociationDPrivate:
+    Condition: 4AZCondition
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref SubnetDPrivate
+      RouteTableId: !Ref RouteTableDPrivate
+  RouteTableAssociationEPublic:
+    Condition: 5AZCondition
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref SubnetEPublic
+      RouteTableId: !Ref RouteTableEPublic
+  RouteTableAssociationEPrivate:
+    Condition: 5AZCondition
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref SubnetEPrivate
+      RouteTableId: !Ref RouteTableEPrivate
+  RouteTableAssociationFPublic:
+    Condition: 6AZCondition
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref SubnetFPublic
+      RouteTableId: !Ref RouteTableFPublic
+  RouteTableAssociationFPrivate:
+    Condition: 6AZCondition
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref SubnetFPrivate
+      RouteTableId: !Ref RouteTableFPrivate
+  RouteTablePublicAInternetRoute: # should be RouteTablePublicAInternetRoute, but logical id was not changed for backward compatibility
+    Condition: 1AZCondition
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTableAPublic
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref InternetGateway
+  RouteTablePublicAInternetRouteIPv6:
+    Condition: 1AZCondition
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTableAPublic
+      DestinationIpv6CidrBlock: '::/0'
+      GatewayId: !Ref InternetGateway
+  RouteTablePrivateAInternetRouteIPv6:
+    Condition: 1AZCondition
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref RouteTableAPrivate
+      DestinationIpv6CidrBlock: '::/0'
+      EgressOnlyInternetGatewayId: !Ref EgressOnlyInternetGateway
+  RouteTablePublicBInternetRoute:
+    Condition: 2AZCondition
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTableBPublic
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref InternetGateway
+  RouteTablePublicBInternetRouteIPv6:
+    Condition: 2AZCondition
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTableBPublic
+      DestinationIpv6CidrBlock: '::/0'
+      GatewayId: !Ref InternetGateway
+  RouteTablePrivateBInternetRouteIPv6:
+    Condition: 2AZCondition
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref RouteTableBPrivate
+      DestinationIpv6CidrBlock: '::/0'
+      EgressOnlyInternetGatewayId: !Ref EgressOnlyInternetGateway
+  RouteTablePublicCInternetRoute:
+    Condition: 3AZCondition
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTableCPublic
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref InternetGateway
+  RouteTablePublicCInternetRouteIPv6:
+    Condition: 3AZCondition
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTableCPublic
+      DestinationIpv6CidrBlock: '::/0'
+      GatewayId: !Ref InternetGateway
+  RouteTablePrivateCInternetRouteIPv6:
+    Condition: 3AZCondition
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref RouteTableCPrivate
+      DestinationIpv6CidrBlock: '::/0'
+      EgressOnlyInternetGatewayId: !Ref EgressOnlyInternetGateway
+  RouteTablePublicDInternetRoute:
+    Condition: 4AZCondition
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTableDPublic
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref InternetGateway
+  RouteTablePublicDInternetRouteIPv6:
+    Condition: 4AZCondition
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTableDPublic
+      DestinationIpv6CidrBlock: '::/0'
+      GatewayId: !Ref InternetGateway
+  RouteTablePrivateDInternetRouteIPv6:
+    Condition: 4AZCondition
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref RouteTableDPrivate
+      DestinationIpv6CidrBlock: '::/0'
+      EgressOnlyInternetGatewayId: !Ref EgressOnlyInternetGateway
+  RouteTablePublicEInternetRoute:
+    Condition: 5AZCondition
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTableEPublic
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref InternetGateway
+  RouteTablePublicEInternetRouteIPv6:
+    Condition: 5AZCondition
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTableEPublic
+      DestinationIpv6CidrBlock: '::/0'
+      GatewayId: !Ref InternetGateway
+  RouteTablePrivateEInternetRouteIPv6:
+    Condition: 5AZCondition
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref RouteTableEPrivate
+      DestinationIpv6CidrBlock: '::/0'
+      EgressOnlyInternetGatewayId: !Ref EgressOnlyInternetGateway
+  RouteTablePublicFInternetRoute:
+    Condition: 6AZCondition
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTableFPublic
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref InternetGateway
+  RouteTablePublicFInternetRouteIPv6:
+    Condition: 6AZCondition
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTableFPublic
+      DestinationIpv6CidrBlock: '::/0'
+      GatewayId: !Ref InternetGateway
+  RouteTablePrivateFInternetRouteIPv6:
+    Condition: 6AZCondition
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref RouteTableFPrivate
+      DestinationIpv6CidrBlock: '::/0'
+      EgressOnlyInternetGatewayId: !Ref EgressOnlyInternetGateway
+  NetworkAclPublic:
+    Type: 'AWS::EC2::NetworkAcl'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-public-nacl-${Env}'
+  NetworkAclPrivate:
+    Type: 'AWS::EC2::NetworkAcl'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-private-nacl-${Env}'
+  SubnetNetworkAclAssociationAPublic:
+    Condition: 1AZCondition
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref SubnetAPublic
+      NetworkAclId: !Ref NetworkAclPublic
+  SubnetNetworkAclAssociationAPrivate:
+    Condition: 1AZCondition
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref SubnetAPrivate
+      NetworkAclId: !Ref NetworkAclPrivate
+  SubnetNetworkAclAssociationBPublic:
+    Condition: 2AZCondition
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref SubnetBPublic
+      NetworkAclId: !Ref NetworkAclPublic
+  SubnetNetworkAclAssociationBPrivate:
+    Condition: 2AZCondition
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref SubnetBPrivate
+      NetworkAclId: !Ref NetworkAclPrivate
+  SubnetNetworkAclAssociationCPublic:
+    Condition: 3AZCondition
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref SubnetCPublic
+      NetworkAclId: !Ref NetworkAclPublic
+  SubnetNetworkAclAssociationCPrivate:
+    Condition: 3AZCondition
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref SubnetCPrivate
+      NetworkAclId: !Ref NetworkAclPrivate
+  SubnetNetworkAclAssociationDPublic:
+    Condition: 4AZCondition
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref SubnetDPublic
+      NetworkAclId: !Ref NetworkAclPublic
+  SubnetNetworkAclAssociationDPrivate:
+    Condition: 4AZCondition
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref SubnetDPrivate
+      NetworkAclId: !Ref NetworkAclPrivate
+  SubnetNetworkAclAssociationEPublic:
+    Condition: 5AZCondition
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref SubnetEPublic
+      NetworkAclId: !Ref NetworkAclPublic
+  SubnetNetworkAclAssociationEPrivate:
+    Condition: 5AZCondition
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref SubnetEPrivate
+      NetworkAclId: !Ref NetworkAclPrivate
+  SubnetNetworkAclAssociationFPublic:
+    Condition: 6AZCondition
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref SubnetFPublic
+      NetworkAclId: !Ref NetworkAclPublic
+  SubnetNetworkAclAssociationFPrivate:
+    Condition: 6AZCondition
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref SubnetFPrivate
+      NetworkAclId: !Ref NetworkAclPrivate
+  NetworkAclEntryInPublicAllowAll:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 99
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '0.0.0.0/0'
+  NetworkAclEntryInPublicAllowAllIPv6:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 98
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      Ipv6CidrBlock: '::/0'
+  NetworkAclEntryOutPublicAllowAll:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 99
+      Protocol: -1
+      RuleAction: allow
+      Egress: true
+      CidrBlock: '0.0.0.0/0'
+  NetworkAclEntryOutPublicAllowAllIPv6:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 98
+      Protocol: -1
+      RuleAction: allow
+      Egress: true
+      Ipv6CidrBlock: '::/0'
+  NetworkAclEntryInPrivateAllowAll:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPrivate
+      RuleNumber: 99
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '0.0.0.0/0'
+  NetworkAclEntryInPrivateAllowAllIPv6:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPrivate
+      RuleNumber: 98
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      Ipv6CidrBlock: '::/0'
+  NetworkAclEntryOutPrivateAllowAll:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPrivate
+      RuleNumber: 99
+      Protocol: -1
+      RuleAction: allow
+      Egress: true
+      CidrBlock: '0.0.0.0/0'
+  NetworkAclEntryOutPrivateAllowAllIPv6:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPrivate
+      RuleNumber: 98
+      Protocol: -1
+      RuleAction: allow
+      Egress: true
+      Ipv6CidrBlock: '::/0'
+Outputs:
+  StackName:
+    Description: 'Stack name.'
+    Value: !Sub '${AWS::StackName}'
+  CidrBlock:
+    Description: 'The set of IP addresses for the VPC.'
+    Value: !GetAtt 'VPC.CidrBlock'
+    Export:
+      Name: !Sub '${StackName}-CidrBlock-${Env}'
+  CidrBlockIPv6:
+    Description: 'The set of IPv6 addresses for the VPC.'
+    Value: !Select [0, !GetAtt 'VPC.Ipv6CidrBlocks']
+    Export:
+      Name: !Sub '${StackName}-CidrBlockIPv6-${Env}'
+  VPC:
+    Description: 'VPC'
+    Value: !Ref VPC
+    Export:
+      Name: !Sub '${StackName}-VPC-${Env}'
+  NumberOfAZs:
+    Description: 'Number of AZs'
+    Value: !Ref NumberOfAZs
+    Export:
+      Name: !Sub '${StackName}-NumberOfAZs-${Env}'
+  AZList:  # Better name would be AZs, but the name was already used
+    Description: 'List of AZs'
+    Value: !If
+      - 6AZCondition
+      - !Join [',', [!Select [0, !GetAZs ''], !Select [1, !GetAZs ''], !Select [2, !GetAZs ''], !Select [3, !GetAZs ''], !Select [4, !GetAZs ''], !Select [5, !GetAZs '']]]
+      - !If
+        - 5AZCondition
+        - !Join [',', [!Select [0, !GetAZs ''], !Select [1, !GetAZs ''], !Select [2, !GetAZs ''], !Select [3, !GetAZs ''], !Select [4, !GetAZs '']]]
+        - !If
+          - 4AZCondition
+          - !Join [',', [!Select [0, !GetAZs ''], !Select [1, !GetAZs ''], !Select [2, !GetAZs ''], !Select [3, !GetAZs '']]]
+          - !If
+            - 3AZCondition
+            - !Join [',', [!Select [0, !GetAZs ''], !Select [1, !GetAZs ''], !Select [2, !GetAZs '']]]
+            - !If
+              - 2AZCondition
+              - !Join [',', [!Select [0, !GetAZs ''], !Select [1, !GetAZs '']]]
+              - !If
+                - 1AZCondition
+                - [!Select [0, !GetAZs '']]
+                - !Ref 'AWS::NoValue'
+    Export:
+      Name: !Sub '${StackName}-AZList-${Env}'
+  SubnetsPublic:
+    Description: 'Subnets public.'
+    Value: !If
+      - 6AZCondition
+      - !Join [',', [!Ref SubnetAPublic, !Ref SubnetBPublic, !Ref SubnetCPublic,!Ref SubnetDPublic, !Ref SubnetEPublic, !Ref SubnetFPublic]]
+      - !If
+        - 5AZCondition
+        - !Join [',', [!Ref SubnetAPublic, !Ref SubnetBPublic, !Ref SubnetCPublic,!Ref SubnetDPublic, !Ref SubnetEPublic]]
+        - !If
+          - 4AZCondition
+          - !Join [',', [!Ref SubnetAPublic, !Ref SubnetBPublic, !Ref SubnetCPublic,!Ref SubnetDPublic]]
+          - !If
+            - 3AZCondition
+            - !Join [',', [!Ref SubnetAPublic, !Ref SubnetBPublic, !Ref SubnetCPublic]]
+            - !If
+              - 2AZCondition
+              - !Join [',', [!Ref SubnetAPublic, !Ref SubnetBPublic]]
+              - !If
+                - 1AZCondition
+                - !Ref SubnetAPublic
+                - !Ref 'AWS::NoValue'
+    Export:
+      Name: !Sub '${StackName}-SubnetsPublic-${Env}'
+  SubnetsPrivate:
+    Description: 'Subnets private.'
+    Value: !If
+      - 6AZCondition
+      - !Join [',', [!Ref SubnetAPrivate, !Ref SubnetBPrivate, !Ref SubnetCPrivate,!Ref SubnetDPrivate, !Ref SubnetEPrivate, !Ref SubnetFPrivate]]
+      - !If
+        - 5AZCondition
+        - !Join [',', [!Ref SubnetAPrivate, !Ref SubnetBPrivate, !Ref SubnetCPrivate,!Ref SubnetDPrivate, !Ref SubnetEPrivate]]
+        - !If
+          - 4AZCondition
+          - !Join [',', [!Ref SubnetAPrivate, !Ref SubnetBPrivate, !Ref SubnetCPrivate,!Ref SubnetDPrivate]]
+          - !If
+            - 3AZCondition
+            - !Join [',', [!Ref SubnetAPrivate, !Ref SubnetBPrivate, !Ref SubnetCPrivate]]
+            - !If
+              - 2AZCondition
+              - !Join [',', [!Ref SubnetAPrivate, !Ref SubnetBPrivate ]]
+              - !If
+                - 1AZCondition
+                - !Ref SubnetAPrivate
+                - !Ref 'AWS::NoValue'
+    Export:
+      Name: !Sub '${StackName}-SubnetsPrivate-${Env}'
+  SubnetAPublic:
+    Condition: 1AZCondition
+    Description: 'Subnet A public.'
+    Value: !Ref SubnetAPublic
+    Export:
+      Name: !Sub '${StackName}-SubnetAPublic-${Env}'
+  RouteTableAPublic:
+    Condition: 1AZCondition
+    Description: 'Route table A public.'
+    Value: !Ref RouteTableAPublic
+    Export:
+      Name: !Sub '${StackName}-RouteTableAPublic-${Env}'
+  SubnetAPrivate:
+    Condition: 1AZCondition
+    Description: 'Subnet A private.'
+    Value: !Ref SubnetAPrivate
+    Export:
+      Name: !Sub '${StackName}-SubnetAPrivate-${Env}'
+  RouteTableAPrivate:
+    Condition: 1AZCondition
+    Description: 'Route table A private.'
+    Value: !Ref RouteTableAPrivate
+    Export:
+      Name: !Sub '${StackName}-RouteTableAPrivate-${Env}'
+  SubnetBPublic:
+    Condition: 2AZCondition
+    Description: 'Subnet B public.'
+    Value: !Ref SubnetBPublic
+    Export:
+      Name: !Sub '${StackName}-SubnetBPublic-${Env}'
+  RouteTableBPublic:
+    Condition: 2AZCondition
+    Description: 'Route table B public.'
+    Value: !Ref RouteTableBPublic
+    Export:
+      Name: !Sub '${StackName}-RouteTableBPublic-${Env}'
+  SubnetBPrivate:
+    Condition: 2AZCondition
+    Description: 'Subnet B private.'
+    Value: !Ref SubnetBPrivate
+    Export:
+      Name: !Sub '${StackName}-SubnetBPrivate-${Env}'
+  RouteTableBPrivate:
+    Condition: 2AZCondition
+    Description: 'Route table B private.'
+    Value: !Ref RouteTableBPrivate
+    Export:
+      Name: !Sub '${StackName}-RouteTableBPrivate-${Env}'
+  SubnetCPublic:
+    Condition: 3AZCondition
+    Description: 'Subnet C public.'
+    Value: !Ref SubnetCPublic
+    Export:
+      Name: !Sub '${StackName}-SubnetCPublic-${Env}'
+  RouteTableCPublic:
+    Condition: 3AZCondition
+    Description: 'Route table C public.'
+    Value: !Ref RouteTableCPublic
+    Export:
+      Name: !Sub '${StackName}-RouteTableCPublic-${Env}'
+  SubnetCPrivate:
+    Condition: 3AZCondition
+    Description: 'Subnet C private.'
+    Value: !Ref SubnetCPrivate
+    Export:
+      Name: !Sub '${StackName}-SubnetCPrivate-${Env}'
+  RouteTableCPrivate:
+    Condition: 3AZCondition
+    Description: 'Route table C private.'
+    Value: !Ref RouteTableCPrivate
+    Export:
+      Name: !Sub '${StackName}-RouteTableCPrivate-${Env}'
+  SubnetDPublic:
+    Condition: 4AZCondition
+    Description: 'Subnet D public.'
+    Value: !Ref SubnetDPublic
+    Export:
+      Name: !Sub '${StackName}-SubnetDPublic-${Env}'
+  RouteTableDPublic:
+    Condition: 4AZCondition
+    Description: 'Route table D public.'
+    Value: !Ref RouteTableDPublic
+    Export:
+      Name: !Sub '${StackName}-RouteTableDPublic-${Env}'
+  SubnetDPrivate:
+    Condition: 4AZCondition
+    Description: 'Subnet D private.'
+    Value: !Ref SubnetDPrivate
+    Export:
+      Name: !Sub '${StackName}-SubnetDPrivate-${Env}'
+  RouteTableDPrivate:
+    Condition: 4AZCondition
+    Description: 'Route table D private.'
+    Value: !Ref RouteTableDPrivate
+    Export:
+      Name: !Sub '${StackName}-RouteTableDPrivate-${Env}'
+  SubnetEPublic:
+    Condition: 5AZCondition
+    Description: 'Subnet E public.'
+    Value: !Ref SubnetEPublic
+    Export:
+      Name: !Sub '${StackName}-SubnetEPublic-${Env}'
+  RouteTableEPublic:
+    Condition: 5AZCondition
+    Description: 'Route table E public.'
+    Value: !Ref RouteTableEPublic
+    Export:
+      Name: !Sub '${StackName}-RouteTableEPublic-${Env}'
+  SubnetEPrivate:
+    Condition: 5AZCondition
+    Description: 'Subnet E private.'
+    Value: !Ref SubnetEPrivate
+    Export:
+      Name: !Sub '${StackName}-SubnetEPrivate-${Env}'
+  RouteTableEPrivate:
+    Condition: 5AZCondition
+    Description: 'Route table E private.'
+    Value: !Ref RouteTableEPrivate
+    Export:
+      Name: !Sub '${StackName}-RouteTableEPrivate-${Env}'
+  SubnetFPublic:
+    Condition: 6AZCondition
+    Description: 'Subnet F public.'
+    Value: !Ref SubnetFPublic
+    Export:
+      Name: !Sub '${StackName}-SubnetFPublic-${Env}'
+  RouteTableFPublic:
+    Condition: 6AZCondition
+    Description: 'Route table F public.'
+    Value: !Ref RouteTableFPublic
+    Export:
+      Name: !Sub '${StackName}-RouteTableFPublic-${Env}'
+  SubnetFPrivate:
+    Condition: 6AZCondition
+    Description: 'Subnet F private.'
+    Value: !Ref SubnetFPrivate
+    Export:
+      Name: !Sub '${StackName}-SubnetFPrivate-${Env}'
+  RouteTableFPrivate:
+    Condition: 6AZCondition
+    Description: 'Route table F private.'
+    Value: !Ref RouteTableFPrivate
+    Export:
+      Name: !Sub '${StackName}-RouteTableFPrivate-${Env}'

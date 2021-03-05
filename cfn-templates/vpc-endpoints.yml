@@ -1,0 +1,124 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This is VPC Endpoint cloudformation template for core Practera infrastructure
+  design.
+Metadata:
+  Authors:
+    Description: Sunil and Mihai (sunil@practera.com/mihai@practera.com) based on
+      AWS quickstart/widdix and best practise.
+  License:
+    Description: Copyright 2020 Intersective PTY LTD and its affiliates. All Rights
+      Reserved.
+
+Parameters:
+  StackName:
+    ConstraintDescription: This will be unique string to represent our stack.
+    Default: beta
+    Description: A client/project/product unique name for the stack to idnetify later.
+      This string can include numbers, lowercase letters, uppercase letters, and hyphens
+      (-). It cannot start or end with a hyphen (-).
+    Type: String
+    AllowedValues: [au,us,uk,p2,lf,nu,alpha,beta]
+  Env:
+    Description: Environment type.
+    Default: stage
+    Type: String
+    AllowedValues:
+      - sandbox
+      - stage
+      - live
+  VPCInterfaceServiceName:
+    Description: 'The name of the service supported for VPC interface endpoint'
+    Type: String
+    AllowedValues: # generate list with aws --region us-east-1 ec2 describe-vpc-endpoint-services --query 'ServiceDetails[].ServiceName'
+    - 'access-analyzer'
+    - 'acm-pca'
+    - 'application-autoscaling'
+    - 'appmesh-envoy-management'
+    - 'appstream.api'
+    - 'appstream.streaming'
+    - athena
+    - autoscaling
+    - 'autoscaling-plans'
+    - awsconnector
+    - cassandra
+    - clouddirectory
+    - cloudformation
+    - cloudtrail
+    - 'codeartifact.api'
+    - 'codeartifact.repositories'
+    - codebuild
+    - 'codebuild-fips'
+    - codecommit
+    - 'codecommit-fips'
+    - codepipeline
+    - config
+    - dataexchange
+    - datasync
+    - ebs
+    - ec2
+    - ec2messages
+    - 'ecr.api'
+    - 'ecr.dkr'
+    - ecs
+    - 'ecs-agent'
+    - 'ecs-telemetry'
+    - 'elastic-inference.runtime'
+    - elasticbeanstalk
+    - 'elasticbeanstalk-health'
+    - elasticfilesystem
+    - 'elasticfilesystem-fips'
+    - elasticloadbalancing
+    - elasticmapreduce
+    - email-smtp # https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-email-set-up-vpc-endpoints.html
+    - events
+    - 'execute-api'
+    - 'git-codecommit'
+    - 'git-codecommit-fips'
+    - glue
+    - 'kinesis-firehose'
+    - 'kinesis-streams'
+    - kms
+    - logs
+    - monitoring
+    - 'qldb.session'
+    - 'rds-data'
+    - rekognition
+    - 'rekognition-fips'
+    - 'sagemaker.api'
+    - 'sagemaker.runtime'
+    - 'sagemaker.runtime-fips'
+    - secretsmanager
+    - servicecatalog
+    - sms
+    - 'sms-fips'
+    - sns
+    - sqs
+    - ssm
+    - ssmmessages
+    - states
+    - storagegateway
+    - sts
+    - synthetics
+    - transfer
+    - 'transfer.server'
+    - workspaces
+Resources:
+  Endpoint:
+    Type: 'AWS::EC2::VPCEndpoint'
+    Properties:
+      PrivateDnsEnabled: true
+      SecurityGroupIds: 
+        - {'Fn::ImportValue': !Sub '${StackName}-VPCEndpointClientSecurityGroup-${Env}'}
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.${VPCInterfaceServiceName}'
+      SubnetIds: !Split [',', {'Fn::ImportValue': !Sub '${StackName}-SubnetsPrivate-${Env}'}]
+      VpcEndpointType: Interface
+      VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
+Outputs:
+  StackName:
+    Description: 'Stack name.'
+    Value: !Sub '${AWS::StackName}'
+  Endpoint:
+    Description: 'The VPC endpoint to a service.'
+    Value: !Ref Endpoint
+    Export:
+      Name: !Sub '${StackName}-Endpoint-${Env}'
