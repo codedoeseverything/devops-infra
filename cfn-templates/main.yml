@@ -76,10 +76,6 @@ Parameters:
     Default: '1'
     Description: The number of bastion hosts to create. The maximum number is four.
     Type: String
-  BastionAMIOS:
-    Type : "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
-    Default: "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
-    Description: Linux distribution for the AMI to be used for the bastion instances.
   BastionInstanceType:
     AllowedValues:
     - t2.nano
@@ -160,18 +156,18 @@ Resources:
       Parameters:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
-  # BastionServerStack:
-  #   DependsOn: [VPCStack, SecurityGroupStack, SNSSlackAlertStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/bastion.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
-  #       KeyName: !Ref 'KeyName'
-  #       BastionAMIOS: !Ref 'BastionAMIOS'
-  #       NumBastionHosts: !Ref 'NumBastionHosts'
-  #       BastionInstanceType: !Ref 'BastionInstanceType'
+  BastionServerStack:
+    DependsOn: [VPCStack, SecurityGroupStack, SNSSlackAlertStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/bastion.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        KeyName: !Ref 'KeyName'
+        # BastionAMIOS: !Ref 'BastionAMIOS'
+        NumBastionHosts: !Ref 'NumBastionHosts'
+        BastionInstanceType: !Ref 'BastionInstanceType'
   NATGatewayStack:
     Condition: CreateNATGatewayStackCondition
     DependsOn: [VPCStack]
