@@ -11,5 +11,3 @@ ChatBotConfigurationName=AWSSlackNotifyStagingEnv
 ChatBotLoggingLevel=INFO
 SlackChannelId=G01P4EKCYR1
 SlackWorkspaceId=T02TCHV4Y
-HostedZoneName=
-HostedZoneId=
