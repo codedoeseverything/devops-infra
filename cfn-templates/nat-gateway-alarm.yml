@@ -96,13 +96,38 @@ Resources:
       AlarmActions:
       - {'Fn::ImportValue': !Sub '${StackName}-ChatBotSNSTopicARN-${Env}'}
       Dimensions: 
-        - Name: NatGatewayA
-          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+      - !If
+        - 6AZCondition
+        - Name: NatGatewayF
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayF-${Env}'}
+        - !Ref 'AWS::NoValue'
+      - !If
+        - 5AZCondition
+        - Name: NatGatewayE
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}
+        - !Ref 'AWS::NoValue'
+      - !If
+        - 4AZCondition
+        - Name: NatGatewayD
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
+        - !Ref 'AWS::NoValue'
+      - !If
+        - 3AZCondition
+        - Name: NatGatewayC
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+        - !Ref 'AWS::NoValue'
+      - !If
+        - 2AZCondition
         - Name: NatGatewayB
           Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
-        - Name: NatGatewayc
-          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
-
+        - !Ref 'AWS::NoValue'
+      - !If
+        - 1AZCondition
+        - Name: NatGatewayA
+          Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+        - !Ref 'AWS::NoValue'
+      - !Ref 'AWS::NoValue'
+ 
   AlarmNatGatewayPacketsDropCount:
     Type: 'AWS::CloudWatch::Alarm'
     Properties:
@@ -145,7 +170,7 @@ Resources:
         - !Ref 'AWS::NoValue'
       - !If
         - 1AZCondition
-        - Name: NatGatewayB
+        - Name: NatGatewayA
           Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
         - !Ref 'AWS::NoValue'
       - !Ref 'AWS::NoValue'
@@ -167,12 +192,37 @@ Resources:
             Namespace: 'AWS/NATGateway'
             MetricName: BytesInFromDestination # bytes per minute
             Dimensions: 
-              - Name: NatGatewayA
-                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+            - !If
+              - 6AZCondition
+              - Name: NatGatewayF
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayF-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 5AZCondition
+              - Name: NatGatewayE
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 4AZCondition
+              - Name: NatGatewayD
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 3AZCondition
+              - Name: NatGatewayC
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 2AZCondition
               - Name: NatGatewayB
                 Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
-              - Name: NatGatewayc
-                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 1AZCondition
+              - Name: NatGatewayA
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !Ref 'AWS::NoValue'
           Period: 60
           Stat: Sum
           Unit: Bytes
@@ -184,12 +234,37 @@ Resources:
             Namespace: 'AWS/NATGateway'
             MetricName: BytesInFromSource # bytes per minute
             Dimensions: 
-              - Name: NatGatewayA
-                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+            - !If
+              - 6AZCondition
+              - Name: NatGatewayF
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayF-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 5AZCondition
+              - Name: NatGatewayE
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 4AZCondition
+              - Name: NatGatewayD
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 3AZCondition
+              - Name: NatGatewayC
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 2AZCondition
               - Name: NatGatewayB
                 Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
-              - Name: NatGatewayc
-                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 1AZCondition
+              - Name: NatGatewayA
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !Ref 'AWS::NoValue'
           Period: 60
           Stat: Sum
           Unit: Bytes
@@ -201,12 +276,37 @@ Resources:
             Namespace: 'AWS/NATGateway'
             MetricName: BytesOutToDestination # bytes per minute
             Dimensions: 
-              - Name: NatGatewayA
-                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+            - !If
+              - 6AZCondition
+              - Name: NatGatewayF
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayF-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 5AZCondition
+              - Name: NatGatewayE
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 4AZCondition
+              - Name: NatGatewayD
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 3AZCondition
+              - Name: NatGatewayC
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 2AZCondition
               - Name: NatGatewayB
                 Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
-              - Name: NatGatewayc
-                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 1AZCondition
+              - Name: NatGatewayA
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !Ref 'AWS::NoValue'
           Period: 60
           Stat: Sum
           Unit: Bytes
@@ -218,12 +318,37 @@ Resources:
             Namespace: 'AWS/NATGateway'
             MetricName: BytesOutToSource # bytes per minute
             Dimensions: 
-              - Name: NatGatewayA
-                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+            - !If
+              - 6AZCondition
+              - Name: NatGatewayF
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayF-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 5AZCondition
+              - Name: NatGatewayE
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayE-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 4AZCondition
+              - Name: NatGatewayD
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayD-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 3AZCondition
+              - Name: NatGatewayC
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 2AZCondition
               - Name: NatGatewayB
                 Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayB-${Env}'}
-              - Name: NatGatewayc
-                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayC-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !If
+              - 1AZCondition
+              - Name: NatGatewayA
+                Value: {'Fn::ImportValue': !Sub '${StackName}-NatGatewayA-${Env}'}
+              - !Ref 'AWS::NoValue'
+            - !Ref 'AWS::NoValue'
           Period: 60
           Stat: Sum
           Unit: Bytes
