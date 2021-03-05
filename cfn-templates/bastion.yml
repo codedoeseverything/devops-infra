@@ -31,16 +31,6 @@ Parameters:
     Description: 'Optional key pair of the ec2-user to establish a SSH connection to the SSH bastion host/instance.'
     Type: AWS::EC2::KeyPair::KeyName
     Default: ''
-  BastionInstanceType:
-    AllowedValues:
-    - t2.nano
-    - t2.micro
-    - t2.small
-    - t2.medium
-    - t2.large
-    Default: t2.nano
-    Description: Amazon EC2 instance type for the bastion instances.
-    Type: String
   BastionAMIOS:
     Type : String
     Description: Linux distribution for the AMI to be used for the bastion instances.
@@ -53,13 +43,6 @@ Parameters:
     Default: '1'
     Description: The number of bastion hosts to create. The maximum number is four.
     Type: String
-  IAMUserSSHAccess:
-    Description: 'Synchronize public keys of IAM users to enable personalized SSH access (Doc: https://cloudonaut.io/manage-aws-ec2-ssh-access-with-iam/).'
-    Type: String
-    Default: false
-    AllowedValues:
-    - true
-    - false
   SystemsManagerAccess:
     Description: 'Enable AWS Systems Manager agent and authorization.'
     Type: String
@@ -67,85 +50,50 @@ Parameters:
     AllowedValues:
     - true
     - false
-  InstanceType:
-    Description: 'Instance type of the SSH bastion host/instance.'
+  BastionInstanceType:
+    AllowedValues:
+    - t2.nano
+    - t2.micro
+    - t2.small
+    - t2.medium
+    - t2.large
+    Default: t2.nano
+    Description: Amazon EC2 instance type for the bastion instances.
     Type: String
-    Default: 't2.nano'
   LogsRetentionInDays:
     Description: 'Specifies the number of days you want to retain log events.'
     Type: Number
-    Default: 14
+    Default: 365
     AllowedValues: [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653]
-  SubDomainNameWithDot:
-    Description: 'Name that is used to create the DNS entry with trailing dot, e.g. §{SubDomainNameWithDot}§{HostedZoneName}. Leave blank for naked (or apex and bare) domain. Requires ParentZoneStack parameter!'
-    Type: String
-    Default: 'ssh.'
   ManagedPolicyArns:
     Description: 'Optional comma-delimited list of IAM managed policy ARNs to attach to the instance''s IAM role'
     Type: String
     Default: ''
-Mappings:
-  RegionMap:
-    'af-south-1':
-      AMI: 'ami-0438616cef15ba2ca'
-    'eu-north-1':
-      AMI: 'ami-0eb6f319b31f7092d'
-    'ap-south-1':
-      AMI: 'ami-08e0ca9924195beba'
-    'eu-west-3':
-      AMI: 'ami-0ea4a063871686f37'
-    'eu-west-2':
-      AMI: 'ami-098828924dc89ea4a'
-    'eu-south-1':
-      AMI: 'ami-0ea288dd7bb5b0251'
-    'eu-west-1':
-      AMI: 'ami-0fc970315c2d38f01'
-    'ap-northeast-2':
-      AMI: 'ami-09282971cf2faa4c9'
-    'me-south-1':
-      AMI: 'ami-0cc4f2b06b56d27e9'
-    'ap-northeast-1':
-      AMI: 'ami-0992fc94ca0f1415a'
-    'sa-east-1':
-      AMI: 'ami-089aac6323aa08aee'
-    'ca-central-1':
-      AMI: 'ami-075cfad2d9805c5f2'
-    'ap-east-1':
-      AMI: 'ami-040f64b9a031d8eb0'
-    'ap-southeast-1':
-      AMI: 'ami-0e2e44c03b85f58b3'
-    'ap-southeast-2':
-      AMI: 'ami-04f77aa5970939148'
-    'eu-central-1':
-      AMI: 'ami-0a6dc7529cd559185'
-    'us-east-1':
-      AMI: 'ami-047a51fa27710816e'
-    'us-east-2':
-      AMI: 'ami-01aab85a5e4a5a0fe'
-    'us-west-1':
-      AMI: 'ami-005c06c6de69aee84'
-    'us-west-2':
-      AMI: 'ami-0e999cbd62129e3b1'
+
 Conditions:
   HasKeyName: !Not [!Equals [!Ref KeyName, '']]
-  HasIAMUserSSHAccess: !Equals [!Ref IAMUserSSHAccess, 'true']
   HasSystemsManagerAccess: !Equals [!Ref SystemsManagerAccess, 'true']
   HasManagedPolicyArns: !Not [!Equals [!Ref ManagedPolicyArns, '']]
+  
 Resources:
-
   Logs:
     Type: 'AWS::Logs::LogGroup'
     Properties:
       RetentionInDays: !Ref LogsRetentionInDays
-  
+      LogGroupName: !Sub '${StackName}-bastionServer-${Env}'
   InstanceProfile:
     Type: 'AWS::IAM::InstanceProfile'
     Properties:
+      InstanceProfileName: !Sub '${StackName}-bastion-instanceProfile-${Env}'
       Roles:
       - !Ref IAMRole
   IAMRole:
     Type: 'AWS::IAM::Role'
     Properties:
+      RoleName: !Sub '${StackName}-bastion-iamRole-${Env}'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-bastion-iamRole-${Env}'
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -157,7 +105,7 @@ Resources:
       Policies:
       - !If
         - HasSystemsManagerAccess
-        - PolicyName: ssm
+        - PolicyName: !Sub '${StackName}-bastion-ssmPolicy-${Env}'
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -168,7 +116,7 @@ Resources:
               - 'ec2messages:*' # SSM Session Manager by https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-messageAPIs.html
               Resource: '*'
         - !Ref 'AWS::NoValue'
-      - PolicyName: 'ec2'
+      - PolicyName: !Sub '${StackName}-bastion-ec2Policy-${Env}'
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
@@ -177,7 +125,7 @@ Resources:
             - 'ec2:AssociateAddress'
             Resource:
             - '*'
-      - PolicyName: logs
+      - PolicyName: !Sub '${StackName}-bastion-logs-${Env}'
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
@@ -188,33 +136,13 @@ Resources:
             - 'logs:PutLogEvents'
             - 'logs:DescribeLogStreams'
             Resource: !GetAtt 'Logs.Arn'
-  IAMPolicySSHAccess:
-    Type: 'AWS::IAM::Policy'
-    Condition: HasIAMUserSSHAccess
-    Properties:
-      Roles:
-      - !Ref IAMRole
-      PolicyName: iam
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-        - Effect: Allow
-          Action:
-          - 'iam:ListUsers'
-          Resource:
-          - '*'
-        - Effect: Allow
-          Action:
-          - 'iam:ListSSHPublicKeys'
-          - 'iam:GetSSHPublicKey'
-          Resource:
-          - !Sub 'arn:aws:iam::${AWS::AccountId}:user/*'
+
   LaunchTemplate:
     Type: 'AWS::EC2::LaunchTemplate'
     Metadata:
       'AWS::CloudFormation::Init':
         configSets:
-          default: !If [HasIAMUserSSHAccess, [awslogs, ssh-access, config], [awslogs, config]]
+          default: [awslogs, config]
         awslogs:
           packages:
             yum:
@@ -332,70 +260,6 @@ Resources:
                 files:
                 - '/etc/awslogs/awslogs.conf'
                 - '/etc/awslogs/awscli.conf'
-        ssh-access:
-          files:
-            '/opt/authorized_keys_command.sh':
-              content: |
-                #!/bin/bash -e
-                if [ -z "$1" ]; then
-                  exit 1
-                fi
-                UnsaveUserName="$1"
-                UnsaveUserName=${UnsaveUserName//".plus."/"+"}
-                UnsaveUserName=${UnsaveUserName//".equal."/"="}
-                UnsaveUserName=${UnsaveUserName//".comma."/","}
-                UnsaveUserName=${UnsaveUserName//".at."/"@"}
-                aws iam list-ssh-public-keys --user-name "$UnsaveUserName" --query "SSHPublicKeys[?Status == 'Active'].[SSHPublicKeyId]" --output text | while read -r KeyId; do
-                  aws iam get-ssh-public-key --user-name "$UnsaveUserName" --ssh-public-key-id "$KeyId" --encoding SSH --query "SSHPublicKey.SSHPublicKeyBody" --output text
-                done
-              mode: '000755'
-              owner: root
-              group: root
-            '/opt/import_users.sh':
-              content: |
-                #!/bin/bash -e
-                aws iam list-users --query "Users[].[UserName]" --output text | while read User; do
-                  SaveUserName="$User"
-                  SaveUserName=${SaveUserName//"+"/".plus."}
-                  SaveUserName=${SaveUserName//"="/".equal."}
-                  SaveUserName=${SaveUserName//","/".comma."}
-                  SaveUserName=${SaveUserName//"@"/".at."}
-                  if [ "${#SaveUserName}" -le "32" ]; then
-                    if ! id -u "$SaveUserName" > /dev/null 2>&1; then
-                      # don't grant sudo rights on bastion host!
-                      /usr/sbin/useradd "$SaveUserName"
-                    fi
-                  else
-                    echo "Can not import IAM user ${SaveUserName}. User name is longer than 32 characters."
-                  fi
-                done
-              mode: '000755'
-              owner: root
-              group: root
-            '/etc/cron.d/import_users':
-              content: |
-                */10 * * * * root /opt/import_users.sh
-              mode: '000644'
-              owner: root
-              group: root
-          commands:
-            'a_configure_sshd_command':
-              command: 'sed -e ''/AuthorizedKeysCommand / s/^#*/#/'' -i /etc/ssh/sshd_config; echo -e ''\nAuthorizedKeysCommand /opt/authorized_keys_command.sh'' >> /etc/ssh/sshd_config'
-              test: '! grep -q ''^AuthorizedKeysCommand /opt/authorized_keys_command.sh'' /etc/ssh/sshd_config'
-            'b_configure_sshd_commanduser':
-              command: 'sed -e ''/AuthorizedKeysCommandUser / s/^#*/#/'' -i /etc/ssh/sshd_config; echo -e ''\nAuthorizedKeysCommandUser nobody'' >> /etc/ssh/sshd_config'
-              test: '! grep -q ''^AuthorizedKeysCommandUser nobody'' /etc/ssh/sshd_config'
-            'c_import_users':
-              command: './import_users.sh'
-              cwd: '/opt'
-          services:
-            sysvinit:
-              sshd:
-                enabled: true
-                ensureRunning: true
-                commands:
-                - 'a_configure_sshd_command'
-                - 'b_configure_sshd_commanduser'
         config:
           packages:
             yum:
@@ -429,6 +293,7 @@ Resources:
                 enabled: !If [HasSystemsManagerAccess, true, false]
                 ensureRunning: !If [HasSystemsManagerAccess, true, false]
     Properties:
+      LaunchTemplateName: !Sub '${StackName}-bastion-launchTemplate-${Env}'
       LaunchTemplateData:
         BlockDeviceMappings:
         - DeviceName: '/dev/xvda'
@@ -437,8 +302,8 @@ Resources:
             VolumeType: gp3
         IamInstanceProfile:
           Name: !Ref InstanceProfile
-        ImageId: !FindInMap [RegionMap, !Ref 'AWS::Region', AMI]
-        InstanceType: !Ref InstanceType
+        ImageId: !Ref BastionAMIOS
+        InstanceType: !Ref BastionInstanceType
         KeyName: !If [HasKeyName, !Ref KeyName, !Ref 'AWS::NoValue']
         MetadataOptions:
           HttpTokens: required
@@ -461,7 +326,7 @@ Resources:
       LaunchTemplate:
         LaunchTemplateId: !Ref LaunchTemplate
         Version: !GetAtt 'LaunchTemplate.LatestVersionNumber'
-      MaxSize: '1'
+      MaxSize: !Ref NumBastionHosts
       MinSize: '1'
       Tags:
       - Key: Name
@@ -501,7 +366,7 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       Threshold: 80
       AlarmActions:
-      - {'Fn::ImportValue': !Sub '${StackName}-ChatBotSNSTopicName-${Env}'}
+      - {'Fn::ImportValue': !Sub '${StackName}-ChatBotSNSTopicARN-${Env}'}
       Dimensions:
       - Name: AutoScalingGroupName
         Value: !Ref AutoScalingGroup
