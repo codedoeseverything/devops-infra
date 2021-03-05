@@ -1,5 +1,19 @@
 #Blacklisted Rules ID here
 ---
 RulesToSuppress:
-- id: W3
-  reason: W3 is something we never care about at enterprise X
+- id: W84
+  reason: CloudWatchLogs LogGroup should specify a KMS Key Id to encrypt the log data
+- id: W66
+  reason: "(W66) To avoid opening all ports for Allow rules, EC2 NetworkACL Entry Protocol should be either 6 (for TCP), 17 (for UDP), 1 (for ICMP), or 58 (for ICMPv6, which must include an IPv6 CIDR block, ICMP type, and code)."
+- id: W33
+  reason: "(W33) EC2 Subnet should not have MapPublicIpOnLaunch set to true"
+- id: W60
+  reason: "VPC should have a flow log attached"
+- id: W12
+  reason: "IAM policy should not allow * resource"
+- id: F3
+  reason: "IAM role should not allow * action on its permissions policy"
+- id: W11
+  reason: "IAM role should not allow * resource on its permissions policy"
+- id: F1000
+  reason: "Missing egress rule means all traffic is allowed outbound.  Make this explicit if it is desired configuration"

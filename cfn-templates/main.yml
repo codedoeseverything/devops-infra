@@ -66,6 +66,7 @@ Parameters:
     Description: CIDR IP range that is permitted to access the bastions. We recommend
       that you set this value to a trusted IP range.
     Type: String
+    Default: 0.0.0.0/0
   NumBastionHosts:
     AllowedValues:
       - '1'
@@ -89,7 +90,7 @@ Parameters:
     Description: 'Optional key pair of the ec2-user to establish a SSH connection to the SSH bastion host/instance.'
     Type: AWS::EC2::KeyPair::KeyName
     Default: ''
-  VPCInterfaceServiceName:
+  VPCInterfaceServiceName1:
     Description: 'The name of the service supported for VPC interface endpoint'
     Type: String
   CreateChatBotStackCondition:
@@ -129,6 +130,7 @@ Conditions:
 
 
 Resources:
+
   VPCStack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -138,6 +140,7 @@ Resources:
         Env: !Ref 'Env'
         NumberOfAZs: !Ref 'NumberOfAZs'
         ClassB: !Ref 'ClassB'
+
   SecurityGroupStack:
     DependsOn: [VPCStack]
     Type: AWS::CloudFormation::Stack
@@ -147,6 +150,7 @@ Resources:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
         DefaultRouteAccess: !Ref 'DefaultRouteAccess'
+
   # SNSSlackAlertStack:
   #   DependsOn: [VPCStack]
   #   Type: AWS::CloudFormation::Stack
@@ -155,6 +159,7 @@ Resources:
   #     Parameters:
   #       StackName: !Ref 'StackName'
   #       Env: !Ref 'Env'
+
   # BastionServerStack:
   #   DependsOn: [VPCStack, SecurityGroupStack, SNSSlackAlertStack]
   #   Type: AWS::CloudFormation::Stack
@@ -166,6 +171,7 @@ Resources:
   #       KeyName: !Ref 'KeyName'
   #       NumBastionHosts: !Ref 'NumBastionHosts'
   #       BastionInstanceType: !Ref 'BastionInstanceType'
+
   # NATGatewayStack:
   #   Condition: CreateNATGatewayStackCondition
   #   DependsOn: [VPCStack]
@@ -176,6 +182,7 @@ Resources:
   #       StackName: !Ref 'StackName'
   #       Env: !Ref 'Env'
   #       NumberOfAZs: !Ref 'NumberOfAZs'
+
   # NATGatewayAlarmStack:
   #   Condition: CreateNATGatewayStackCondition
   #   DependsOn: [NATGatewayStack, SNSSlackAlertStack]
@@ -186,6 +193,7 @@ Resources:
   #       StackName: !Ref 'StackName'
   #       Env: !Ref 'Env'
   #       NumberOfAZs: !Ref 'NumberOfAZs'
+
   # AWSChatBotSlackStack:
   #   Condition: CreateChatBotStackCondition
   #   DependsOn: [SNSSlackAlertStack]
@@ -199,6 +207,7 @@ Resources:
   #       ChatBotLoggingLevel: !Ref 'ChatBotLoggingLevel'
   #       SlackChannelId: !Ref 'SlackChannelId'
   #       SlackWorkspaceId: !Ref 'SlackWorkspaceId'  
+  
   # VPCEndpointInterfaceStack:
   #   DependsOn: [VPCStack, SecurityGroupStack]
   #   Type: AWS::CloudFormation::Stack
@@ -207,6 +216,6 @@ Resources:
   #     Parameters:
   #       StackName: !Ref 'StackName'
   #       Env: !Ref 'Env'
-  #       VPCInterfaceServiceName: !Ref 'VPCInterfaceServiceName'
+  #       VPCInterfaceServiceName1: !Ref 'VPCInterfaceServiceName1'
  
         

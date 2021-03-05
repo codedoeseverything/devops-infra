@@ -26,7 +26,7 @@ Parameters:
       - sandbox
       - stage
       - live
-  VPCInterfaceServiceName:
+  VPCInterfaceServiceName1:
     Description: 'The name of the service supported for VPC interface endpoint'
     Type: String
     AllowedValues: # generate list with aws --region us-east-1 ec2 describe-vpc-endpoint-services --query 'ServiceDetails[].ServiceName'
@@ -109,7 +109,7 @@ Resources:
       PrivateDnsEnabled: true
       SecurityGroupIds: 
         - {'Fn::ImportValue': !Sub '${StackName}-VPCEndpointClientSecurityGroup-${Env}'}
-      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.${VPCInterfaceServiceName}'
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.${VPCInterfaceServiceName1}'
       SubnetIds: !Split [',', {'Fn::ImportValue': !Sub '${StackName}-SubnetsPrivate-${Env}'}]
       VpcEndpointType: Interface
       VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}

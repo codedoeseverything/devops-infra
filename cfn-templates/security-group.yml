@@ -45,7 +45,7 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: A client security group for RDS DB instance
-      GroupName: !Sub '${StackName}-DBClientSecurityGroup-${Env}'
+      # # GroupName: !Sub '${StackName}-DBClientSecurityGroup-${Env}'
       VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
       Tags:
         - Key: Name
@@ -68,7 +68,7 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: A server security group for RDS DB instance
-      GroupName: !Sub '${StackName}-DBServerSecurityGroup-${Env}'
+      # GroupName: !Sub '${StackName}-DBServerSecurityGroup-${Env}'
       VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -91,7 +91,7 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: A client security group for Cache DB instance
-      GroupName: !Sub '${StackName}-CacheClientSecurityGroup-${Env}'
+      # GroupName: !Sub '${StackName}-CacheClientSecurityGroup-${Env}'
       VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
       Tags:
         - Key: Name
@@ -114,7 +114,7 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: A server security group for Cache DB instance
-      GroupName: !Sub '${StackName}-CacheServerSecurityGroup-${Env}'
+      # GroupName: !Sub '${StackName}-CacheServerSecurityGroup-${Env}'
       VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -142,7 +142,7 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: A client security group for ALB
-      GroupName: !Sub '${StackName}-ALBPublicSecurityGroup-${Env}'
+      # GroupName: !Sub '${StackName}-ALBPublicSecurityGroup-${Env}'
       VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -178,7 +178,7 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: A server security group for ECS EC2 instance
-      GroupName: !Sub '${StackName}-ECSServerSecurityGroup-${Env}'
+      # GroupName: !Sub '${StackName}-ECSServerSecurityGroup-${Env}'
       VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -211,7 +211,7 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: A security group for bastion linux machine.
-      GroupName: !Sub '${StackName}-BastionSecurityGroup-${Env}'
+      # GroupName: !Sub '${StackName}-BastionSecurityGroup-${Env}'
       SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 22
@@ -243,7 +243,7 @@ Resources:
   VPCEndpointClientSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub '${StackName}-VPCEndpointClientSecurityGroup-${Env}'
+      # GroupName: !Sub '${StackName}-VPCEndpointClientSecurityGroup-${Env}'
       GroupDescription: A client security group for SNS Endpoint Interface
       VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
       Tags:

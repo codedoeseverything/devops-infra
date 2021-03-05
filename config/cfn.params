@@ -1,12 +1,10 @@
 ClassB=0
 NumberOfAZs=3
-DefaultRouteAccess=0.0.0.0/0
 NumBastionHosts=1
 BastionInstanceType=t2.nano
-VPCInterfaceServiceName=sns
-CreateChatBotStackCondition=false
-CreateNATGatewayStackCondition=true     
-ChatBotConfigurationName=AWSSlackNotifyStagingEnv
-ChatBotLoggingLevel=INFO
+DefaultRouteAccess=0.0.0.0/0
+VPCInterfaceServiceName1=sns
 SlackChannelId=C01NPT2PTMG
 SlackWorkspaceId=T01NQ3FPC7M
+CreateChatBotStackCondition=false
+CreateNATGatewayStackCondition=true

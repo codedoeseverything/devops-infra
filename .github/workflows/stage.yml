@@ -26,6 +26,7 @@ jobs:
       SUBDOMAIN: devops-infra
       CFNS3BucketName: devops-cfn-templates1
       S3BucketNameKeyPair: devops-ec2-keypair1
+      LOGGING_LEVEL: INFO  #ERROR, INFO, or NONE.
 
     # Steps to execute in this job
     steps:
@@ -78,6 +79,8 @@ jobs:
           KeyName=${{ env.STACK_NAME }}-${{ env.REGION }}
           CFNS3BucketName=${{ env.CFNS3BucketName }}
           CFNS3BucketRegion=ap-southeast-2
+          ChatBotConfigurationName=${{ env.STACK_NAME }}-ChatBotSlackNotify-${{ env.ENV }}
+          ChatBotLoggingLevel=${{ env.LOGGING_LEVEL }}
           EOF
 
       

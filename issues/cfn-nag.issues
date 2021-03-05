@@ -2,52 +2,8 @@
   {
     "filename": "cfn-templates/bastion.yml",
     "file_results": {
-      "failure_count": 1,
+      "failure_count": 0,
       "violations": [
-        {
-          "id": "W12",
-          "type": "WARN",
-          "message": "IAM policy should not allow * resource",
-          "logical_resource_ids": [
-            "IAMPolicySSHAccess"
-          ],
-          "line_numbers": [
-            149
-          ]
-        },
-        {
-          "id": "F3",
-          "type": "FAIL",
-          "message": "IAM role should not allow * action on its permissions policy",
-          "logical_resource_ids": [
-            "IAMRole"
-          ],
-          "line_numbers": [
-            100
-          ]
-        },
-        {
-          "id": "W11",
-          "type": "WARN",
-          "message": "IAM role should not allow * resource on its permissions policy",
-          "logical_resource_ids": [
-            "IAMRole"
-          ],
-          "line_numbers": [
-            100
-          ]
-        },
-        {
-          "id": "W84",
-          "type": "WARN",
-          "message": "CloudWatchLogs LogGroup should specify a KMS Key Id to encrypt the log data",
-          "logical_resource_ids": [
-            "Logs"
-          ],
-          "line_numbers": [
-            89
-          ]
-        },
         {
           "id": "W28",
           "type": "WARN",
@@ -135,63 +91,7 @@
     "file_results": {
       "failure_count": 0,
       "violations": [
-        {
-          "id": "W66",
-          "type": "WARN",
-          "message": "To avoid opening all ports for Allow rules, EC2 NetworkACL Entry Protocol should be either 6 (for TCP), 17 (for UDP), 1 (for ICMP), or 58 (for ICMPv6, which must include an IPv6 CIDR block, ICMP type, and code).",
-          "logical_resource_ids": [
-            "NetworkAclEntryInPublicAllowAll",
-            "NetworkAclEntryInPublicAllowAllIPv6",
-            "NetworkAclEntryOutPublicAllowAll",
-            "NetworkAclEntryOutPublicAllowAllIPv6",
-            "NetworkAclEntryInPrivateAllowAll",
-            "NetworkAclEntryInPrivateAllowAllIPv6",
-            "NetworkAclEntryOutPrivateAllowAll",
-            "NetworkAclEntryOutPrivateAllowAllIPv6"
-          ],
-          "line_numbers": [
-            703,
-            712,
-            721,
-            730,
-            739,
-            748,
-            757,
-            766
-          ]
-        },
-        {
-          "id": "W33",
-          "type": "WARN",
-          "message": "EC2 Subnet should not have MapPublicIpOnLaunch set to true",
-          "logical_resource_ids": [
-            "SubnetAPublic",
-            "SubnetBPublic",
-            "SubnetCPublic",
-            "SubnetDPublic",
-            "SubnetEPublic",
-            "SubnetFPublic"
-          ],
-          "line_numbers": [
-            127,
-            158,
-            189,
-            220,
-            251,
-            282
-          ]
-        },
-        {
-          "id": "W60",
-          "type": "WARN",
-          "message": "VPC should have a flow log attached",
-          "logical_resource_ids": [
-            "VPC"
-          ],
-          "line_numbers": [
-            95
-          ]
-        }
+
       ]
     }
   },
@@ -227,11 +127,11 @@
             45,
             68,
             91,
-            115,
-            143,
-            180,
-            213,
-            246
+            114,
+            142,
+            178,
+            211,
+            244
           ]
         },
         {
@@ -243,8 +143,8 @@
             "BastionSecurityGroup"
           ],
           "line_numbers": [
-            143,
-            213
+            142,
+            211
           ]
         },
         {
@@ -256,8 +156,8 @@
             "BastionSecurityGroup"
           ],
           "line_numbers": [
-            143,
-            213
+            142,
+            211
           ]
         },
         {
@@ -274,9 +174,9 @@
           "line_numbers": [
             45,
             91,
-            143,
-            180,
-            246
+            142,
+            178,
+            244
           ]
         },
         {
@@ -297,11 +197,11 @@
             45,
             68,
             91,
-            115,
-            143,
-            180,
-            213,
-            246
+            114,
+            142,
+            178,
+            211,
+            244
           ]
         },
         {
@@ -317,8 +217,8 @@
           "line_numbers": [
             57,
             103,
-            167,
-            256
+            166,
+            254
           ]
         }
       ]
@@ -361,17 +261,6 @@
     "file_results": {
       "failure_count": 0,
       "violations": [
-        {
-          "id": "W11",
-          "type": "WARN",
-          "message": "IAM role should not allow * resource on its permissions policy",
-          "logical_resource_ids": [
-            "ChatbotIamRole"
-          ],
-          "line_numbers": [
-            59
-          ]
-        },
         {
           "id": "W28",
           "type": "WARN",
