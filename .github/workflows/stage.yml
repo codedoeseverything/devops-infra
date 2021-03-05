@@ -12,7 +12,7 @@ on:
     
 
 #Jobs to perform based on event occurred
-
+ 
 jobs:
   release-stage:
     name: release-stage
