@@ -182,15 +182,6 @@ Resources:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
         NumberOfAZs: !Ref 'NumberOfAZs'
-  # VPCEndpointInterfaceStack:
-  #   DependsOn: [VPCStack, SecurityGroupStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/vpc-endpoints.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
-  #       VPCInterfaceServiceName: !Ref 'VPCInterfaceServiceName'
   NATGatewayAlarmStack:
     Condition: CreateNATGatewayStackCondition
     DependsOn: [NATGatewayStack, SNSSlackAlertStack]
@@ -201,18 +192,27 @@ Resources:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
         NumberOfAZs: !Ref 'NumberOfAZs'
-  # AWSChatBotSlackStack:
-  #   Condition: CreateChatBotStackCondition
-  #   DependsOn: [SNSSlackAlertStack]
+  AWSChatBotSlackStack:
+    Condition: CreateChatBotStackCondition
+    DependsOn: [SNSSlackAlertStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/chatbot.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        ChatBotConfigurationName: !Ref 'ChatBotConfigurationName'
+        ChatBotLoggingLevel: !Ref 'ChatBotLoggingLevel'
+        SlackChannelId: !Ref 'SlackChannelId'
+        SlackWorkspaceId: !Ref 'SlackWorkspaceId'  
+  # VPCEndpointInterfaceStack:
+  #   DependsOn: [VPCStack, SecurityGroupStack]
   #   Type: AWS::CloudFormation::Stack
   #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/chatbot.yml'
+  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/vpc-endpoints.yml'
   #     Parameters:
   #       StackName: !Ref 'StackName'
   #       Env: !Ref 'Env'
-  #       ChatBotConfigurationName: !Ref 'ChatBotConfigurationName'
-  #       ChatBotLoggingLevel: !Ref 'ChatBotLoggingLevel'
-  #       SlackChannelId: !Ref 'SlackChannelId'
-  #       SlackWorkspaceId: !Ref 'SlackWorkspaceId'  
+  #       VPCInterfaceServiceName: !Ref 'VPCInterfaceServiceName'
  
         
