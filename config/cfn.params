@@ -1,7 +1,7 @@
 ClassB=0
 NumberOfAZs=3
 DefaultRouteAccess=0.0.0.0/0
-NumBastionHosts=1
+NumBastionHosts=2
 BastionAMIOS=/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
 BastionInstanceType=t2.nano
 VPCInterfaceServiceName=sns
