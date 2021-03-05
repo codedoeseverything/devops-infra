@@ -256,7 +256,7 @@ Resources:
                 ensureRunning: true
                 packages:
                   yum:
-                  - awslogs
+                  - us-east-1 # awslogs
                 files:
                 - '/etc/awslogs/awslogs.conf'
                 - '/etc/awslogs/awscli.conf'
@@ -314,12 +314,13 @@ Resources:
           - {'Fn::ImportValue': !Sub '${StackName}-BastionSecurityGroupID-${Env}'}
         UserData:
           'Fn::Base64': !Sub |
-            #!/bin/bash -ex
+            #!/bin/bash -xe
+            yum update -y aws-cfn-bootstrap
+            /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource AutoScalingGroup --region ${AWS::Region}
             trap '/opt/aws/bin/cfn-signal -e 1 --stack ${AWS::StackName} --resource AutoScalingGroup --region ${AWS::Region}' ERR
             TOKEN=$(curl --silent --max-time 60 -X PUT http://169.254.169.254/latest/api/token -H "X-aws-ec2-metadata-token-ttl-seconds: 30")
             INSTANCEID=$(curl --silent --max-time 60 -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-id)
             /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource LaunchTemplate --region ${AWS::Region}
-            /opt/aws/bin/cfn-signal -e 0 --stack ${AWS::StackName} --resource AutoScalingGroup --region ${AWS::Region}
   AutoScalingGroup:
     Type: 'AWS::AutoScaling::AutoScalingGroup'
     Properties:
@@ -343,7 +344,7 @@ Resources:
     CreationPolicy:
       ResourceSignal:
         Count: 1
-        Timeout: PT10M
+        Timeout: PT15M
     UpdatePolicy:
       AutoScalingRollingUpdate:
         PauseTime: PT10M
