@@ -473,7 +473,7 @@ Resources:
       - NotificationTypes:
         - 'autoscaling:EC2_INSTANCE_LAUNCH_ERROR'
         - 'autoscaling:EC2_INSTANCE_TERMINATE_ERROR'
-        TopicARN: {'Fn::ImportValue': !Sub '${StackName}-ChatBotSNSTopicName-${Env}'}
+        TopicARN: {'Fn::ImportValue': !Sub '${StackName}-ChatBotSNSTopicARN-${Env}'}
       VPCZoneIdentifier: !Split [',', {'Fn::ImportValue': !Sub '${StackName}-SubnetsPublic-${Env}'}]
     CreationPolicy:
       ResourceSignal:
