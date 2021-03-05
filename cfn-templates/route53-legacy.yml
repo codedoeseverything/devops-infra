@@ -1,28 +1,31 @@
----
-# Copyright 2018 widdix GmbH
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'VPC: legacy DNS zone, a cloudonaut.io template'
+Description: This is Route53 Legacy cloudformation template for core Practera infrastructure
+  design.
 Metadata:
-  'AWS::CloudFormation::Interface':
-    ParameterGroups:
-    - Label:
-        default: 'Zone Parameters'
-      Parameters:
-      - HostedZoneName
-      - HostedZoneId
+  Authors:
+    Description: Sunil and Mihai (sunil@practera.com/mihai@practera.com) based on
+      AWS quickstart/widdix and best practise.
+  License:
+    Description: Copyright 2020 Intersective PTY LTD and its affiliates. All Rights
+      Reserved.
+
 Parameters:
+  StackName:
+    ConstraintDescription: This will be unique string to represent our stack.
+    Default: beta
+    Description: A client/project/product unique name for the stack to idnetify later.
+      This string can include numbers, lowercase letters, uppercase letters, and hyphens
+      (-). It cannot start or end with a hyphen (-).
+    Type: String
+    AllowedValues: [au,us,uk,p2,lf,nu,alpha,beta]
+  Env:
+    Description: Environment type.
+    Default: stage
+    Type: String
+    AllowedValues:
+      - sandbox
+      - stage
+      - live
   HostedZoneName:
     Description: 'The name of the hosted zone.'
     Type: String
@@ -36,12 +39,6 @@ Resources:
     Type: 'Custom::NullResource'
     Condition: HasNot
 Outputs:
-  TemplateID:
-    Description: 'cloudonaut.io template id.'
-    Value: 'vpc/zone-legacy'
-  TemplateVersion:
-    Description: 'cloudonaut.io template version.'
-    Value: '__VERSION__'
   StackName:
     Description: 'Stack name.'
     Value: !Sub '${AWS::StackName}'
@@ -49,9 +46,9 @@ Outputs:
     Description: 'The name of the hosted zone.'
     Value: !Ref HostedZoneName
     Export:
-      Name: !Sub '${AWS::StackName}-HostedZoneName'
+      Name: !Sub '${StackName}-HostedZoneName-${Env}'
   HostedZoneId:
     Description: 'The ID of the hosted zone.'
     Value: !Ref HostedZoneId
     Export:
-      Name: !Sub '${AWS::StackName}-HostedZoneId'
+      Name: !Sub '${StackName}-HostedZoneId-${Env}'
