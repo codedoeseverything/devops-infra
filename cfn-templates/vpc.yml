@@ -116,6 +116,9 @@ Resources:
     Type: 'AWS::EC2::EgressOnlyInternetGateway'
     Properties:
       VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-egress-igw-${Env}'
   VPCGatewayAttachment:
     Type: 'AWS::EC2::VPCGatewayAttachment'
     Properties:
