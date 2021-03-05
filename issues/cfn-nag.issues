@@ -5,6 +5,17 @@
       "failure_count": 1,
       "violations": [
         {
+          "id": "W12",
+          "type": "WARN",
+          "message": "IAM policy should not allow * resource",
+          "logical_resource_ids": [
+            "IAMPolicySSHAccess"
+          ],
+          "line_numbers": [
+            149
+          ]
+        },
+        {
           "id": "F3",
           "type": "FAIL",
           "message": "IAM role should not allow * action on its permissions policy",
@@ -12,7 +23,7 @@
             "IAMRole"
           ],
           "line_numbers": [
-            91
+            100
           ]
         },
         {
@@ -23,7 +34,7 @@
             "IAMRole"
           ],
           "line_numbers": [
-            91
+            100
           ]
         },
         {
@@ -34,7 +45,7 @@
             "Logs"
           ],
           "line_numbers": [
-            80
+            89
           ]
         },
         {
@@ -45,14 +56,32 @@
             "IAMRole"
           ],
           "line_numbers": [
-            91
+            100
           ]
         }
       ]
     }
   },
   {
+    "filename": "cfn-templates/route53-private.yml",
+    "file_results": {
+      "failure_count": 0,
+      "violations": [
+
+      ]
+    }
+  },
+  {
     "filename": "cfn-templates/vpc-endpoints.yml",
+    "file_results": {
+      "failure_count": 0,
+      "violations": [
+
+      ]
+    }
+  },
+  {
+    "filename": "cfn-templates/route53-public.yml",
     "file_results": {
       "failure_count": 0,
       "violations": [
@@ -94,8 +123,8 @@
           ],
           "line_numbers": [
             85,
-            107,
-            128
+            132,
+            179
           ]
         }
       ]
@@ -167,6 +196,15 @@
     }
   },
   {
+    "filename": "cfn-templates/route53-legacy.yml",
+    "file_results": {
+      "failure_count": 0,
+      "violations": [
+
+      ]
+    }
+  },
+  {
     "filename": "cfn-templates/security-group.yml",
     "file_results": {
       "failure_count": 8,
@@ -187,13 +225,13 @@
           ],
           "line_numbers": [
             45,
-            69,
-            92,
-            116,
-            144,
-            181,
-            214,
-            247
+            68,
+            91,
+            115,
+            143,
+            180,
+            213,
+            246
           ]
         },
         {
@@ -205,8 +243,8 @@
             "BastionSecurityGroup"
           ],
           "line_numbers": [
-            144,
-            214
+            143,
+            213
           ]
         },
         {
@@ -218,8 +256,8 @@
             "BastionSecurityGroup"
           ],
           "line_numbers": [
-            144,
-            214
+            143,
+            213
           ]
         },
         {
@@ -235,10 +273,10 @@
           ],
           "line_numbers": [
             45,
-            92,
-            144,
-            181,
-            247
+            91,
+            143,
+            180,
+            246
           ]
         },
         {
@@ -257,13 +295,13 @@
           ],
           "line_numbers": [
             45,
-            69,
-            92,
-            116,
-            144,
-            181,
-            214,
-            247
+            68,
+            91,
+            115,
+            143,
+            180,
+            213,
+            246
           ]
         },
         {
@@ -278,9 +316,9 @@
           ],
           "line_numbers": [
             57,
-            104,
-            168,
-            257
+            103,
+            167,
+            256
           ]
         }
       ]

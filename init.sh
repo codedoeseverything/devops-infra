@@ -4,7 +4,7 @@ mkdir -p issues cfn-flip-output docs/cfn-param-info images/graph images/arch
 CFN_TEMPLATES=$(ls -l cfn-templates| awk '{print $9}')
 
 echo "Run cloudformation template Lint test"
-cfn-lint -t '**/*.yml' > issues/cfn-lint.issues
+cfn-lint -i W2001 -t '**/*.yml' > issues/cfn-lint.issues
 
 echo "Run cloudformation template static analysis test"
 python3 scripts/cfn-nag-param-json-convert.py config/cfn.params
