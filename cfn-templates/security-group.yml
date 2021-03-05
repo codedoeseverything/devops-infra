@@ -61,6 +61,7 @@ Resources:
       IpProtocol: tcp
       FromPort: 0
       ToPort: 65535
+      Description: !Sub 'To allow all ports from within DBClientSecurityGroup id, ${DBClientSecurityGroup}'
       SourceSecurityGroupId:
         Ref: DBClientSecurityGroup
 
@@ -107,6 +108,7 @@ Resources:
       IpProtocol: tcp
       FromPort: 0
       ToPort: 65535
+      Description: !Sub 'To allow all ports from within CacheClientSecurityGroup id, ${CacheClientSecurityGroup}'
       SourceSecurityGroupId:
         Ref: CacheClientSecurityGroup
 
@@ -170,6 +172,7 @@ Resources:
       IpProtocol: tcp
       FromPort: 0
       ToPort: 65535
+      Description: !Sub 'To allow all ports from within ALBPublicSecurityGroup id, ${ALBPublicSecurityGroup}'
       SourceSecurityGroupId:
         Ref: ALBPublicSecurityGroup
 
@@ -258,6 +261,7 @@ Resources:
       IpProtocol: tcp
       FromPort: 0
       ToPort: 65535
+      Description: !Sub 'To allow all ports from within VPCEndpointClientSecurityGroup id, ${VPCEndpointClientSecurityGroup}'
       SourceSecurityGroupId:
         Ref: VPCEndpointClientSecurityGroup
 
