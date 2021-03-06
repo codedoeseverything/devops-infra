@@ -85,11 +85,17 @@ Resources:
     Condition: 1AZCondition
     Type: 'AWS::EC2::EIP'
     Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-EIPA-${Env}'
       Domain: vpc
   NatGatewayA:
     Condition: 1AZCondition
     Type: 'AWS::EC2::NatGateway'
     Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-NatGatewayA-${Env}'
       AllocationId: !GetAtt 'EIPA.AllocationId'
       SubnetId: {'Fn::ImportValue': !Sub '${StackName}-SubnetAPublic-${Env}'}
   RouteA:
@@ -103,11 +109,17 @@ Resources:
     Condition: 2AZCondition
     Type: 'AWS::EC2::EIP'
     Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-EIPB-${Env}'
       Domain: vpc
   NatGatewayB:
     Condition: 2AZCondition
     Type: 'AWS::EC2::NatGateway'
     Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-NatGatewayB-${Env}'
       AllocationId: !GetAtt 'EIPB.AllocationId'
       SubnetId: {'Fn::ImportValue': !Sub '${StackName}-SubnetBPublic-${Env}'}
   RouteB:
@@ -121,11 +133,17 @@ Resources:
     Condition: 3AZCondition
     Type: 'AWS::EC2::EIP'
     Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-EIPC-${Env}'
       Domain: vpc
   NatGatewayC:
     Condition: 3AZCondition
     Type: 'AWS::EC2::NatGateway'
     Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-NatGatewayC-${Env}'
       AllocationId: !GetAtt 'EIPC.AllocationId'
       SubnetId: {'Fn::ImportValue': !Sub '${StackName}-SubnetCPublic-${Env}'}
   RouteC:
@@ -139,11 +157,17 @@ Resources:
     Condition: 4AZCondition
     Type: 'AWS::EC2::EIP'
     Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-EIPD-${Env}'
       Domain: vpc
   NatGatewayD:
     Condition: 4AZCondition
     Type: 'AWS::EC2::NatGateway'
     Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-NatGatewayD-${Env}'
       AllocationId: !GetAtt 'EIPD.AllocationId'
       SubnetId: {'Fn::ImportValue': !Sub '${StackName}-SubnetDPublic-${Env}'}
   RouteD:
@@ -157,11 +181,17 @@ Resources:
     Condition: 5AZCondition
     Type: 'AWS::EC2::EIP'
     Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-EIPE-${Env}'
       Domain: vpc
   NatGatewayE:
     Condition: 5AZCondition
     Type: 'AWS::EC2::NatGateway'
     Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-NatGatewayE-${Env}'
       AllocationId: !GetAtt 'EIPE.AllocationId'
       SubnetId: {'Fn::ImportValue': !Sub '${StackName}-SubnetEPublic-${Env}'}
   RouteE:
@@ -175,11 +205,17 @@ Resources:
     Condition: 6AZCondition
     Type: 'AWS::EC2::EIP'
     Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-EIPF-${Env}'
       Domain: vpc
   NatGatewayF:
     Condition: 6AZCondition
     Type: 'AWS::EC2::NatGateway'
     Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackName}-NatGatewayF-${Env}'
       AllocationId: !GetAtt 'EIPF.AllocationId'
       SubnetId: {'Fn::ImportValue': !Sub '${StackName}-SubnetFPublic-${Env}'}
   RouteF:

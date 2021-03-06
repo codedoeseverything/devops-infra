@@ -107,6 +107,13 @@ Parameters:
     Default: 'false'
     Description: Set to false to not create AWS NATGatewayStack
     Type: String
+  CreateVPCEndpointStackCondition:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Set to false to not create AWS NATGatewayStack
+    Type: String
   ChatBotConfigurationName:
     Description: A Slack Configuration Name
     Type: String
@@ -126,6 +133,9 @@ Conditions:
       - 'true'
   CreateNATGatewayStackCondition: !Equals
       - !Ref 'CreateNATGatewayStackCondition'
+      - 'true'
+  CreateVPCEndpointStackCondition: !Equals
+      - !Ref 'CreateVPCEndpointStackCondition'
       - 'true'
 
 
@@ -213,7 +223,8 @@ Resources:
         NumberOfAZs: !Ref 'NumberOfAZs'
  
   
-  VPCEndpointInterfaceStack:
+  SNSEndpointInterfaceStack:
+    Condition: CreateVPCEndpointStackCondition
     DependsOn: [VPCStack, SecurityGroupStack]
     Type: AWS::CloudFormation::Stack
     Properties:
