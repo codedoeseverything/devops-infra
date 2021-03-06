@@ -6,5 +6,5 @@ DefaultRouteAccess=0.0.0.0/0
 VPCInterfaceServiceName1=sns
 SlackChannelId=C01NPT2PTMG
 SlackWorkspaceId=T01NQ3FPC7M
-CreateChatBotStackCondition=false
+CreateChatBotStackCondition=true
 CreateNATGatewayStackCondition=true
