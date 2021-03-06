@@ -151,14 +151,14 @@ Resources:
         Env: !Ref 'Env'
         DefaultRouteAccess: !Ref 'DefaultRouteAccess'
 
-  # SNSSlackAlertStack:
-  #   DependsOn: [VPCStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/sns-slack.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
+  SNSSlackAlertStack:
+    DependsOn: [VPCStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/sns-slack.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
 
   # BastionServerStack:
   #   DependsOn: [VPCStack, SecurityGroupStack, SNSSlackAlertStack]
