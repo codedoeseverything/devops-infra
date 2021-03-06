@@ -1,7 +1,7 @@
 #!/bin/bash 
 
-rm -rf issues cfn-flip-output docs/cfn-param-info images/graph images/arch
-mkdir -p issues cfn-flip-output docs/cfn-param-info images/graph images/arch
+rm -rf issues docs/cfn-param-info images/graph images/arch
+mkdir -p issues docs/cfn-param-info images/graph images/arch
 CFN_TEMPLATES=$(ls -l cfn-templates| awk '{print $9}')
 
 echo "Run cloudformation template Lint test"
@@ -12,10 +12,10 @@ python3 scripts/cfn-nag-param-json-convert.py config/cfn.params
 cfn_nag_scan -i cfn-templates -o json --parameter-values-path=cfn-nag-params.json --blacklist-path .cfn_nag_blacklist.yml >issues/cfn-nag.issues
 rm cfn-nag-params.json
 
-for i in $CFN_TEMPLATES ; do
-  echo "Performing cloudformation template formatting for file name "$i
-  cfn-flip -n -c cfn-templates/$i > cfn-flip-output/$i
-done
+# for i in $CFN_TEMPLATES ; do
+#   echo "Performing cloudformation template formatting for file name "$i
+#   cfn-flip -n -c cfn-templates/$i > cfn-flip-output/$i
+# done
 
 for i in $CFN_TEMPLATES ; do
   echo "Generating cloudformation parameter info docs for file name "$i
