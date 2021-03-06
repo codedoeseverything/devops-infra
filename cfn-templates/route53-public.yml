@@ -31,7 +31,7 @@ Parameters:
     Type: String
 
 Resources:
-  HostedZone:
+  PublicHostedZone:
     Type: 'AWS::Route53::HostedZone'
     Properties:
       HostedZoneConfig:
@@ -52,11 +52,11 @@ Outputs:
       Name: !Sub '${StackName}-PublicHostedZoneName-${Env}'
   PublicHostedZoneId:
     Description: 'The ID of the hosted zone.'
-    Value: !Ref HostedZone
+    Value: !Ref PublicHostedZone
     Export:
       Name: !Sub '${StackName}-PublicHostedZoneId-${Env}'
   PublicHostedZoneNSRecord:
     Description: 'The Name Server record for Hosted Zone.'
-    Value:  !Join [',', !GetAtt HostedZone.NameServers]
+    Value:  !Join [',', !GetAtt PublicHostedZone.NameServers]
     Export:
       Name: !Sub '${StackName}-PublicHostedZoneNSRecord-${Env}'

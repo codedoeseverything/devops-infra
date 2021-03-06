@@ -26,43 +26,38 @@ Parameters:
       - sandbox
       - stage
       - live
-  HostedZoneName:
+  PrivateHostedZoneName:
     Description: 'The name of the existing hosted zone.'
     Type: String
 
 Resources:
-  HostedZone:
+  PrivateHostedZone:
     Type: 'AWS::Route53::HostedZone'
     Properties:
       HostedZoneConfig:
-        Comment: !Sub "${HostedZoneName} public DNS zone"
-      Name: !Ref HostedZoneName
+        Comment: !Sub "${PrivateHostedZoneName} private DNS zone"
+      Name: !Ref PrivateHostedZoneName
       VPCs:
       - VPCId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
         VPCRegion: !Ref 'AWS::Region'
       HostedZoneTags: 
       - 
         Key: 'Name'
-        Value: !Sub '${StackName}-${HostedZoneName}-${Env}'
+        Value: !Sub '${StackName}-${PrivateHostedZoneName}-${Env}'
 Outputs:
   StackName:
     Description: 'Stack name.'
     Value: !Sub '${AWS::StackName}'
-  HostedZoneName:
+  PrivateHostedZoneName:
     Description: 'The name of the hosted zone.'
-    Value: !Ref HostedZoneName
+    Value: !Ref PrivateHostedZoneName
     Export:
-      Name: !Sub '${StackName}-HostedZoneName-${Env}'
-  HostedZoneId:
+      Name: !Sub '${StackName}-PrivateHostedZoneName-${Env}'
+  PrivateHostedZoneID:
     Description: 'The ID of the hosted zone.'
-    Value: !Ref HostedZone
+    Value: !Ref PrivateHostedZone
     Export:
-      Name: !Sub '${StackName}-HostedZoneId-${Env}'
-  HostedZoneNSRecord:
-    Description: 'The Name Server record for Hosted Zone.'
-    Value:  !Join [',', !GetAtt HostedZone.NameServers]
-    Export:
-      Name: !Sub '${StackName}-HostedZoneNSRecord-${Env}'
+      Name: !Sub '${StackName}-PrivateHostedZoneID-${Env}'
 
 
 
