@@ -112,7 +112,14 @@ Parameters:
       - 'true'
       - 'false'
     Default: 'false'
-    Description: Set to false to not create AWS NATGatewayStack
+    Description: Set to false to not create VPC Endpoint
+    Type: String
+  Route53HostedZoneExist:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Set to false to create new Route 53 Hosted Zone
     Type: String
   ChatBotConfigurationName:
     Description: A Slack Configuration Name
@@ -126,6 +133,15 @@ Parameters:
   SlackWorkspaceId:
     Description: A Slack Workspace ID 
     Type: String
+  PublicHostedZoneName:
+    Description: 'The name of the existing hosted zone.'
+    Type: String
+  PrivateHostedZoneName:
+    Description: 'The name of the existing hosted zone.'
+    Type: String
+  PublicHostedZoneId:
+    Description: 'The ID of the existing hosted zone.'
+    Type: String
 
 Conditions:
   CreateChatBotStackCondition: !Equals
@@ -137,6 +153,12 @@ Conditions:
   CreateVPCEndpointStackCondition: !Equals
       - !Ref 'CreateVPCEndpointStackCondition'
       - 'true'
+  Route53HostedZoneExist: !Equals
+      - !Ref 'Route53HostedZoneExist'
+      - 'true'
+  Route53HostedZoneNotExist: !Equals
+      - !Ref 'Route53HostedZoneExist'
+      - 'false'
 
 
 Resources:
@@ -234,4 +256,39 @@ Resources:
         Env: !Ref 'Env'
         VPCInterfaceServiceName1: !Ref 'VPCInterfaceServiceName1'
  
+
+  
+  Route53LegacyStack:
+    Condition: Route53HostedZoneExist
+    DependsOn: [VPCStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/route53-legacy.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        PublicHostedZoneName: !Ref 'PublicHostedZoneName'
+        PublicHostedZoneId: !Ref 'PublicHostedZoneId'
+  
+
+  Route53PublicHostedZoneStack:
+    Condition: Route53HostedZoneNotExist
+    DependsOn: [VPCStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/route53-public.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        PublicHostedZoneName: !Ref 'PublicHostedZoneName'
+
+  Route53PrivateHostedZoneStack:
+    DependsOn: [VPCStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/route53-public.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        PublicHostedZoneName: !Ref 'PublicHostedZoneName'
         

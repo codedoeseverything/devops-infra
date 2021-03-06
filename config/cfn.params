@@ -9,3 +9,6 @@ SlackWorkspaceId=T01NQ3FPC7M
 CreateChatBotStackCondition=true
 CreateNATGatewayStackCondition=true
 CreateVPCEndpointStackCondition=false
+Route53HostedZoneExist=true
+PublicHostedZoneName=
+PrivateHostedZoneName=

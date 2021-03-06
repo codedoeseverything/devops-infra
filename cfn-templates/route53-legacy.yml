@@ -26,11 +26,11 @@ Parameters:
       - sandbox
       - stage
       - live
-  HostedZoneName:
-    Description: 'The name of the hosted zone.'
+  PublicHostedZoneName:
+    Description: 'The name of the existing hosted zone.'
     Type: String
-  HostedZoneId:
-    Description: 'The ID of the hosted zone.'
+  PublicHostedZoneId:
+    Description: 'The ID of the existing hosted zone.'
     Type: String
 Conditions:
   HasNot: !Equals ['true', 'false']
@@ -42,13 +42,13 @@ Outputs:
   StackName:
     Description: 'Stack name.'
     Value: !Sub '${AWS::StackName}'
-  HostedZoneName:
+  PublicHostedZoneName:
     Description: 'The name of the hosted zone.'
-    Value: !Ref HostedZoneName
+    Value: !Ref PublicHostedZoneName
     Export:
-      Name: !Sub '${StackName}-HostedZoneName-${Env}'
-  HostedZoneId:
+      Name: !Sub '${StackName}-PublicHostedZoneName-${Env}'
+  PublicHostedZoneId:
     Description: 'The ID of the hosted zone.'
-    Value: !Ref HostedZoneId
+    Value: !Ref PublicHostedZoneId
     Export:
-      Name: !Sub '${StackName}-HostedZoneId-${Env}'
+      Name: !Sub '${StackName}-PublicHostedZoneId-${Env}'
