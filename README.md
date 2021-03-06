@@ -1,4 +1,4 @@
-# Devops-INFRA-Resources 
+# Devops-INFRA-Resources   
 
 1. Cloudformation Parameters needs to be in below format-
 Keyname1=value1
