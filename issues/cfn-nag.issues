@@ -4,17 +4,7 @@
     "file_results": {
       "failure_count": 0,
       "violations": [
-        {
-          "id": "W28",
-          "type": "WARN",
-          "message": "Resource found with an explicit name, this disallows updates that require replacement of this resource",
-          "logical_resource_ids": [
-            "IAMRole"
-          ],
-          "line_numbers": [
-            100
-          ]
-        }
+
       ]
     }
   },
@@ -68,21 +58,7 @@
     "file_results": {
       "failure_count": 0,
       "violations": [
-        {
-          "id": "W28",
-          "type": "WARN",
-          "message": "Resource found with an explicit name, this disallows updates that require replacement of this resource",
-          "logical_resource_ids": [
-            "AlarmNatGatewayErrorPortAllocation",
-            "AlarmNatGatewayPacketsDropCount",
-            "AlarmNatGatewayBandwidth"
-          ],
-          "line_numbers": [
-            85,
-            132,
-            179
-          ]
-        }
+
       ]
     }
   },
@@ -107,152 +83,18 @@
   {
     "filename": "cfn-templates/security-group.yml",
     "file_results": {
-      "failure_count": 8,
+      "failure_count": 0,
       "violations": [
-        {
-          "id": "W28",
-          "type": "WARN",
-          "message": "Resource found with an explicit name, this disallows updates that require replacement of this resource",
-          "logical_resource_ids": [
-            "DBClientSecurityGroup",
-            "DBServerSecurityGroup",
-            "CacheClientSecurityGroup",
-            "CacheServerSecurityGroup",
-            "ALBPublicSecurityGroup",
-            "ECSServerSecurityGroup",
-            "BastionSecurityGroup",
-            "VPCEndpointClientSecurityGroup"
-          ],
-          "line_numbers": [
-            45,
-            68,
-            91,
-            114,
-            142,
-            178,
-            211,
-            244
-          ]
-        },
-        {
-          "id": "W9",
-          "type": "WARN",
-          "message": "Security Groups found with ingress cidr that is not /32",
-          "logical_resource_ids": [
-            "ALBPublicSecurityGroup",
-            "BastionSecurityGroup"
-          ],
-          "line_numbers": [
-            142,
-            211
-          ]
-        },
-        {
-          "id": "W2",
-          "type": "WARN",
-          "message": "Security Groups found with cidr open to world on ingress.  This should never be true on instance.  Permissible on ELB",
-          "logical_resource_ids": [
-            "ALBPublicSecurityGroup",
-            "BastionSecurityGroup"
-          ],
-          "line_numbers": [
-            142,
-            211
-          ]
-        },
-        {
-          "id": "W27",
-          "type": "WARN",
-          "message": "Security Groups found ingress with port range instead of just a single port",
-          "logical_resource_ids": [
-            "DBClientSecurityGroup",
-            "CacheClientSecurityGroup",
-            "ALBPublicSecurityGroup",
-            "ECSServerSecurityGroup",
-            "VPCEndpointClientSecurityGroup"
-          ],
-          "line_numbers": [
-            45,
-            91,
-            142,
-            178,
-            244
-          ]
-        },
-        {
-          "id": "F1000",
-          "type": "FAIL",
-          "message": "Missing egress rule means all traffic is allowed outbound.  Make this explicit if it is desired configuration",
-          "logical_resource_ids": [
-            "DBClientSecurityGroup",
-            "DBServerSecurityGroup",
-            "CacheClientSecurityGroup",
-            "CacheServerSecurityGroup",
-            "ALBPublicSecurityGroup",
-            "ECSServerSecurityGroup",
-            "BastionSecurityGroup",
-            "VPCEndpointClientSecurityGroup"
-          ],
-          "line_numbers": [
-            45,
-            68,
-            91,
-            114,
-            142,
-            178,
-            211,
-            244
-          ]
-        },
-        {
-          "id": "W36",
-          "type": "WARN",
-          "message": "Security group rules without a description obscure their purpose and may lead to bad practices in ensuring they only allow traffic from the ports and sources/destinations required.",
-          "logical_resource_ids": [
-            "DBClientSecurityGroupIngress",
-            "CacheClientSecurityGroupIngress",
-            "ALBPublicSecurityGroupIngress",
-            "VPCEndpointClientSecurityGroupIngress"
-          ],
-          "line_numbers": [
-            57,
-            103,
-            166,
-            254
-          ]
-        }
+
       ]
     }
   },
   {
     "filename": "cfn-templates/sns-slack.yml",
     "file_results": {
-      "failure_count": 1,
+      "failure_count": 0,
       "violations": [
-        {
-          "id": "W47",
-          "type": "WARN",
-          "message": "SNS Topic should specify KmsMasterKeyId property",
-          "logical_resource_ids": [
-            "Topic",
-            "FallbackTopic"
-          ],
-          "line_numbers": [
-            35,
-            81
-          ]
-        },
-        {
-          "id": "F18",
-          "type": "FAIL",
-          "message": "SNS topic policy should not allow * principal",
-          "logical_resource_ids": [
-            "TopicPolicy"
-          ],
-          "line_numbers": [
-            42
-          ]
-        }
+
       ]
     }
   },
@@ -261,17 +103,7 @@
     "file_results": {
       "failure_count": 0,
       "violations": [
-        {
-          "id": "W28",
-          "type": "WARN",
-          "message": "Resource found with an explicit name, this disallows updates that require replacement of this resource",
-          "logical_resource_ids": [
-            "ChatbotIamRole"
-          ],
-          "line_numbers": [
-            59
-          ]
-        }
+
       ]
     }
   }

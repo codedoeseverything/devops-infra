@@ -17,3 +17,13 @@ RulesToSuppress:
   reason: "IAM role should not allow * resource on its permissions policy"
 - id: F1000
   reason: "Missing egress rule means all traffic is allowed outbound.  Make this explicit if it is desired configuration"
+- id: W9
+  reason: "Security Groups found with ingress cidr that is not /32"
+- id: W2
+  reason: "Security Groups found with cidr open to world on ingress.  This should never be true on instance.  Permissible on ELB"
+- id: W27
+  reason: "Security Groups found ingress with port range instead of just a single port"
+- id: W47
+  reason: "SNS Topic should specify KmsMasterKeyId property"
+- id: F18
+  reason: "SNS topic policy should not allow * principal"

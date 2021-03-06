@@ -85,7 +85,7 @@ Resources:
     Type: 'AWS::CloudWatch::Alarm'
     Properties:
       AlarmDescription: 'NAT gateway A could not allocate a source port'
-      AlarmName: !Sub '${StackName}-AlarmNatGatewayErrorPortAllocation-${Env}'
+      # AlarmName: !Sub '${StackName}-AlarmNatGatewayErrorPortAllocation-${Env}'
       Namespace: 'AWS/NATGateway'
       MetricName: ErrorPortAllocation
       Statistic: Sum
@@ -132,7 +132,7 @@ Resources:
     Type: 'AWS::CloudWatch::Alarm'
     Properties:
       AlarmDescription: 'NAT gateway A dropped packets'
-      AlarmName: !Sub '${StackName}-AlarmNatGatewayPacketsDropCount-${Env}'
+      # AlarmName: !Sub '${StackName}-AlarmNatGatewayPacketsDropCount-${Env}'
       Namespace: 'AWS/NATGateway'
       MetricName: PacketsDropCount
       Statistic: Sum
@@ -181,7 +181,7 @@ Resources:
       AlarmActions:
       - {'Fn::ImportValue': !Sub '${StackName}-ChatBotSNSTopicARN-${Env}'}
       AlarmDescription: 'NAT gateway A bandwidth utilization is over 80%'
-      AlarmName: !Sub '${StackName}-AlarmNatGatewayBandwidth-${Env}'
+      # AlarmName: !Sub '${StackName}-AlarmNatGatewayBandwidth-${Env}'
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 1
       Metrics:

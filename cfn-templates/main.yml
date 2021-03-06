@@ -159,6 +159,22 @@ Resources:
       Parameters:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
+  
+
+  AWSChatBotSlackStack:
+    Condition: CreateChatBotStackCondition
+    DependsOn: [SNSSlackAlertStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/chatbot.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        ChatBotConfigurationName: !Ref 'ChatBotConfigurationName'
+        ChatBotLoggingLevel: !Ref 'ChatBotLoggingLevel'
+        SlackChannelId: !Ref 'SlackChannelId'
+        SlackWorkspaceId: !Ref 'SlackWorkspaceId' 
+
 
   # BastionServerStack:
   #   DependsOn: [VPCStack, SecurityGroupStack, SNSSlackAlertStack]
@@ -172,6 +188,7 @@ Resources:
   #       NumBastionHosts: !Ref 'NumBastionHosts'
   #       BastionInstanceType: !Ref 'BastionInstanceType'
 
+
   # NATGatewayStack:
   #   Condition: CreateNATGatewayStackCondition
   #   DependsOn: [VPCStack]
@@ -183,6 +200,7 @@ Resources:
   #       Env: !Ref 'Env'
   #       NumberOfAZs: !Ref 'NumberOfAZs'
 
+
   # NATGatewayAlarmStack:
   #   Condition: CreateNATGatewayStackCondition
   #   DependsOn: [NATGatewayStack, SNSSlackAlertStack]
@@ -193,20 +211,7 @@ Resources:
   #       StackName: !Ref 'StackName'
   #       Env: !Ref 'Env'
   #       NumberOfAZs: !Ref 'NumberOfAZs'
-
-  # AWSChatBotSlackStack:
-  #   Condition: CreateChatBotStackCondition
-  #   DependsOn: [SNSSlackAlertStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/chatbot.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
-  #       ChatBotConfigurationName: !Ref 'ChatBotConfigurationName'
-  #       ChatBotLoggingLevel: !Ref 'ChatBotLoggingLevel'
-  #       SlackChannelId: !Ref 'SlackChannelId'
-  #       SlackWorkspaceId: !Ref 'SlackWorkspaceId'  
+ 
   
   # VPCEndpointInterfaceStack:
   #   DependsOn: [VPCStack, SecurityGroupStack]

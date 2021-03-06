@@ -58,7 +58,10 @@ Resources:
   ChatbotIamRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub '${StackName}-chatbot-iam-role-${Env}'
+      Tags:
+      - Key: Name
+        Value: !Sub '${StackName}-chatbot-iam-role-${Env}'
+      # RoleName: !Sub '${StackName}-chatbot-iam-role-${Env}'
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
