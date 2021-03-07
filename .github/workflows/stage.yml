@@ -27,6 +27,7 @@ jobs:
       CFNS3BucketName: devops-cfn-templates1
       S3BucketNameKeyPair: devops-ec2-keypair1
       LOGGING_LEVEL: INFO  #ERROR, INFO, or NONE.
+      ISZONEEXIST: false  #false, true.
 
     # Steps to execute in this job
     steps:
@@ -81,6 +82,7 @@ jobs:
           CFNS3BucketRegion=ap-southeast-2
           ChatBotConfigurationName=${{ env.STACK_NAME }}-ChatBotSlackNotify-${{ env.ENV }}
           ChatBotLoggingLevel=${{ env.LOGGING_LEVEL }}
+          Route53HostedZoneExist=${{ env.ISZONEEXIST }}
           EOF
 
       
@@ -118,9 +120,16 @@ jobs:
           aws s3 sync cfn-templates/ s3://${{env.CFNS3BucketName}}/${{env.STACK_NAME}}/cfn-templates --delete
 
 
-      - name: Create or Update cloudformation templates to AWS
+      # - name: Create or Update cloudformation templates to AWS
+      #   run: |
+      #     python3 scripts/cfn-create-update.py ${{ env.SUBDOMAIN }} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
+
+
+      - name: Create Route53 NS Record if new hosted zone created 
+        if: Route53HostedZoneExist == 'false'
         run: |
-          python3 scripts/cfn-create-update.py ${{ env.SUBDOMAIN }} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
+          echo "Route53HostedZoneExist :" ${{ env.ISZONEEXIST }} 
+
             
 
       - name: Slack Notification
