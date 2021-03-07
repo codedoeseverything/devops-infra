@@ -13,5 +13,3 @@ Route53HostedZoneExist=false
 PublicHostedZoneName=sub.quicktest.com
 PrivateHostedZoneName=internal.sub.quicktest.com
 PublicHostedZoneId=Z028715610YQDU36DOXE3
-
-
