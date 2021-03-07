@@ -19,8 +19,4 @@ PublicHostedZoneNSRecord=ns-553.awsdns-05.net,ns-1306.awsdns-35.org,ns-1586.awsd
 
 # Creates route 53 records based on env name
 
-aws route53 change-resource-record-sets --hosted-zone-id $PublicHostedZoneId \
---change-batch '{ "Comment": "Testing creating a record set", \
-"Changes": [ { "Action": "CREATE", "ResourceRecordSet": { "Name": \
-"\`$PublicHostedZoneName\`", "Type": "CNAME", "TTL": \
-120, "ResourceRecords": [ { "Value": "\`$PublicHostedZoneNSRecord\`" } ] } } ] }'
+aws route53 change-resource-record-sets --hosted-zone-id $PublicHostedZoneId --change-batch '{ "Comment": "Testing creating a record set", "Changes": [ { "Action": "CREATE", "ResourceRecordSet": { "Name": "\`$PublicHostedZoneName\`", "Type": "CNAME", "TTL": 120, "ResourceRecords": [ { "Value": "\`$PublicHostedZoneNSRecord\`" } ] } } ] }'
