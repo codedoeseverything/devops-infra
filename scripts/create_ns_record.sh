@@ -13,10 +13,16 @@
 
 
 
-PublicHostedZoneName=sub.quicktest.com 
+ENV=one
 PublicHostedZoneId=Z02869401EGHOT9UP36YF
-PublicHostedZoneNSRecord=ns-553.awsdns-05.net,ns-1306.awsdns-35.org,ns-1586.awsdns-06.co.uk,ns-282.awsdns-35.com
+DNS=ns-553.awsdns-05.net,ns-1306.awsdns-35.org,ns-1586.awsdns-06.co.uk,ns-282.awsdns-35.com
 
 # Creates route 53 records based on env name
 
-aws route53 change-resource-record-sets --hosted-zone-id $PublicHostedZoneId --change-batch '{ "Comment": "Testing creating a record set", "Changes": [ { "Action": "CREATE", "ResourceRecordSet": { "Name": "`"$PublicHostedZoneName"`", "Type": "CNAME", "TTL": 120, "ResourceRecords": [ { "Value": "`"$PublicHostedZoneNSRecord"`" } ] } } ] }'
+# aws route53 change-resource-record-sets --hosted-zone-id $PublicHostedZoneId --change-batch '{ "Comment": "Testing creating a record set", "Changes": [ { "Action": "CREATE", "ResourceRecordSet": { "Name": "`"$PublicHostedZoneName"`", "Type": "CNAME", "TTL": 120, "ResourceRecords": [ { "Value": "`"$PublicHostedZoneNSRecord"`" } ] } } ] }'
+
+aws route53 change-resource-record-sets --hosted-zone-id $PublicHostedZoneId \ 
+--change-batch '{ "Comment": "Testing creating a record set", \
+"Changes": [ { "Action": "CREATE", "ResourceRecordSet": { "Name": \ 
+"'"$ENV"'.sub.quicktest.com ", "Type": "CNAME", "TTL": \
+120, "ResourceRecords": [ { "Value": "'"$DNS"'" } ] } } ] }'
