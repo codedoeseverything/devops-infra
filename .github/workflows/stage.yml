@@ -27,7 +27,7 @@ jobs:
       CFNS3BucketName: devops-cfn-templates1
       S3BucketNameKeyPair: devops-ec2-keypair1
       LOGGING_LEVEL: INFO  #ERROR, INFO, or NONE.
-      ISZONEEXIST: false  #false, true.
+      ISZONEEXIST: true  #false, true.
 
     # Steps to execute in this job
     steps:
