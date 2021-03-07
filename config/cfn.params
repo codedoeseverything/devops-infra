@@ -9,8 +9,9 @@ SlackWorkspaceId=T01NQ3FPC7M
 CreateChatBotStackCondition=true
 CreateNATGatewayStackCondition=true
 CreateVPCEndpointStackCondition=false
-Route53HostedZoneExist=false
+Route53HostedZoneExist=true
 PublicHostedZoneName=sub.quicktest.com
 PrivateHostedZoneName=internal.sub.quicktest.com
-PublicHostedZoneId=
+PublicHostedZoneId=Z028715610YQDU36DOXE3
+
 
