@@ -126,9 +126,10 @@ jobs:
 
 
       - name: Create Route53 NS Record if new hosted zone created 
-        if: ${{ env.ISZONEEXIST }} == 'false'
         run: |
-          echo "Route53HostedZoneExist :" ${{ env.ISZONEEXIST }} 
+          chmod +x scripts/create_ns_record.sh && scripts/create_ns_record.sh
+        env:
+          ISZONEEXIST: ${{ env.ISZONEEXIST }} 
 
             
 
