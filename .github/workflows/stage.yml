@@ -126,7 +126,7 @@ jobs:
 
 
       - name: Create Route53 NS Record if new hosted zone created 
-        if: Route53HostedZoneExist == 'false'
+        if: ${{ env.ISZONEEXIST }} == 'false'
         run: |
           echo "Route53HostedZoneExist :" ${{ env.ISZONEEXIST }} 
 
