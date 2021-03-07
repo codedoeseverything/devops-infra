@@ -46,9 +46,9 @@ Outputs:
     Description: 'The name of the hosted zone.'
     Value: !Ref PublicHostedZoneName
     Export:
-      Name: !Sub '${StackName}-PublicHostedZoneName-${Env}'
+      Name: !Sub '${StackName}-PublicLegacyHostedZoneName-${Env}'
   PublicHostedZoneId:
     Description: 'The ID of the hosted zone.'
     Value: !Ref PublicHostedZoneId
     Export:
-      Name: !Sub '${StackName}-PublicHostedZoneId-${Env}'
+      Name: !Sub '${StackName}-PublicLegacyHostedZoneId-${Env}'
