@@ -24,9 +24,10 @@ custom:
       rewriteRecords: false
 
 resources:
-  NullResource:
-    Type: 'Custom::NullResource'
-    Condition: false
+  Resources:
+    NullResource:
+      Type: 'Custom::NullResource'
+      Condition: false
   Outputs:
     SharedACMCertificateArn:
       Description: 'The ARN of shared ACM certification'

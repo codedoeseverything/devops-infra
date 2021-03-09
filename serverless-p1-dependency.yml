@@ -13,11 +13,12 @@ provider:
   stage: ${env:ENV}
 
 resources:
-  myDNSRecord:
-    Type: AWS::Route53::RecordSet
-    Properties:
-      HostedZoneId : ${env:P1PUBLICZONEID}
-      Name: ${env:PUBLICZONENAME}
-      ResourceRecords: ${env:PUBLICZONENSRECORD}
-      TTL: '300'
-      Type: A
+  Resources:
+    myDNSRecord:
+      Type: AWS::Route53::RecordSet
+      Properties:
+        HostedZoneId : ${env:P1PUBLICZONEID}
+        Name: ${env:PUBLICZONENAME}
+        ResourceRecords: ${env:PUBLICZONENSRECORD}
+        TTL: '300'
+        Type: NS
