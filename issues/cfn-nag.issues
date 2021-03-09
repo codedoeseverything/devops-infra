@@ -36,6 +36,15 @@
     }
   },
   {
+    "filename": "cfn-templates/p1-main.yml.md",
+    "file_results": {
+      "failure_count": 0,
+      "violations": [
+
+      ]
+    }
+  },
+  {
     "filename": "cfn-templates/main.yml",
     "file_results": {
       "failure_count": 0,
