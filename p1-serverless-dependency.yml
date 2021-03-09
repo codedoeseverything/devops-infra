@@ -1,11 +1,8 @@
-service: ${env:STACK_NAME}-${env:SUBDOMAIN}-shared-acm-cert
+service: ${env:STACK_NAME}-${env:SUBDOMAIN}-p1-dependency
 
 frameworkVersion: ^2.17.0
 
 useDotenv: true
-
-plugins:
-  - serverless-certificate-creator
 
 provider:
   name: aws
@@ -17,16 +14,17 @@ provider:
 
 
 custom:
-  customCertificate:
-      certificateName: "*.${env:PUBLICZONENAME}"
-      hostedZoneName: "${env:PUBLICZONENAME}"
-      hostedZoneId: "${env:PUBLICZONEID}"
-      rewriteRecords: false
 
 resources:
-  NullResource:
-    Type: 'Custom::NullResource'
-    Condition: false
+  myNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId : ${env:P1PUBLICZONEID}
+      Name: ${env:PUBLICZONENAME}
+      ResourceRecords: 
+      - !Split [',', ${env:PUBLICZONENSRECORD}]
+      TTL: '300'
+      Type: NS
   Outputs:
     SharedACMCertificateArn:
       Description: 'The ARN of shared ACM certification'

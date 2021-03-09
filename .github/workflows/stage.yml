@@ -161,8 +161,7 @@ jobs:
 
       - name: Create or Update cloudformation templates to AWS
         run: |
-          python3 scripts/cfn-create-update.py {{ env.STACK_NAME }}-${{ env.SUBDOMAIN }} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
-
+          python3 scripts/cfn-create-update.py ${{ env.STACK_NAME }}-${{ env.SUBDOMAIN }} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
       
       - name: Export CFN output values
         if: env.ISZONEEXIST == 'false'
