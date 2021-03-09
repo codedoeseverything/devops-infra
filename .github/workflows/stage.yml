@@ -60,10 +60,10 @@ jobs:
           pip install -r requirements.txt
       
 
-      - name: Run cloudformation template Lint test using cfn-lint
-        run: |
-          pip install cfn-lint==0.44.4
-          cfn-lint -i W2001 W8001 W4002 W6001 -t '**/*.yml'
+      # - name: Run cloudformation template Lint test using cfn-lint
+      #   run: |
+      #     pip install cfn-lint==0.44.4
+      #     cfn-lint -i W2001 W8001 W4002 W6001 -t '**/*.yml'
       
       
       - name: Run cloudformation template static analysis test using cfn-nag
