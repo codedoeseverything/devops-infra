@@ -21,12 +21,12 @@ custom:
       certificateName: "*.${env:PUBLICZONENAME}"
       hostedZoneName: "${env:PUBLICZONENAME}"
       hostedZoneId: "${env:PUBLICZONEID}"
-      tags:
-          Name: "*.${env:PUBLICZONENAME}"
-          Environment: ${env:ENV}
       rewriteRecords: false
 
 resources:
+  NullResource:
+    Type: 'Custom::NullResource'
+    Condition: false
   Outputs:
     SharedACMCertificateArn:
       Description: 'The ARN of shared ACM certification'
