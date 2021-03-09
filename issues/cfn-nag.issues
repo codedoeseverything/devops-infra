@@ -63,6 +63,15 @@
     }
   },
   {
+    "filename": "cfn-templates/shared-acm.yml",
+    "file_results": {
+      "failure_count": 0,
+      "violations": [
+
+      ]
+    }
+  },
+  {
     "filename": "cfn-templates/nat-gateway-alarm.yml",
     "file_results": {
       "failure_count": 0,
