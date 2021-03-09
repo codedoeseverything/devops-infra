@@ -45,7 +45,7 @@ Parameters:
   AllowReadOnlyAndSupportPolicyArns:
     Description: 'Optional comma-delimited list of IAM managed policy ARNs to attach to the instance''s IAM role'
     Type: String
-    Default: arn:aws:iam::aws:policy/ReadOnlyAccess,arn:aws:iam::aws:policy/AWSSupportAccess
+    Default: 'arn:aws:iam::aws:policy/ReadOnlyAccess,arn:aws:iam::aws:policy/AWSSupportAccess'
   AllowLambdaInvokeForChatBot:
     Description: 'Enable AWS Lambda Invoke Access for chatbot.'
     Type: String
