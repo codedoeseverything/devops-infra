@@ -62,7 +62,7 @@ jobs:
   
       - name: Run cloudformation template Lint test
         run: |
-          cfn-lint -t -i W2001 W8001 '**/*.yml'
+          cfn-lint -i W2001 W8001 -t '**/*.yml'
       
       
       - name: Run cloudformation template static analysis test
