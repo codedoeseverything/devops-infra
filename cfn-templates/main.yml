@@ -140,8 +140,9 @@ Parameters:
     Description: 'The name of the existing hosted zone.'
     Type: String
   PublicHostedZoneId:
-    Description: 'The ID of the existing hosted zone.'
+    Description: 'The ID of the existing hosted zone id.'
     Type: String
+  
 
 Conditions:
   CreateChatBotStackCondition: !Equals
@@ -173,169 +174,169 @@ Resources:
         NumberOfAZs: !Ref 'NumberOfAZs'
         ClassB: !Ref 'ClassB'
 
-  # SecurityGroupStack:
-  #   DependsOn: [VPCStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/security-group.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
-  #       DefaultRouteAccess: !Ref 'DefaultRouteAccess'
+  SecurityGroupStack:
+    DependsOn: [VPCStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/security-group.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        DefaultRouteAccess: !Ref 'DefaultRouteAccess'
 
-  # SNSSlackAlertStack:
-  #   DependsOn: [VPCStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/sns-slack.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
+  SNSSlackAlertStack:
+    DependsOn: [VPCStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/sns-slack.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
   
 
-  # AWSChatBotSlackStack:
-  #   Condition: CreateChatBotStackCondition
-  #   DependsOn: [SNSSlackAlertStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/chatbot.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
-  #       ChatBotConfigurationName: !Ref 'ChatBotConfigurationName'
-  #       ChatBotLoggingLevel: !Ref 'ChatBotLoggingLevel'
-  #       SlackChannelId: !Ref 'SlackChannelId'
-  #       SlackWorkspaceId: !Ref 'SlackWorkspaceId' 
+  AWSChatBotSlackStack:
+    Condition: CreateChatBotStackCondition
+    DependsOn: [SNSSlackAlertStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/chatbot.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        ChatBotConfigurationName: !Ref 'ChatBotConfigurationName'
+        ChatBotLoggingLevel: !Ref 'ChatBotLoggingLevel'
+        SlackChannelId: !Ref 'SlackChannelId'
+        SlackWorkspaceId: !Ref 'SlackWorkspaceId' 
 
 
-  # BastionServerStack:
-  #   DependsOn: [VPCStack, SecurityGroupStack, SNSSlackAlertStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/bastion.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
-  #       KeyName: !Ref 'KeyName'
-  #       NumBastionHosts: !Ref 'NumBastionHosts'
-  #       BastionInstanceType: !Ref 'BastionInstanceType'
+  BastionServerStack:
+    DependsOn: [VPCStack, SecurityGroupStack, SNSSlackAlertStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/bastion.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        KeyName: !Ref 'KeyName'
+        NumBastionHosts: !Ref 'NumBastionHosts'
+        BastionInstanceType: !Ref 'BastionInstanceType'
 
 
-  # NATGatewayStack:
-  #   Condition: CreateNATGatewayStackCondition
-  #   DependsOn: [VPCStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
-  #       NumberOfAZs: !Ref 'NumberOfAZs'
+  NATGatewayStack:
+    Condition: CreateNATGatewayStackCondition
+    DependsOn: [VPCStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        NumberOfAZs: !Ref 'NumberOfAZs'
 
 
-  # NATGatewayAlarmStack:
-  #   Condition: CreateNATGatewayStackCondition
-  #   DependsOn: [NATGatewayStack, SNSSlackAlertStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway-alarm.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
-  #       NumberOfAZs: !Ref 'NumberOfAZs'
+  NATGatewayAlarmStack:
+    Condition: CreateNATGatewayStackCondition
+    DependsOn: [NATGatewayStack, SNSSlackAlertStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway-alarm.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        NumberOfAZs: !Ref 'NumberOfAZs'
  
   
-  # SNSEndpointInterfaceStack:
-  #   Condition: CreateVPCEndpointStackCondition
-  #   DependsOn: [VPCStack, SecurityGroupStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/vpc-endpoints.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
-  #       VPCInterfaceServiceName1 # SecurityGroupStack:
-  #   DependsOn: [VPCStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/security-group.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
-  #       DefaultRouteAccess: !Ref 'DefaultRouteAccess'
+  SNSEndpointInterfaceStack:
+    Condition: CreateVPCEndpointStackCondition
+    DependsOn: [VPCStack, SecurityGroupStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/vpc-endpoints.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        VPCInterfaceServiceName: !Ref VPCInterfaceServiceName1 
+    DependsOn: [VPCStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/security-group.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        DefaultRouteAccess: !Ref 'DefaultRouteAccess'
 
-  # SNSSlackAlertStack:
-  #   DependsOn: [VPCStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/sns-slack.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
+  SNSSlackAlertStack:
+    DependsOn: [VPCStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/sns-slack.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
   
 
-  # AWSChatBotSlackStack:
-  #   Condition: CreateChatBotStackCondition
-  #   DependsOn: [SNSSlackAlertStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/chatbot.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
-  #       ChatBotConfigurationName: !Ref 'ChatBotConfigurationName'
-  #       ChatBotLoggingLevel: !Ref 'ChatBotLoggingLevel'
-  #       SlackChannelId: !Ref 'SlackChannelId'
-  #       SlackWorkspaceId: !Ref 'SlackWorkspaceId' 
+  AWSChatBotSlackStack:
+    Condition: CreateChatBotStackCondition
+    DependsOn: [SNSSlackAlertStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/chatbot.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        ChatBotConfigurationName: !Ref 'ChatBotConfigurationName'
+        ChatBotLoggingLevel: !Ref 'ChatBotLoggingLevel'
+        SlackChannelId: !Ref 'SlackChannelId'
+        SlackWorkspaceId: !Ref 'SlackWorkspaceId' 
 
 
-  # BastionServerStack:
-  #   DependsOn: [VPCStack, SecurityGroupStack, SNSSlackAlertStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/bastion.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
-  #       KeyName: !Ref 'KeyName'
-  #       NumBastionHosts: !Ref 'NumBastionHosts'
-  #       BastionInstanceType: !Ref 'BastionInstanceType'
+  BastionServerStack:
+    DependsOn: [VPCStack, SecurityGroupStack, SNSSlackAlertStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/bastion.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        KeyName: !Ref 'KeyName'
+        NumBastionHosts: !Ref 'NumBastionHosts'
+        BastionInstanceType: !Ref 'BastionInstanceType'
 
 
-  # NATGatewayStack:
-  #   Condition: CreateNATGatewayStackCondition
-  #   DependsOn: [VPCStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
-  #       NumberOfAZs: !Ref 'NumberOfAZs'
+  NATGatewayStack:
+    Condition: CreateNATGatewayStackCondition
+    DependsOn: [VPCStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        NumberOfAZs: !Ref 'NumberOfAZs'
 
 
-  # NATGatewayAlarmStack:
-  #   Condition: CreateNATGatewayStackCondition
-  #   DependsOn: [NATGatewayStack, SNSSlackAlertStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway-alarm.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
-  #       NumberOfAZs: !Ref 'NumberOfAZs'
+  NATGatewayAlarmStack:
+    Condition: CreateNATGatewayStackCondition
+    DependsOn: [NATGatewayStack, SNSSlackAlertStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway-alarm.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        NumberOfAZs: !Ref 'NumberOfAZs'
  
   
-  # SNSEndpointInterfaceStack:
-  #   Condition: CreateVPCEndpointStackCondition
-  #   DependsOn: [VPCStack, SecurityGroupStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/vpc-endpoints.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
-  #       VPCInterfaceServiceName1: !Ref 'VPCInterfaceServiceName1': !Ref 'VPCInterfaceServiceName1'
+  SNSEndpointInterfaceStack:
+    Condition: CreateVPCEndpointStackCondition
+    DependsOn: [VPCStack, SecurityGroupStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/vpc-endpoints.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        VPCInterfaceServiceName1: !Ref 'VPCInterfaceServiceName1': !Ref 'VPCInterfaceServiceName1'
  
 
   
@@ -372,4 +373,5 @@ Resources:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
         PrivateHostedZoneName: !Ref 'PrivateHostedZoneName'
+        
         

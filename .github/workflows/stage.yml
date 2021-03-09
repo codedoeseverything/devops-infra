@@ -27,7 +27,7 @@ jobs:
       CFNS3BucketName: devops-cfn-templates1
       S3BucketNameKeyPair: devops-ec2-keypair1
       LOGGING_LEVEL: INFO  #ERROR, INFO, or NONE.
-      ISZONEEXIST: true  #false, true.
+      ISZONEEXIST: false  #false, true.
 
     # Steps to execute in this job
     steps:
@@ -60,16 +60,16 @@ jobs:
           pip install -r requirements.txt
 
   
-      # - name: Run cloudformation template Lint test
-      #   run: |
-      #     cfn-lint -t '**/*.yml'
+      - name: Run cloudformation template Lint test
+        run: |
+          cfn-lint -t -i W2001 W8001 '**/*.yml'
       
       
-      # - name: Run cloudformation template static analysis test
-      #   uses: stelligent/cfn_nag@master
-      #   with:
-      #     input_path: cfn-templates
-      #     extra_args: --fail-on-warnings -o json
+      - name: Run cloudformation template static analysis test
+        uses: stelligent/cfn_nag@master
+        with:
+          input_path: cfn-templates
+          extra_args: --fail-on-warnings -o json --blacklist-path .cfn_nag_blacklist.yml
 
 
       - name: Create additional cloudformation parameters for stack deployment
@@ -120,16 +120,66 @@ jobs:
           aws s3 sync cfn-templates/ s3://${{env.CFNS3BucketName}}/${{env.STACK_NAME}}/cfn-templates --delete
 
 
+      - name: Create or Update cloudformation templates to AWS
+        run: |
+          python3 scripts/cfn-create-update.py ${{ env.SUBDOMAIN }} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
+
+
+      # #### P1 update
+
+
+      # - name: Create additional cloudformation parameters for P1 dependency stack deployment
+      #   run: |
+      #     cat >> config/cfn-p1-main.params <<EOF 
+      #     StackName=${{ env.STACK_NAME }}
+      #     Env=${{ env.ENV }}
+      #     KeyName=${{ env.STACK_NAME }}-${{ env.REGION }}
+      #     CFNS3BucketName=${{ env.CFNS3BucketName }}
+      #     CFNS3BucketRegion=ap-southeast-2
+      #     ChatBotConfigurationName=${{ env.STACK_NAME }}-ChatBotSlackNotify-${{ env.ENV }}
+      #     ChatBotLoggingLevel=${{ env.LOGGING_LEVEL }}
+      #     Route53HostedZoneExist=${{ env.ISZONEEXIST }}
+      #     EOF
+
+      
+      # - name: Create additional cloudformation tags for stack deployment
+      #   run: |
+      #     cat >> config/cfn.tags <<EOF 
+      #     StackName=${{ env.STACK_NAME }}
+      #     Env=${{ env.ENV }}
+      #     RootStack=${{ env.SUBDOMAIN }}
+      #     EOF
+         
+
+      # - name: Convert JSON format cloudformation parameters and tags for stack deployment
+      #   run: |
+      #     python3 scripts/cfn-param-json-convert.py config/cfn.params
+      #     python3 scripts/cfn-param-json-convert.py config/cfn.tags
+
+
+      # - name: Configure AWS credentials from ${{ env.STACK_NAME }} account in ${{ env.REGION }} region
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.DEVOPS_AWS_KEY }}
+      #     aws-secret-access-key: ${{ secrets.DEVOPS_SECRET_KEY }}
+      #     aws-region: ${{ env.REGION }}
+
+      
+      # - name: Create AWS EC2 Key Pair Name for ${{ env.STACK_NAME }} account in ${{ env.REGION }} region if not exist
+      #   run: chmod +x scripts/ec2-key-pair.sh && scripts/ec2-key-pair.sh
+      #   env:
+      #     EC2KEYPAIR: ${{ env.STACK_NAME }}-${{ env.REGION }}
+
+
+      # - name: AWS S3 Sync operation
+      #   run: |
+      #     aws s3 sync cfn-templates/ s3://${{env.CFNS3BucketName}}/${{env.STACK_NAME}}/cfn-templates --delete
+
+
       # - name: Create or Update cloudformation templates to AWS
       #   run: |
       #     python3 scripts/cfn-create-update.py ${{ env.SUBDOMAIN }} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
 
-
-      - name: Create Route53 NS Record if new hosted zone created 
-        run: |
-          chmod +x scripts/create_ns_record.sh && scripts/create_ns_record.sh
-        env:
-          ISZONEEXIST: ${{ env.ISZONEEXIST }} 
 
             
 
