@@ -28,6 +28,7 @@ jobs:
       S3BucketNameKeyPair: devops-ec2-keypair1
       LOGGING_LEVEL: INFO  #ERROR, INFO, or NONE.
       ISZONEEXIST: false  #false, true.
+      P1PUBLICZONEID: 
       PUBLICZONENAME: sub.quicktest.com
       PRIVATEZONENAME: internal.sub.quicktest.com
       PUBLICZONEID: 
@@ -62,6 +63,35 @@ jobs:
         run: |
           echo "Installing dependencies and caching them."
           pip install -r requirements.txt
+
+      
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      
+ 
+      - name: Cache node modules
+        uses: actions/cache@v2
+        id: cache-node-modules
+        env:
+          cache-name: cache
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: |
+            ~/.npm
+            node_modules
+            */*/node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run:  npm install
       
 
       # - name: Run cloudformation template Lint test using cfn-lint
@@ -131,52 +161,19 @@ jobs:
 
       - name: Create or Update cloudformation templates to AWS
         run: |
-          python3 scripts/cfn-create-update.py ${{ env.SUBDOMAIN }} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
-          # python3 scripts/cfn-create-update.py {{ env.STACK_NAME }}-${{ env.SUBDOMAIN }} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
-      
-      
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-      
- 
-      - name: Cache node modules
-        uses: actions/cache@v2
-        id: cache-node-modules
-        env:
-          cache-name: cache
-        with:
-          # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: |
-            ~/.npm
-            node_modules
-            */*/node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-
-      - name: Install dependencies
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run:  npm install
+          python3 scripts/cfn-create-update.py {{ env.STACK_NAME }}-${{ env.SUBDOMAIN }} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
 
       
       - name: Export CFN output values
         if: env.ISZONEEXIST == 'false'
         run: |
           export DN=${{ env.STACK_NAME }}-PublicHostedZoneId-${{ env.ENV }}
-          echo "DN is :" $DN
-          echo "Before export PUBLICZONEID is :" ${{ env.PUBLICZONEID }}
+          export NS=${{ env.STACK_NAME }}-PublicHostedZoneNSRecord-${{ env.ENV }}
           echo "PUBLICZONEID="$(aws cloudformation list-exports --query "Exports[?Name==\`$DN\`].Value" --no-paginate --output text) >> $GITHUB_ENV
-          echo "After export PUBLICZONEID is :" ${{ env.PUBLICZONEID }}
-          echo "After export PUBLICZONEID is :" $PUBLICZONEID
-      
-      - name: Serverless ACM cert creation
-        run: |
-          node_modules/.bin/serverless create-cert
+          echo "PUBLICZONENSRECORD="$(aws cloudformation list-exports --query "Exports[?Name==\`$NS\`].Value" --no-paginate --output text) >> $GITHUB_ENV
+      # - name: Serverless ACM cert creation
+      #   run: |
+      #     node_modules/.bin/serverless create-cert && node_modules/.bin/serverless deploy
 
 
       # #### P1 update
