@@ -9,8 +9,6 @@ SlackWorkspaceId=T01NQ3FPC7M
 CreateChatBotStackCondition=true
 CreateNATGatewayStackCondition=true
 CreateVPCEndpointStackCondition=true
-PublicHostedZoneName=sub.quicktest.com
-PrivateHostedZoneName=internal.sub.quicktest.com
-PublicHostedZoneId=
 AllowReadOnlyAndSupportPolicyArns=arn:aws:iam::aws:policy/ReadOnlyAccess,arn:aws:iam::aws:policy/AWSSupportAccess
 AllowLambdaInvokeForChatBot=true
+

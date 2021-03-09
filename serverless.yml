@@ -1,0 +1,35 @@
+service: ${env:STACK_NAME}-${env:SUBDOMAIN}-shared-acm-cert
+
+frameworkVersion: ^2.17.0
+
+useDotenv: true
+
+plugins:
+  - serverless-certificate-creator
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  timeout: 300
+  memorySize: 128
+  region: ${env:REGION}
+  stage: ${env:ENV}
+
+
+custom:
+  customCertificate:
+      certificateName: "*.${env:PUBLICZONENAME}"
+      hostedZoneName: "${env:PUBLICZONENAME}"
+      # hostedZoneId: "${env:PUBLICZONEID}"
+      tags:
+          Name: '*.${env:PUBLICZONENAME}'
+          Environment: ${env:ENV}
+      rewriteRecords: false
+
+resources:
+  Outputs:
+    SharedACMCertificateArn:
+      Description: 'The ARN of shared ACM certification'
+      Value: ${certificate:${self:custom.customCertificate.certificateName}:CertificateArn}
+      Export:
+        Name: !Sub '${StackName}-SharedACMCertificateArn-${Env}'

@@ -28,6 +28,10 @@ jobs:
       S3BucketNameKeyPair: devops-ec2-keypair1
       LOGGING_LEVEL: INFO  #ERROR, INFO, or NONE.
       ISZONEEXIST: false  #false, true.
+      PUBLICZONENAME: sub.quicktest.com
+      PRIVATEZONENAME: internal.sub.quicktest.com
+      PUBLICZONEID: 
+      
 
     # Steps to execute in this job
     steps:
@@ -84,6 +88,10 @@ jobs:
           ChatBotConfigurationName=${{ env.STACK_NAME }}-ChatBotSlackNotify-${{ env.ENV }}
           ChatBotLoggingLevel=${{ env.LOGGING_LEVEL }}
           Route53HostedZoneExist=${{ env.ISZONEEXIST }}
+          PublicHostedZoneName=${{ env.PUBLICZONENAME }}
+          PrivateHostedZoneName=${{ env.PRIVATEZONENAME }}
+          PublicHostedZoneId=${{ env.PUBLICZONEID }}
+
           EOF
 
       
@@ -124,34 +132,46 @@ jobs:
       - name: Create or Update cloudformation templates to AWS
         run: |
           python3 scripts/cfn-create-update.py ${{ env.SUBDOMAIN }} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
+          # python3 scripts/cfn-create-update.py {{ env.STACK_NAME }}-${{ env.SUBDOMAIN }} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
       
-
-      - name: AWS ACM shared certification creation- Configure AWS credentials from ${{ env.STACK_NAME }} account in us-east-1 region
-        uses: aws-actions/configure-aws-credentials@v1
+      
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
         with:
-          aws-access-key-id: ${{ secrets.DEVOPS_AWS_KEY }}
-          aws-secret-access-key: ${{ secrets.DEVOPS_SECRET_KEY }}
-          aws-region: us-east-1 
+          node-version: '14'
       
+ 
+      - name: Cache node modules
+        uses: actions/cache@v2
+        id: cache-node-modules
+        env:
+          cache-name: cache
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: |
+            ~/.npm
+            node_modules
+            */*/node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run:  npm install
+
       
-      - name: AWS ACM shared certification creation- Create additional cloudformation parameters for stack deployment
-        run: |
-          cat >> config/cfn-acm.params <<EOF 
-          StackName=${{ env.STACK_NAME }}
-          Env=${{ env.ENV }}
-          EOF
-         
+      # - name: Export CFN output values
+      #   if: env.ISZONEEXIST == 'false'
+      #   run:  echo "PublicHostedZoneName="$(aws cloudformation list-exports --query "Exports[?Name==\`$SG\`].Value" --no-paginate --output text) >> $GITHUB_ENV
 
-      - name: AWS ACM shared certification creation- Convert JSON format cloudformation parameters and tags for stack deployment
-        run: |
-          python3 scripts/cfn-param-json-convert.py config/cfn-acm.params
       
-
-
-      - name: AWS ACM certification creation cloudformation templates in us-east-1 region
+      - name: Serverless Packaging
         run: |
-          python3 scripts/cfn-create-update.py ${{ env.SUBDOMAIN }}-shared-acm-cert cfn-templates/shared-acm.yml config/cfn-params.json config/cfn-tags.json
-
+          node_modules/.bin/serverless create-cert
 
 
       # #### P1 update
