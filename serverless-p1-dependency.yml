@@ -19,6 +19,6 @@ resources:
       Properties:
         HostedZoneId : ${env:P1PUBLICZONEID}
         Name: ${env:PUBLICZONENAME}
-        ResourceRecords: ${env:PUBLICZONENSRECORD}
+        ResourceRecords: [${env:PUBLICZONENSRECORD}]
         TTL: '300'
         Type: NS
