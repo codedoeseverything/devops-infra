@@ -22,7 +22,7 @@ custom:
       hostedZoneName: "${env:PUBLICZONENAME}"
       hostedZoneId: "${env:PUBLICZONEID}"
       tags:
-          Name: '*.${env:PUBLICZONENAME}'
+          Name: "*.${env:PUBLICZONENAME}"
           Environment: ${env:ENV}
       rewriteRecords: false
 
