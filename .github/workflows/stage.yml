@@ -31,7 +31,7 @@ jobs:
       PUBLICZONENAME: sub.quicktest.com
       PRIVATEZONENAME: internal.sub.quicktest.com
       PUBLICZONEID: 
-      
+
 
     # Steps to execute in this job
     steps:
@@ -164,12 +164,16 @@ jobs:
         run:  npm install
 
       
-      # - name: Export CFN output values
-      #   if: env.ISZONEEXIST == 'false'
-      #   run:  echo "PublicHostedZoneName="$(aws cloudformation list-exports --query "Exports[?Name==\`$SG\`].Value" --no-paginate --output text) >> $GITHUB_ENV
-
+      - name: Export CFN output values
+        if: env.ISZONEEXIST == 'false'
+        run: |
+          export DN=${{ env.STACK_NAME }}-PublicHostedZoneId-${{ env.ENV }}
+          echo "DN is :" $DN
+          echo "Before export PUBLICZONEID is :" ${{ env.PUBLICZONEID }}
+          echo "PUBLICZONEID="$(aws cloudformation list-exports --query "Exports[?Name==\`$DN\`].Value" --no-paginate --output text) >> $GITHUB_ENV
+          echo "After export PUBLICZONEID is :" ${{ env.PUBLICZONEID }}
       
-      - name: Serverless Packaging
+      - name: Serverless ACM cert creation
         run: |
           node_modules/.bin/serverless create-cert
 
