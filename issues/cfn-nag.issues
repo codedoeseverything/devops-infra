@@ -110,19 +110,9 @@
   {
     "filename": "cfn-templates/chatbot.yml",
     "file_results": {
-      "failure_count": 1,
+      "failure_count": 0,
       "violations": [
-        {
-          "id": "F38",
-          "type": "FAIL",
-          "message": "IAM role should not allow * resource with PassRole action on its permissions policy",
-          "logical_resource_ids": [
-            "ChatbotIamRole"
-          ],
-          "line_numbers": [
-            76
-          ]
-        }
+
       ]
     }
   }

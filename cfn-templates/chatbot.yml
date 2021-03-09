@@ -86,7 +86,7 @@ Resources:
             Principal:
               Service: chatbot.amazonaws.com
             Action: sts:AssumeRole
-      ManagedPolicyArns: !If [AllowReadOnlyAndSupportPolicyArns, !Split [',', !Ref ManagedPolicyArns], !Ref 'AWS::NoValue']
+      ManagedPolicyArns: !If [AllowReadOnlyAndSupportPolicyArns, !Split [',', !Ref AllowReadOnlyAndSupportPolicyArns], !Ref 'AWS::NoValue']
       Policies:
       - !If
         - AllowReadOnlyAndSupportPolicyArns
