@@ -24,10 +24,4 @@ resources:
       ResourceRecords: 
       - !Split [',', ${env:PUBLICZONENSRECORD}]
       TTL: '300'
-      Type: NS
-  Outputs:
-    SharedACMCertificateArn:
-      Description: 'The ARN of shared ACM certification'
-      Value: ${certificate:${self:custom.customCertificate.certificateName}:CertificateArn}
-      Export:
-        Name: !Sub '${StackName}-SharedACMCertificateArn-${Env}'
+      Type: A
