@@ -27,3 +27,5 @@ RulesToSuppress:
   reason: "SNS Topic should specify KmsMasterKeyId property"
 - id: F18
   reason: "SNS topic policy should not allow * principal"
+- id: F38
+  reason: "IAM role should not allow * resource with PassRole action on its permissions policy"
