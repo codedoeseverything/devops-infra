@@ -172,6 +172,7 @@ jobs:
           echo "Before export PUBLICZONEID is :" ${{ env.PUBLICZONEID }}
           echo "PUBLICZONEID="$(aws cloudformation list-exports --query "Exports[?Name==\`$DN\`].Value" --no-paginate --output text) >> $GITHUB_ENV
           echo "After export PUBLICZONEID is :" ${{ env.PUBLICZONEID }}
+          echo "After export PUBLICZONEID is :" $PUBLICZONEID
       
       - name: Serverless ACM cert creation
         run: |

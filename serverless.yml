@@ -20,7 +20,7 @@ custom:
   customCertificate:
       certificateName: "*.${env:PUBLICZONENAME}"
       hostedZoneName: "${env:PUBLICZONENAME}"
-      # hostedZoneId: "${env:PUBLICZONEID}"
+      hostedZoneId: "${env:PUBLICZONEID}"
       tags:
           Name: '*.${env:PUBLICZONENAME}'
           Environment: ${env:ENV}
