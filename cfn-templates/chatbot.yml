@@ -54,6 +54,7 @@ Resources:
       IamRoleArn: !GetAtt ChatbotIamRole.Arn
       SnsTopicArns: 
         - {'Fn::ImportValue': !Sub '${StackName}-ChatBotSNSTopicARN-${Env}'}
+        - {'Fn::ImportValue': !Sub '${StackName}-FallbackSNSTopicARN-${Env}'}
 
   ChatbotIamRole:
     Type: AWS::IAM::Role

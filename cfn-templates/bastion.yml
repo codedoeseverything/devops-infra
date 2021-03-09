@@ -423,7 +423,7 @@ Resources:
       Tags:
       - Key: Name
         Value: !Sub
-        - 'SSH bastion host/instance ${CidrBlock}'
+        - 'SSH-bastion-host-cidr-block-${CidrBlock}'
         - CidrBlock: {'Fn::ImportValue': !Sub '${StackName}-CidrBlock-${Env}'}
         PropagateAtLaunch: true
       NotificationConfigurations:

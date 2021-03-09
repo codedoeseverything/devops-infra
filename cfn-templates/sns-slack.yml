@@ -115,3 +115,8 @@ Outputs:
     Value: !GetAtt 'Topic.TopicName'
     Export:
       Name: !Sub '${StackName}-ChatBotSNSTopicName-${Env}'
+  FallbackSNSTopicARN:
+    Description: 'The name of the alert topic.'
+    Value: !Ref FallbackTopic
+    Export:
+      Name: !Sub '${StackName}-FallbackSNSTopicARN-${Env}'

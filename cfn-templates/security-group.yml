@@ -265,6 +265,7 @@ Resources:
       SourceSecurityGroupId:
         Ref: VPCEndpointClientSecurityGroup
 
+
 Outputs:
   StackName:
     Description: 'Stack name.'
