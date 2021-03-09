@@ -12,16 +12,12 @@ provider:
   region: ${env:REGION}
   stage: ${env:ENV}
 
-
-custom:
-
 resources:
-  NSRecordSet:
+  myDNSRecord:
     Type: AWS::Route53::RecordSet
     Properties:
-      Comment: This is test record from automation
       HostedZoneId : ${env:P1PUBLICZONEID}
       Name: ${env:PUBLICZONENAME}
       ResourceRecords: ${env:PUBLICZONENSRECORD}
-      TTL: '60'
-      Type: NS
+      TTL: '300'
+      Type: A
