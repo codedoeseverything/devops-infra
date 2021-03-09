@@ -142,6 +142,17 @@ Parameters:
   PublicHostedZoneId:
     Description: 'The ID of the existing hosted zone.'
     Type: String
+  AllowReadOnlyAndSupportPolicyArns:
+    Description: 'Optional comma-delimited list of IAM managed policy ARNs to attach to the instance''s IAM role'
+    Type: String
+    Default: 'arn:aws:iam::aws:policy/ReadOnlyAccess,arn:aws:iam::aws:policy/AWSSupportAccess'
+  AllowLambdaInvokeForChatBot:
+    Description: 'Enable AWS Lambda Invoke Access for chatbot.'
+    Type: String
+    Default: true
+    AllowedValues:
+    - true
+    - false
 
 Conditions:
   CreateChatBotStackCondition: !Equals
@@ -205,7 +216,9 @@ Resources:
         ChatBotConfigurationName: !Ref 'ChatBotConfigurationName'
         ChatBotLoggingLevel: !Ref 'ChatBotLoggingLevel'
         SlackChannelId: !Ref 'SlackChannelId'
-        SlackWorkspaceId: !Ref 'SlackWorkspaceId' 
+        SlackWorkspaceId: !Ref 'SlackWorkspaceId'
+        AllowReadOnlyAndSupportPolicyArns: !Ref AllowReadOnlyAndSupportPolicyArns
+        AllowLambdaInvokeForChatBot: !Ref AllowLambdaInvokeForChatBot
 
 
   BastionServerStack:
