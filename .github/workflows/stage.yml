@@ -164,7 +164,7 @@ jobs:
           python3 scripts/cfn-create-update.py ${{ env.STACK_NAME }}-${{ env.SUBDOMAIN }} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
       
 
-      - name: Export CFN output values
+      - name: Export CFN output values only if ISZONEEXIST is false
         if: env.ISZONEEXIST == 'false'
         run: |
           export DN=${{ env.STACK_NAME }}-PublicHostedZoneId-${{ env.ENV }}
@@ -173,12 +173,42 @@ jobs:
           echo "PUBLICZONENSRECORD="$(aws cloudformation list-exports --query "Exports[?Name==\`$NS\`].Value" --no-paginate --output text) >> $GITHUB_ENV
       
 
+      
+      - name: Export AWS Account ID
+        run: |
+          export ID=${{ env.STACK_NAME }}-AccountID-${{ env.ENV }}
+          echo "ACCOUNTID="$(aws cloudformation list-exports --query "Exports[?Name==\`$ID\`].Value" --no-paginate --output text) >> $GITHUB_ENV
+
+
+      - name: Configure AWS credentials from P1 AU account in ${{ env.REGION }} region
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.DEVOPS_AWS_KEY }}
+          aws-secret-access-key: ${{ secrets.DEVOPS_SECRET_KEY }}
+          aws-region: ${{ env.REGION }}
+
+
       - name: P1 Dependency Resource creation using Serverless
         run: |
           mv serverless-p1-dependency.yml serverless.yml
           node_modules/.bin/serverless deploy
           rm serverless.yml
+
+
+      # - name: P1 Dependency Resource creation using script for ECR Push and Pull access
+      #   run: |
+      #     chmod +x ecr-push-pull-access-p1.sh && ./ecr-push-pull-access-p1.sh
+      #   env:
+      #     ACCOUNTID: ${{ env.ACCOUNTID }}
       
+      
+      # - name: Configure AWS credentials from ${{ env.STACK_NAME }} account in ${{ env.REGION }} region
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.DEVOPS_AWS_KEY }}
+      #     aws-secret-access-key: ${{ secrets.DEVOPS_SECRET_KEY }}
+      #     aws-region: ${{ env.REGION }}
+
 
       # - name: Serverless ACM cert creation
       #   run: |

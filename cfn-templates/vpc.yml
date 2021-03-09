@@ -1008,3 +1008,8 @@ Outputs:
     Value: !Ref RouteTableFPrivate
     Export:
       Name: !Sub '${StackName}-RouteTableFPrivate-${Env}'
+  AccountID:
+    Description: 'The AWS Account ID'
+    Value: !Sub '${AWS::AccountId}'
+    Export:
+      Name: !Sub '${StackName}-AccountID-${Env}'
