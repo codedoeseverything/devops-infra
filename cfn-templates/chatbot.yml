@@ -42,6 +42,21 @@ Parameters:
   SlackWorkspaceId:
     Description: A Slack Workspace ID 
     Type: String
+  AllowReadOnlyAndSupportPolicyArns:
+    Description: 'Optional comma-delimited list of IAM managed policy ARNs to attach to the instance''s IAM role'
+    Type: String
+    Default: arn:aws:iam::aws:policy/ReadOnlyAccess,arn:aws:iam::aws:policy/AWSSupportAccess
+  AllowLambdaInvokeForChatBot:
+    Description: 'Enable AWS Lambda Invoke Access for chatbot.'
+    Type: String
+    Default: true
+    AllowedValues:
+    - true
+    - false
+
+Conditions:
+  AllowLambdaInvokeForChatBot: !Equals [!Ref AllowLambdaInvokeForChatBot, 'true']
+  AllowReadOnlyAndSupportPolicyArns: !Not [!Equals [!Ref AllowReadOnlyAndSupportPolicyArns, '']]
 
 Resources:
   TestChatbot:
@@ -55,6 +70,7 @@ Resources:
       SnsTopicArns: 
         - {'Fn::ImportValue': !Sub '${StackName}-ChatBotSNSTopicARN-${Env}'}
         - {'Fn::ImportValue': !Sub '${StackName}-FallbackSNSTopicARN-${Env}'}
+
 
   ChatbotIamRole:
     Type: AWS::IAM::Role
@@ -70,15 +86,61 @@ Resources:
             Principal:
               Service: chatbot.amazonaws.com
             Action: sts:AssumeRole
+      ManagedPolicyArns: !If [AllowReadOnlyAndSupportPolicyArns, !Split [',', !Ref ManagedPolicyArns], !Ref 'AWS::NoValue']
       Policies:
-        - PolicyName: !Sub '${StackName}-chatbot-iam-policy-${Env}'
+      - !If
+        - AllowReadOnlyAndSupportPolicyArns
+        - PolicyName: !Sub '${StackName}-Deny-ReadOnlyPolicy-${Env}'
           PolicyDocument:
-            Version: 2012-10-17
+            Version: '2012-10-17'
             Statement:
-              - Effect: Allow
-                Action:
-                  - cloudwatch:Describe*
-                  - cloudwatch:Get*
-                  - cloudwatch:List*
-                Resource:
-                  - "*"
+            - Effect: Deny
+              Action:
+              - iam:*
+              - s3:GetBucketPolicy
+              - ssm:*
+              - sts:*
+              - kms:*
+              - cognito-idp:GetSigningCertificate
+              - ec2:GetPasswordData
+              - ecr:GetAuthorizationToken
+              - gamelift:RequestUploadCredentials
+              - gamelift:GetInstanceAccess
+              - lightsail:DownloadDefaultKeyPair
+              - lightsail:GetInstanceAccessDetails
+              - lightsail:GetKeyPair
+              - lightsail:GetKeyPairs
+              - redshift:GetClusterCredentials
+              - storagegateway:DescribeChapCredentials
+              Resource:
+              - "*"
+        - !Ref 'AWS::NoValue'
+      - !If
+        - AllowLambdaInvokeForChatBot
+        - PolicyName: !Sub '${StackName}-AllowLambdaInvokeForChatBot-${Env}'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+              - lambda:invokeAsync
+              - lambda:invokeFunction
+              Resource:
+              - "*"
+        - !Ref 'AWS::NoValue'
+  LogsNotificationOnly:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      Roles:
+      - !Ref ChatbotIamRole
+      PolicyName: !Sub '${StackName}-LogsNotificationOnly-${Env}'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - cloudwatch:Describe*
+          - cloudwatch:Get*
+          - cloudwatch:List*
+          Resource:
+          - "*"
