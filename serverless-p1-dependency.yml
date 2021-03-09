@@ -16,11 +16,12 @@ provider:
 custom:
 
 resources:
-  myNSRecord:
+  NSRecordSet:
     Type: AWS::Route53::RecordSet
     Properties:
+      Comment: This is test record from automation
       HostedZoneId : ${env:P1PUBLICZONEID}
       Name: ${env:PUBLICZONENAME}
       ResourceRecords: ${env:PUBLICZONENSRECORD}
-      TTL: '300'
+      TTL: '60'
       Type: NS
