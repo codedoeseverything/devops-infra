@@ -12,5 +12,3 @@ CreateVPCEndpointStackCondition=true
 PublicHostedZoneName=sub.quicktest.com
 PrivateHostedZoneName=internal.sub.quicktest.com
 PublicHostedZoneId=
-ParentHostedZoneName=sub.quicktest.com
-ParentHostedZoneId=Z028715610YQDU36DOXE3
