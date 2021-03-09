@@ -62,6 +62,8 @@ jobs:
   
       - name: Run cloudformation template Lint test
         run: |
+          pip install cfn-lint
+          cfn-lint -v
           cfn-lint -i W2001 W8001 -t '**/*.yml'
       
       
