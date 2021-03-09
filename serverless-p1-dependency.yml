@@ -19,6 +19,7 @@ resources:
       Properties:
         HostedZoneId : ${env:P1PUBLICZONEID}
         Name: ${env:PUBLICZONENAME}
-        ResourceRecords: !Split [',',${env:PUBLICZONENSRECORD}]
+        ResourceRecords: 
+        !Split [',','${env:PUBLICZONENSRECORD}']
         TTL: '300'
         Type: NS
