@@ -27,11 +27,11 @@ jobs:
       CFNS3BucketName: devops-cfn-templates1
       S3BucketNameKeyPair: devops-ec2-keypair1
       LOGGING_LEVEL: INFO  #ERROR, INFO, or NONE.
-      ISZONEEXIST: false  #false, true.
+      ISZONEEXIST: true  #false, true.
       P1PUBLICZONEID: 
       PUBLICZONENAME: sub.quicktest.com
       PRIVATEZONENAME: internal.sub.quicktest.com
-      PUBLICZONEID: 
+      PUBLICZONEID: Z04615941B2RGJA39TBRM
 
 
     # Steps to execute in this job
@@ -189,6 +189,7 @@ jobs:
 
 
       - name: P1 Dependency Resource creation using Serverless
+        if: env.ISZONEEXIST == 'false'
         run: |
           mv serverless-p1-dependency.yml serverless.yml
           node_modules/.bin/serverless deploy
