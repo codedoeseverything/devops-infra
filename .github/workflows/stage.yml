@@ -193,6 +193,8 @@ jobs:
           mv serverless-p1-dependency.yml serverless.yml
           node_modules/.bin/serverless deploy
           rm serverless.yml
+        env:
+          P1PUBLICZONEID: Z04615941B2RGJA39TBRM
 
 
       # - name: P1 Dependency Resource creation using script for ECR Push and Pull access
