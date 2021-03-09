@@ -40,11 +40,13 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install cfn-lint
+          
 
   
       - name: Run cloudformation template Lint test
         run: |
+          pip install cfn-lint
+          cfn-lint -v
           cfn-lint -i W2001 W8001 -t '**/*.yml'
       
       
