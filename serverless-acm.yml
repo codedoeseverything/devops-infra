@@ -18,19 +18,33 @@ provider:
 
 custom:
   customCertificate:
-      certificateName: "*.${env:PUBLICZONENAME}"
+      certificateName: "${env:PUBLICZONENAME}"
       hostedZoneName: "${env:PUBLICZONENAME}"
       hostedZoneId: "${env:PUBLICZONEID}"
+      region: "${env:CUSTOMREGION}"
+      subjectAlternativeNames : 
+        - "*.${env:PUBLICZONENAME}"
       rewriteRecords: false
 
 resources:
+  Conditions:
+    APIREGION: !Equals [${env:CUSTOMREGION}, 'us-east-1']
+    APPREGION: !Not [!Equals [${env:CUSTOMREGION},${env:REGION}]]
+    HasNot: !Equals ['true', 'false']
   Resources:
     NullResource:
       Type: 'Custom::NullResource'
-      Condition: false
+      Condition: HasNot
   Outputs:
-    SharedACMCertificateArn:
-      Description: 'The ARN of shared ACM certification'
+    APISharedACMCertificateArn:
+      Condition: APIREGION
+      Description: 'The ARN of shared ACM certification for API gateway custom domains'
       Value: ${certificate:${self:custom.customCertificate.certificateName}:CertificateArn}
       Export:
-        Name: !Sub '${StackName}-SharedACMCertificateArn-${Env}'
+        Name: !Sub '${StackName}-APISharedACMCertificateArn-${Env}'
+    APPSharedACMCertificateArn:
+      Condition: APPREGION
+      Description: 'The ARN of shared ACM certification for CORE, APP services'
+      Value: ${certificate:${self:custom.customCertificate.certificateName}:CertificateArn}
+      Export:
+        Name: !Sub '${StackName}-APPSharedACMCertificateArn-${Env}'

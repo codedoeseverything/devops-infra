@@ -22,7 +22,7 @@ jobs:
     env:
       REGION : ap-southeast-2
       ENV : stage # Valid values are sandbox,stage,live only
-      STACK_NAME: beta # Valid values are au,us,uk,p2,lf,nu,alpha,beta only
+      STACK_NAME: beta # Valid values are au,us,uk,p2,lf,nu,alpha,beta,shared only
       SUBDOMAIN: devops-infra
       CFNS3BucketName: devops-cfn-templates1
       S3BucketNameKeyPair: devops-ec2-keypair1
@@ -159,7 +159,7 @@ jobs:
 
       - name: Create or Update cloudformation templates to AWS
         run: |
-          python3 scripts/cfn-create-update.py ${{ env.STACK_NAME }}-${{ env.SUBDOMAIN }} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
+          python3 scripts/cfn-create-update.py ${{ env.STACK_NAME }}-${{ env.SUBDOMAIN }}-${{env.ENV}} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
       
 
       - name: Export CFN output values only if ISZONEEXIST is false
@@ -176,8 +176,11 @@ jobs:
         run: |
           export ID=${{ env.STACK_NAME }}-CURRENTACCOUNTID-${{ env.ENV }}
           echo "CURRENTACCOUNTID="$(aws cloudformation list-exports --query "Exports[?Name==\`$ID\`].Value" --no-paginate --output text) >> $GITHUB_ENV
-
-      # TODO - Enable P1 account credentials here
+          # export P1ZONEID=${{ env.STACK_NAME }}-P1PUBLICZONEID-${{ env.ENV }}
+          # echo "P1PUBLICZONEID="$(aws ssm get-parameter --name $P1ZONEID--with-decryption --output text --query Parameter.Value) >> $GITHUB_ENV
+      
+      
+          # TODO - Enable P1 account credentials here
       - name: Configure AWS credentials from P1 AU account in ${{ env.REGION }} region 
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -210,10 +213,20 @@ jobs:
       #     aws-region: ${{ env.REGION }}
 
 
-      # - name: Serverless ACM cert creation
+      # - name: Serverless ACM cert creation for Custom domain for Lambda and API gateway
       #   run: |
       #     mv serverless-acm.yml serverless.yml
       #     node_modules/.bin/serverless create-cert && node_modules/.bin/serverless deploy
+      #   env:
+      #     CUSTOMREGION: us-east-1
+
+
+      # - name: Serverless ACM cert creation for Front End Applications CORE,APP services
+      #   run: |
+      #     mv serverless-acm.yml serverless.yml
+      #     node_modules/.bin/serverless create-cert && node_modules/.bin/serverless deploy
+      #   env:
+      #     CUSTOMREGION: ${{ env.REGION }}
 
        
 
