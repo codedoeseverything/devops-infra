@@ -94,12 +94,10 @@ jobs:
         run:  npm install
       
 
-      # - name: Run cloudformation template Lint test using cfn-lint
-      #   run: |
-      #     pip install cfn-lint==0.44.4
-      #     cfn-lint -i W2001 W8001 W4002 W6001 -t '**/*.yml'
-      
-      
+      - name: Run cloudformation template Lint analysis test using cfn-lint
+        uses: docker://ghcr.io/scottbrenner/cfn-lint-action:master
+          
+
       - name: Run cloudformation template static analysis test using cfn-nag
         uses: stelligent/cfn_nag@master
         with:

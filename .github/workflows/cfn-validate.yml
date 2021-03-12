@@ -49,14 +49,10 @@ jobs:
           python -m pip install --upgrade pip
           
       
-      - name: cfn-lint
+      - name: Run cloudformation template Lint analysis test using cfn-lint
         uses: docker://ghcr.io/scottbrenner/cfn-lint-action:master
-        # with:
-        #   args: "**/*.yml"
-          # args: "-i W2001 W8001 W4002 W6001 -t **/*.yml"
           
-      
-      
+
       - name: Run cloudformation template static analysis test using cfn-nag
         uses: stelligent/cfn_nag@master
         with:
