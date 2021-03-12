@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
   push:
     # branches: [ 'trunk' ]
-    branches: [ 'develop' ]
+    branches: [ 'develop123' ]
     
 
 #Jobs to perform based on event occurred
