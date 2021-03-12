@@ -1,0 +1,6 @@
+templates:
+  - cfn-templates/**/*.yml
+# ignore_templates:
+#   - codebuild.yaml
+# ignore_checks:
+#   - E2001 
