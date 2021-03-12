@@ -141,7 +141,7 @@ Parameters:
     Type: String
   PublicHostedZoneId:
     Description: 'The ID of the existing hosted zone.'
-    Type: String
+    # Type: String
   AllowReadOnlyAndSupportPolicyArns:
     Description: 'Optional comma-delimited list of IAM managed policy ARNs to attach to the instance''s IAM role'
     Type: String
