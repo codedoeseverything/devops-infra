@@ -52,7 +52,8 @@ jobs:
       - name: cfn-lint
         uses: docker://ghcr.io/scottbrenner/cfn-lint-action:master
         with:
-          args: "-i W2001 W8001 W4002 W6001 -t **/*.yml"
+          args: "**/*.yml"
+          # args: "-i W2001 W8001 W4002 W6001 -t **/*.yml"
           
       
       
