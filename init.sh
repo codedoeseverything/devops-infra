@@ -20,7 +20,7 @@ rm cfn-nag-params.json
 for i in $CFN_TEMPLATES ; do
   echo "Generating cloudformation parameter info docs for file name "$i
   output=$(echo "$i" | cut -f 1 -d '.')
-  python3 scripts/cfn-docs-generator.py $i > docs/cfn-param-info/$output.html
+  python3 scripts/cfn-docs-generator.py cfn-templates/$i > docs/cfn-param-info/$output.html
 done
 
 echo "Run cloudformation dot graph flow diagram into png format image generator"

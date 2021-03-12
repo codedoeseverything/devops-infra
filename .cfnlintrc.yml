@@ -1,6 +1,9 @@
 templates:
   - cfn-templates/**/*.yml
-# ignore_checks:
-#   - W2001 W8001 W4002 W6001 
+ignore_checks:
+  - W2001
+  - W8001
+  - W4002
+  - W6001 
 # ignore_templates:
 #   - codebuild.yaml

@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
   push:
     # branches: [ 'trunk' ]
-    branches: [ 'develop123' ]
+    branches: [ 'develop' ]
     
 
 #Jobs to perform based on event occurred
@@ -49,7 +49,7 @@ jobs:
           
       - name: Cache Python dependencies
         uses: actions/cache@v2
-        id: cache
+        id: cache-python
         with:
           path: ${{ env.pythonLocation}}/lib/python3.8/site-packages/*
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
@@ -59,7 +59,7 @@ jobs:
 
 
       - name: Install Python dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           echo "Installing dependencies and caching them."
           pip install -r requirements.txt
@@ -165,20 +165,20 @@ jobs:
       - name: Export CFN output values only if ISZONEEXIST is false
         if: env.ISZONEEXIST == 'false'
         run: |
-          export DN=${{ env.STACK_NAME }}-PublicHostedZoneId-${{ env.ENV }}
-          export NS=${{ env.STACK_NAME }}-PublicHostedZoneNSRecord-${{ env.ENV }}
-          echo "PUBLICZONEID="$(aws cloudformation list-exports --query "Exports[?Name==\`$DN\`].Value" --no-paginate --output text) >> $GITHUB_ENV
-          echo "PUBLICZONENSRECORD="$(aws cloudformation list-exports --query "Exports[?Name==\`$NS\`].Value" --no-paginate --output text) >> $GITHUB_ENV
+          export ZONEID=${{ env.STACK_NAME }}-PublicHostedZoneId-${{ env.ENV }}
+          export NSRECORD=${{ env.STACK_NAME }}-PublicHostedZoneNSRecord-${{ env.ENV }}
+          echo "PUBLICZONEID="$(aws cloudformation list-exports --query "Exports[?Name==\`$ZONEID\`].Value" --no-paginate --output text) >> $GITHUB_ENV
+          echo "PUBLICZONENSRECORD="$(aws cloudformation list-exports --query "Exports[?Name==\`$NSRECORD\`].Value" --no-paginate --output text) >> $GITHUB_ENV
       
 
       
-      - name: Export AWS Account ID
+      - name: Export existing AWS Account ID
         run: |
-          export ID=${{ env.STACK_NAME }}-AccountID-${{ env.ENV }}
-          echo "ACCOUNTID="$(aws cloudformation list-exports --query "Exports[?Name==\`$ID\`].Value" --no-paginate --output text) >> $GITHUB_ENV
+          export ID=${{ env.STACK_NAME }}-CURRENTACCOUNTID-${{ env.ENV }}
+          echo "CURRENTACCOUNTID="$(aws cloudformation list-exports --query "Exports[?Name==\`$ID\`].Value" --no-paginate --output text) >> $GITHUB_ENV
 
-
-      - name: Configure AWS credentials from P1 AU account in ${{ env.REGION }} region
+      # TODO - Enable P1 account credentials here
+      - name: Configure AWS credentials from P1 AU account in ${{ env.REGION }} region 
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.DEVOPS_AWS_KEY }}
@@ -193,16 +193,15 @@ jobs:
           node_modules/.bin/serverless deploy
           rm serverless.yml
         env:
-          P1PUBLICZONEID: Z04615941B2RGJA39TBRM
+          P1PUBLICZONEID: Z04615941B2RGJA39TBRM # TODO: Delete env section once testing
 
 
       # - name: P1 Dependency Resource creation using script for ECR Push and Pull access
       #   run: |
       #     chmod +x ecr-push-pull-access-p1.sh && ./ecr-push-pull-access-p1.sh
-      #   env:
-      #     ACCOUNTID: ${{ env.ACCOUNTID }}
       
       
+      # TODO - Enable back current account credentials here again for ACM
       # - name: Configure AWS credentials from ${{ env.STACK_NAME }} account in ${{ env.REGION }} region
       #   uses: aws-actions/configure-aws-credentials@v1
       #   with:

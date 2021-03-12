@@ -5,7 +5,7 @@
             "Sid": "AllowCrossAccountPush",
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::1231243432454:root"
+                "AWS": "arn:aws:iam::account-id:root"
             },
             "Action": [
                 "ecr:GetDownloadUrlForLayer",

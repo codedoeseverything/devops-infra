@@ -6,22 +6,15 @@ name: Cloudformation template validation
 
 on:
   workflow_dispatch:
-  push:
-    # branches: [ 'trunk' ]
-    branches: [ 'develop' ]
-    
+  pull_request:
+    branches:
+      - 'develop'
+      - 'trunk'
+      - 'release/**'
+    types: [opened, synchronize, reopened]
 
-# on:
-#   workflow_dispatch:
-#   pull_request:
-#     branches:
-#       - 'develop'
-#       - 'trunk'
-#       - 'release/**'
-#     types: [opened, synchronize, reopened]
 
 #Jobs to perform based on event occurred
-
 
 jobs:
   cfn-validate:
@@ -43,6 +36,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
+
 
       - name: Install Python dependencies
         run: |
