@@ -3,4 +3,4 @@ templates:
 # ignore_templates:
 #   - codebuild.yaml
 ignore_checks:
-  - E2001 
+  - E2001
