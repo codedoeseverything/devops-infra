@@ -82,6 +82,16 @@ Resources:
           ToPort: 5432
           Description: !Sub 'To allow port 5432 open to DBClientSecurityGroup id, ${DBClientSecurityGroup}'
           SourceSecurityGroupId: !Ref DBClientSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          Description: !Sub 'To allow port 3306 open to BastionSecurityGroup id, ${BastionSecurityGroup}'
+          SourceSecurityGroupId: !Ref BastionSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          Description: !Sub 'To allow port 5432 open to BastionSecurityGroup id, ${BastionSecurityGroup}'
+          SourceSecurityGroupId: !Ref BastionSecurityGroup
       Tags:
         - Key: Name
           Value: !Sub '${StackName}-DBServerSecurityGroup-${Env}'
@@ -129,11 +139,6 @@ Resources:
           ToPort: 6379
           Description: !Sub 'To allow Redis cache port 6379 open to BastionSecurityGroup id, ${BastionSecurityGroup}'
           SourceSecurityGroupId: !Ref BastionSecurityGroup
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          Description: !Sub 'To allow SSH port 22 open to BastionSecurityGroup id, ${BastionSecurityGroup}'
-          SourceSecurityGroupId: !Ref BastionSecurityGroup 
       Tags:
         - Key: Name
           Value: !Sub '${StackName}-CacheServerSecurityGroup-${Env}'
