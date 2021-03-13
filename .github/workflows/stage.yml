@@ -147,7 +147,7 @@ jobs:
 
       
       - name: Create AWS EC2 Key Pair Name for ${{ env.STACK_NAME }} account in ${{ env.REGION }} region if not exist
-        run: chmod +x scripts/ec2-key-pair.sh && scripts/ec2-key-pair.sh
+        run: chmod +x scripts/cfn-ec2-key-pair.sh && scripts/cfn-ec2-key-pair.sh
         env:
           EC2KEYPAIR: ${{ env.STACK_NAME }}-${{ env.REGION }}
 
@@ -157,9 +157,9 @@ jobs:
           aws s3 sync cfn-templates/ s3://${{env.CFNS3BucketName}}/${{env.STACK_NAME}}/cfn-templates --delete
 
 
-      - name: Create or Update cloudformation templates to AWS
-        run: |
-          python3 scripts/cfn-create-update.py ${{ env.STACK_NAME }}-${{ env.SUBDOMAIN }}-${{env.ENV}} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
+      # - name: Create or Update cloudformation templates from ${{ env.STACK_NAME }} AWS account in ${{ env.REGION }} region
+      #   run: |
+      #     python3 scripts/cfn-create-update.py ${{ env.STACK_NAME }}-${{ env.SUBDOMAIN }}-${{env.ENV}} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
       
 
       - name: Export CFN output values only if ISZONEEXIST is false
@@ -180,7 +180,7 @@ jobs:
           # echo "P1PUBLICZONEID="$(aws ssm get-parameter --name $P1ZONEID--with-decryption --output text --query Parameter.Value) >> $GITHUB_ENV
       
       
-          # TODO - Enable P1 account credentials here
+      # TODO - Enable P1 account credentials here
       - name: Configure AWS credentials from P1 AU account in ${{ env.REGION }} region 
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -189,19 +189,19 @@ jobs:
           aws-region: ${{ env.REGION }}
 
 
-      - name: P1 Dependency Resource creation using Serverless
-        if: env.ISZONEEXIST == 'false'
-        run: |
-          mv serverless-p1-dependency.yml serverless.yml
-          node_modules/.bin/serverless deploy
-          rm serverless.yml
-        env:
-          P1PUBLICZONEID: Z04615941B2RGJA39TBRM # TODO: Delete env section once testing
+      # - name: P1 Dependency Resource creation using Serverless
+      #   if: env.ISZONEEXIST == 'false'
+      #   run: |
+      #     mv serverless-p1-dependency.yml serverless.yml
+      #     node_modules/.bin/serverless deploy
+      #     rm serverless.yml
+      #   env:
+      #     P1PUBLICZONEID: Z04615941B2RGJA39TBRM # TODO: Delete env section once testing
 
 
       # - name: P1 Dependency Resource creation using script for ECR Push and Pull access
       #   run: |
-      #     chmod +x ecr-push-pull-access-p1.sh && ./ecr-push-pull-access-p1.sh
+      #     chmod +x cfn-ecr-push-pull-access-p1.sh && ./cfn-ecr-push-pull-access-p1.sh
       
       
       # TODO - Enable back current account credentials here again for ACM
