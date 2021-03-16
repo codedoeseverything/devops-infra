@@ -239,7 +239,7 @@ jobs:
           CUSTOMREGION: us-east-1
 
 
-     - name: serverless acm cert creation for custom domain for ELB app services.
+      - name: serverless acm cert creation for custom domain for ELB app services.
         run: |
           cp serverless-acm-app.yml serverless.yml
           node_modules/.bin/serverless create-cert && node_modules/.bin/serverless deploy
