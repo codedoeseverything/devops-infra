@@ -90,7 +90,7 @@ jobs:
 
 
       - name: Install dependencies
-        # if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run:  npm install
       
 
@@ -230,13 +230,13 @@ jobs:
           aws-region: ${{ env.REGION }}
 
 
-      # - name: Serverless ACM cert creation for Custom domain for Lambda and API gateway
-      #   run: |
-      #     mv serverless-acm.yml serverless.yml
-      #     node_modules/.bin/serverless create-cert && node_modules/.bin/serverless deploy
-      #     rm serverless.yml
-      #   env:
-      #     CUSTOMREGION: us-east-1
+      - name: Serverless ACM cert creation for Custom domain for Lambda and API gateway
+        run: |
+          mv serverless-acm.yml serverless.yml
+          node_modules/.bin/serverless create-cert && node_modules/.bin/serverless deploy
+          rm serverless.yml
+        env:
+          CUSTOMREGION: us-east-1
 
 
       # - name: Serverless ACM cert creation for Front End Applications CORE,APP services
