@@ -31,10 +31,11 @@ jobs:
       P1PUBLICZONEID: 
       PUBLICZONENAME: sub.quicktest.com
       PRIVATEZONENAME: internal.sub.quicktest.com
-      PUBLICZONEID:SUBDOMAIN Z04615941B2RGJA39TBRM
+      PUBLICZONEID: Z04615941B2RGJA39TBRM
 
 
-    # Steps to execuREGION
+    # Steps to execute in this job
+    steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
@@ -168,7 +169,7 @@ jobs:
           STACK_NAME=${{ env.STACK_NAME }}
           ENV=${{ env.ENV }}
           REGION=${{ env.REGION }}
-          SUBDOMAIN=${{ env.SUBDOMAIN }}
+          SUBDOMAIN=${{ env.REGION }}
           EOF
           echo "Here is secret variable ARN" && cat .env
         env:
