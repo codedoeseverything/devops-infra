@@ -22,6 +22,7 @@
     "dotenv": "^8.2.0"
   },
   "devDependencies": {
+    "dotenv": "^8.2.0",
     "serverless": "^2.28.7",
     "serverless-certificate-creator": "^1.5.2"
   }

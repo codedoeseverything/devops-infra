@@ -178,6 +178,11 @@ jobs:
           mv serverless-secret-arn-export.yml serverless.yml
           node_modules/.bin/serverless deploy
           rm serverless.yml
+        env:
+          STACK_NAME: ${{ env.STACK_NAME }}
+          ENV: ${{ env.ENV }}
+          REGION: ${{ env.REGION }}
+          SUBDOMAIN: ${{ env.SUBDOMAIN }}
         
       
           
