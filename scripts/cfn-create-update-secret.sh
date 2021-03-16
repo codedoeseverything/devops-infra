@@ -18,7 +18,7 @@ for i in $S3KEYNAME ; do
   if [ "$ISEXIST" == "false" ]; then
         echo "creating new secret for variable name "$SECRETNAME
         echo $SECRETNAME=$(aws secretsmanager create-secret --name $SECRETNAME \
-        --description "This secret name created with the Automation CLI" \
+        --description "The secret name '"$SECRETNAME"' created with the Automation CLI" \
         --secret-string file://temp/$i \
         --query 'ARN' \
         --output text)>>secret.param
@@ -29,6 +29,7 @@ for i in $S3KEYNAME ; do
     else
         echo "updating existing secret for variable name "$SECRETNAME
         echo $SECRETNAME=$(aws secretsmanager update-secret \
+        --description "The secret name '"$SECRETNAME"' created with the Automation CLI" \
         --secret-id $SECRETNAME \
         --secret-string file://temp/$i \
         --query 'ARN' \
