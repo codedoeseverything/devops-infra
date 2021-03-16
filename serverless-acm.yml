@@ -1,7 +1,5 @@
 service: ${env:STACK_NAME}-${env:SUBDOMAIN}-shared-acm-cert
 
-frameworkVersion: ^2.17.0
-
 useDotenv: true
 
 plugins:
@@ -41,10 +39,10 @@ resources:
       Description: 'The ARN of shared ACM certification for API gateway custom domains'
       Value: ${certificate:${self:custom.customCertificate.certificateName}:CertificateArn}
       Export:
-        Name: !Sub '${StackName}-APISharedACMCertificateArn-${Env}'
+        Name: ${env:STACK_NAME}-APISharedACMCertificateArn-${env:ENV}
     APPSharedACMCertificateArn:
       Condition: APPREGION
       Description: 'The ARN of shared ACM certification for CORE, APP services'
       Value: ${certificate:${self:custom.customCertificate.certificateName}:CertificateArn}
       Export:
-        Name: !Sub '${StackName}-APPSharedACMCertificateArn-${Env}'
+        Name: ${env:STACK_NAME}-APPSharedACMCertificateArn-${env:ENV}
