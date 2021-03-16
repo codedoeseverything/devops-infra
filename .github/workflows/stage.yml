@@ -162,31 +162,42 @@ jobs:
       #     python3 scripts/cfn-create-update.py ${{ env.STACK_NAME }}-${{ env.SUBDOMAIN }}-${{env.ENV}} cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
       
 
-      - name: Export CFN output values only if ISZONEEXIST is false
-        if: env.ISZONEEXIST == 'false'
+      - name: Create or Update AWS Secret Variables for ${{ env.STACK_NAME }} account in ${{ env.REGION }} region
         run: |
-          export ZONEID=${{ env.STACK_NAME }}-PublicHostedZoneId-${{ env.ENV }}
-          export NSRECORD=${{ env.STACK_NAME }}-PublicHostedZoneNSRecord-${{ env.ENV }}
-          echo "PUBLICZONEID="$(aws cloudformation list-exports --query "Exports[?Name==\`$ZONEID\`].Value" --no-paginate --output text) >> $GITHUB_ENV
-          echo "PUBLICZONENSRECORD="$(aws cloudformation list-exports --query "Exports[?Name==\`$NSRECORD\`].Value" --no-paginate --output text) >> $GITHUB_ENV
+          chmod +x scripts/cfn-create-update-secret.sh && scripts/cfn-create-update-secret.sh
+          echo "Here is secret variable ARN" && cat .env
+        env:
+          S3SECRETBUCKET: ${{ env.CFNS3BucketName }}
+          STACKNAME: ${{ env.STACK_NAME }}
+          ENV: ${{ env.ENV }}
+          TAGFILENAME: config/cfn-tags.json
+          
+
+      # - name: Export CFN output values only if ISZONEEXIST is false
+      #   if: env.ISZONEEXIST == 'false'
+      #   run: |
+      #     export ZONEID=${{ env.STACK_NAME }}-PublicHostedZoneId-${{ env.ENV }}
+      #     export NSRECORD=${{ env.STACK_NAME }}-PublicHostedZoneNSRecord-${{ env.ENV }}
+      #     echo "PUBLICZONEID="$(aws cloudformation list-exports --query "Exports[?Name==\`$ZONEID\`].Value" --no-paginate --output text) >> $GITHUB_ENV
+      #     echo "PUBLICZONENSRECORD="$(aws cloudformation list-exports --query "Exports[?Name==\`$NSRECORD\`].Value" --no-paginate --output text) >> $GITHUB_ENV
       
 
       
-      - name: Export existing AWS Account ID
-        run: |
-          export ID=${{ env.STACK_NAME }}-CURRENTACCOUNTID-${{ env.ENV }}
-          echo "CURRENTACCOUNTID="$(aws cloudformation list-exports --query "Exports[?Name==\`$ID\`].Value" --no-paginate --output text) >> $GITHUB_ENV
-          # export P1ZONEID=${{ env.STACK_NAME }}-P1PUBLICZONEID-${{ env.ENV }}
-          # echo "P1PUBLICZONEID="$(aws ssm get-parameter --name $P1ZONEID--with-decryption --output text --query Parameter.Value) >> $GITHUB_ENV
+      # - name: Export existing AWS Account ID
+      #   run: |
+      #     export ID=${{ env.STACK_NAME }}-CURRENTACCOUNTID-${{ env.ENV }}
+      #     echo "CURRENTACCOUNTID="$(aws cloudformation list-exports --query "Exports[?Name==\`$ID\`].Value" --no-paginate --output text) >> $GITHUB_ENV
+      #     # export P1ZONEID=${{ env.STACK_NAME }}-P1PUBLICZONEID-${{ env.ENV }}
+      #     # echo "P1PUBLICZONEID="$(aws ssm get-parameter --name $P1ZONEID--with-decryption --output text --query Parameter.Value) >> $GITHUB_ENV
       
       
-      # TODO - Enable P1 account credentials here
-      - name: Configure AWS credentials from P1 AU account in ${{ env.REGION }} region 
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.DEVOPS_AWS_KEY }}
-          aws-secret-access-key: ${{ secrets.DEVOPS_SECRET_KEY }}
-          aws-region: ${{ env.REGION }}
+      # # TODO - Enable P1 account credentials here
+      # - name: Configure AWS credentials from P1 AU account in ${{ env.REGION }} region 
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.DEVOPS_AWS_KEY }}
+      #     aws-secret-access-key: ${{ secrets.DEVOPS_SECRET_KEY }}
+      #     aws-region: ${{ env.REGION }}
 
 
       # - name: P1 Dependency Resource creation using Serverless
