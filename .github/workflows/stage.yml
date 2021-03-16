@@ -239,13 +239,13 @@ jobs:
           CUSTOMREGION: us-east-1
 
 
-      # - name: Serverless ACM cert creation for Front End Applications CORE,APP services
-      #   run: |
-      #     mv serverless-acm.yml serverless.yml
-      #     node_modules/.bin/serverless create-cert && node_modules/.bin/serverless deploy
-      #     rm serverless.yml
-      #   env:
-      #     CUSTOMREGION: ${{ env.REGION }}
+      - name: Serverless ACM cert creation for Front End Applications CORE,APP services
+        run: |
+          mv serverless-acm.yml serverless.yml
+          node_modules/.bin/serverless create-cert && node_modules/.bin/serverless deploy
+          rm serverless.yml
+        env:
+          CUSTOMREGION: ${{ env.REGION }}
 
        
 
