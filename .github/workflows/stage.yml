@@ -165,12 +165,6 @@ jobs:
       - name: Create or Update AWS Secret Variables for ${{ env.STACK_NAME }} account in ${{ env.REGION }} region
         run: |
           chmod +x scripts/cfn-create-update-secret.sh && scripts/cfn-create-update-secret.sh
-          cat >>.env <<EOF
-          STACK_NAME=${{ env.STACK_NAME }}
-          ENV=${{ env.ENV }}
-          REGION=${{ env.REGION }}
-          SUBDOMAIN=${{ env.REGION }}
-          EOF
           echo "Here is secret variable ARN" && cat .env
         env:
           S3SECRETBUCKET: ${{ env.CFNS3BucketName }}
