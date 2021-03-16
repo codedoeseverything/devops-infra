@@ -16,12 +16,12 @@ provider:
 
 custom:
   customCertificate:
-      certificateName: "${env:PUBLICZONENAME}"
-      hostedZoneName: "${env:PUBLICZONENAME}"
-      hostedZoneId: "${env:PUBLICZONEID}"
-      region: "${env:CUSTOMREGION}"
+      certificateName: 'api.${env:PUBLICZONENAME}'
+      hostedZoneName: '${env:PUBLICZONENAME}'
+      hostedZoneId: '${env:PUBLICZONEID}'
+      region: '${env:CUSTOMREGION}'
       subjectAlternativeNames : 
-        - "*.${env:PUBLICZONENAME}"
+        - '*.${env:PUBLICZONENAME}'
       rewriteRecords: false
 
 resources:
