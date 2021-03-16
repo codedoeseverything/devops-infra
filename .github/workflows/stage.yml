@@ -31,11 +31,10 @@ jobs:
       P1PUBLICZONEID: 
       PUBLICZONENAME: sub.quicktest.com
       PRIVATEZONENAME: internal.sub.quicktest.com
-      PUBLICZONEID: Z04615941B2RGJA39TBRM
+      PUBLICZONEID:SUBDOMAIN Z04615941B2RGJA39TBRM
 
 
-    # Steps to execute in this job
-    steps:
+    # Steps to execuREGION
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
@@ -80,7 +79,7 @@ jobs:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: |
             ~/.npm
-            node_modules
+            node_modREGIONules
             */*/node_modules
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
           restore-keys: |
@@ -165,6 +164,12 @@ jobs:
       - name: Create or Update AWS Secret Variables for ${{ env.STACK_NAME }} account in ${{ env.REGION }} region
         run: |
           chmod +x scripts/cfn-create-update-secret.sh && scripts/cfn-create-update-secret.sh
+          cat >>.env <<EOF
+          STACK_NAME=${{ env.STACK_NAME }}
+          ENV=${{ env.ENV }}
+          REGION=${{ env.REGION }}
+          SUBDOMAIN=${{ env.SUBDOMAIN }}
+          EOF
           echo "Here is secret variable ARN" && cat .env
         env:
           S3SECRETBUCKET: ${{ env.CFNS3BucketName }}
@@ -173,16 +178,11 @@ jobs:
           TAGFILENAME: config/cfn-tags.json
 
 
-      - name: Serverless ACM cert creation for Front End Applications CORE,APP services
+      - name: Serverless AWS Secret Creation or Updation service
         run: |
           mv serverless-secret-arn-export.yml serverless.yml
           node_modules/.bin/serverless deploy
-          rm serverless.yml
-        env:
-          STACK_NAME: ${{ env.STACK_NAME }}
-          ENV: ${{ env.ENV }}
-          REGION: ${{ env.REGION }}
-          SUBDOMAIN: ${{ env.SUBDOMAIN }}
+          rm serverless.yml .env
         
       
           
