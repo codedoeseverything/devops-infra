@@ -178,6 +178,8 @@ jobs:
           mv serverless-secret-arn-export.yml serverless.yml
           node_modules/.bin/serverless deploy
           rm serverless.yml
+        
+      
           
 
       # - name: Export CFN output values only if ISZONEEXIST is false
