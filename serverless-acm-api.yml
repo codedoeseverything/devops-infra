@@ -1,4 +1,4 @@
-service: ${env:STACK_NAME}-${env:SUBDOMAIN}-api
+service: ${env:STACK_NAME}-${env:SUBDOMAIN}-api-acm-create
 
 useDotenv: true
 

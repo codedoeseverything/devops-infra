@@ -1,4 +1,4 @@
-service: ${env:STACK_NAME}-${env:SUBDOMAIN}-app
+service: ${env:STACK_NAME}-${env:SUBDOMAIN}-app-acm-create
 
 useDotenv: true
 
@@ -34,7 +34,7 @@ resources:
       Condition: HasNot
   Outputs:
     APPSharedACMCertificateArn:
-      Description: 'The ARN of shared ACM certification for CORE, APP services'
+      Description: 'The ARN of shared ACM certification for ELB services'
       Value: ${certificate:${self:custom.customCertificate.certificateName}:CertificateArn}
       Export:
         Name: ${env:STACK_NAME}-APPSharedACMCertificateArn-${env:ENV}
