@@ -25,7 +25,7 @@ custom:
       region: '${env:CUSTOMREGION}'
       subjectAlternativeNames : 
         - '*.${env:PUBLICZONENAME}'
-      rewriteRecords: false
+      rewriteRecords: true
 
 
 resources:
