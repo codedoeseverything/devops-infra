@@ -175,7 +175,7 @@ jobs:
 
       - name: Serverless AWS Secret Creation or Updation service
         run: |
-          mv serverless-secret-arn-export.yml serverless.yml
+          cp serverless-secret-arn-export.yml serverless.yml
           node_modules/.bin/serverless deploy
           rm serverless.yml .env
         
@@ -210,7 +210,7 @@ jobs:
       - name: P1 Dependency Resource creation using Serverless
         if: env.ISZONEEXIST == 'false'
         run: |
-          mv serverless-p1-dependency.yml serverless.yml
+          cp serverless-p1-dependency.yml serverless.yml
           node_modules/.bin/serverless deploy
           rm serverless.yml
 
@@ -232,7 +232,7 @@ jobs:
 
       - name: Serverless ACM cert creation for Custom domain for Lambda and API gateway
         run: |
-          mv serverless-acm.yml serverless.yml
+          cp serverless-acm.yml serverless.yml
           node_modules/.bin/serverless create-cert && node_modules/.bin/serverless deploy
           rm serverless.yml
         env:
@@ -241,7 +241,7 @@ jobs:
 
       - name: Serverless ACM cert creation for Front End Applications CORE,APP services
         run: |
-          mv serverless-acm.yml serverless.yml
+          cp serverless-acm.yml serverless.yml
           node_modules/.bin/serverless create-cert && node_modules/.bin/serverless deploy
           rm serverless.yml
         env:
