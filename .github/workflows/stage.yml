@@ -171,6 +171,13 @@ jobs:
           STACKNAME: ${{ env.STACK_NAME }}
           ENV: ${{ env.ENV }}
           TAGFILENAME: config/cfn-tags.json
+
+
+      - name: Serverless ACM cert creation for Front End Applications CORE,APP services
+        run: |
+          mv serverless-secret-arn-export.yml serverless.yml
+          node_modules/.bin/serverless deploy
+          rm serverless.yml
           
 
       # - name: Export CFN output values only if ISZONEEXIST is false
@@ -228,6 +235,7 @@ jobs:
       #   run: |
       #     mv serverless-acm.yml serverless.yml
       #     node_modules/.bin/serverless create-cert && node_modules/.bin/serverless deploy
+      #     rm serverless.yml
       #   env:
       #     CUSTOMREGION: us-east-1
 
@@ -236,6 +244,7 @@ jobs:
       #   run: |
       #     mv serverless-acm.yml serverless.yml
       #     node_modules/.bin/serverless create-cert && node_modules/.bin/serverless deploy
+      #     rm serverless.yml
       #   env:
       #     CUSTOMREGION: ${{ env.REGION }}
 
