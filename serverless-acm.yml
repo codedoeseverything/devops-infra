@@ -26,8 +26,8 @@ custom:
 
 resources:
   Conditions:
-    APIREGION: !Equals [${env:CUSTOMREGION}, 'us-east-1']
-    APPREGION: !Not [!Equals [${env:CUSTOMREGION},${env:REGION}]]
+    APIREGION: !Equals ['${env:CUSTOMREGION}', 'us-east-1']
+    APPREGION: !Not [!Equals ['${env:CUSTOMREGION}','${env:REGION}']]
     HasNot: !Equals ['true', 'false']
   Resources:
     NullResource:

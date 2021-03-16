@@ -114,11 +114,13 @@ jobs:
           CFNS3BucketName=${{ env.CFNS3BucketName }}
           CFNS3BucketRegion=ap-southeast-2
           ChatBotConfigurationName=${{ env.STACK_NAME }}-ChatBotSlackNotify-${{ env.ENV }}
-          ChatBotLoggingLevel=${{ env.LOGGING_LEVEL }}
-          Route53HostedZoneExist=${{ env.ISZONEEXIST }}
-          PublicHostedZoneName=${{ env.PUBLICZONENAME }}
-          PrivateHostedZoneName=${{ env.PRIVATEZONENAME }}
-          PublicHostedZoneId=${{ env.PUBLICZONEID }}
+          ChatBotLoggingLevel- name: Serverless ACM cert creation for Front End Applications CORE,APP services
+      #   run: |
+      #     mv serverless-acm.yml serverless.yml
+      #     node_modules/.bin/serverless create-cert && node_modules/.bin/serverless deploy
+      #     rm serverless.yml
+      #   env:
+      #     CUSTOMREGION: ${{ env.REGION }}${{ env.PUBLICZONEID }}
 
           EOF
 
@@ -151,7 +153,13 @@ jobs:
         env:
           EC2KEYPAIR: ${{ env.STACK_NAME }}-${{ env.REGION }}
 
-
+- name: Serverless ACM cert creation for Front End Applications CORE,APP services
+      #   run: |
+      #     mv serverless-acm.yml serverless.yml
+      #     node_modules/.bin/serverless create-cert && node_modules/.bin/serverless deploy
+      #     rm serverless.yml
+      #   env:
+      #     CUSTOMREGION: ${{ env.REGION }}
       - name: AWS S3 Sync operation
         run: |
           aws s3 sync cfn-templates/ s3://${{env.CFNS3BucketName}}/${{env.STACK_NAME}}/cfn-templates --delete
