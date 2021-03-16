@@ -1,4 +1,4 @@
-service: ${env:STACK_NAME}-${env:SUBDOMAIN}-shared-acm-cert
+service: ${env:STACK_NAME}-${env:SUBDOMAIN}-app
 
 useDotenv: true
 
@@ -15,11 +15,8 @@ provider:
 
 
 custom:
-  domains:
-    API: 'api.${env:PUBLICZONENAME}'
-    APP: 'app.${env:PUBLICZONENAME}'
   customCertificate:
-      certificateName: '${self:custom.domains.${env:SERVICETYPE}}'
+      certificateName: 'app.${env:PUBLICZONENAME}'
       hostedZoneName: '${env:PUBLICZONENAME}'
       hostedZoneId: '${env:PUBLICZONEID}'
       region: '${env:CUSTOMREGION}'
@@ -30,22 +27,13 @@ custom:
 
 resources:
   Conditions:
-    APIREGION: !Equals ['${env:SERVICETYPE}', 'API']
-    APPREGION: !Not [!Equals ['${env:SERVICETYPE}','APP']]
     HasNot: !Equals ['true', 'false']
   Resources:
     NullResource:
       Type: 'Custom::NullResource'
       Condition: HasNot
   Outputs:
-    APISharedACMCertificateArn:
-      Condition: APIREGION
-      Description: 'The ARN of shared ACM certification for API gateway custom domains'
-      Value: ${certificate:${self:custom.customCertificate.certificateName}:CertificateArn}
-      Export:
-        Name: ${env:STACK_NAME}-APISharedACMCertificateArn-${env:ENV}
     APPSharedACMCertificateArn:
-      Condition: APPREGION
       Description: 'The ARN of shared ACM certification for CORE, APP services'
       Value: ${certificate:${self:custom.customCertificate.certificateName}:CertificateArn}
       Export:

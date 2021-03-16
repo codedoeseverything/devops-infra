@@ -230,24 +230,22 @@ jobs:
           aws-region: ${{ env.REGION }}
 
 
-      - name: Serverless ACM cert creation for Custom domain for Lambda and API gateway
+      - name: serverless acm cert creation for custom domain for Lambda and API gateway api services.
         run: |
-          cp serverless-acm.yml serverless.yml
+          cp serverless-acm-api.yml serverless.yml
           node_modules/.bin/serverless create-cert && node_modules/.bin/serverless deploy
           rm serverless.yml
         env:
           CUSTOMREGION: us-east-1
-          SERVICETYPE: API
 
 
-      - name: Serverless ACM cert creation for Front End Applications CORE,APP services
+     - name: serverless acm cert creation for custom domain for ELB app services.
         run: |
-          cp serverless-acm.yml serverless.yml
+          cp serverless-acm-app.yml serverless.yml
           node_modules/.bin/serverless create-cert && node_modules/.bin/serverless deploy
           rm serverless.yml
         env:
           CUSTOMREGION: ${{ env.REGION }}
-          SERVICETYPE: APP
 
        
 

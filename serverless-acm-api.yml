@@ -1,0 +1,40 @@
+service: ${env:STACK_NAME}-${env:SUBDOMAIN}-api
+
+useDotenv: true
+
+plugins:
+  - serverless-certificate-creator
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  timeout: 300
+  memorySize: 128
+  region: ${env:REGION}
+  stage: ${env:ENV}
+
+
+custom:
+  customCertificate:
+      certificateName:  'api.${env:PUBLICZONENAME}'
+      hostedZoneName: '${env:PUBLICZONENAME}'
+      hostedZoneId: '${env:PUBLICZONEID}'
+      region: '${env:CUSTOMREGION}'
+      subjectAlternativeNames : 
+        - '*.${env:PUBLICZONENAME}'
+      rewriteRecords: true
+
+
+resources:
+  Conditions:
+    HasNot: !Equals ['true', 'false']
+  Resources:
+    NullResource:
+      Type: 'Custom::NullResource'
+      Condition: HasNot
+  Outputs:
+    APISharedACMCertificateArn:
+      Description: 'The ARN of shared ACM certification for API gateway custom domains'
+      Value: ${certificate:${self:custom.customCertificate.certificateName}:CertificateArn}
+      Export:
+        Name: ${env:STACK_NAME}-APISharedACMCertificateArn-${env:ENV}
