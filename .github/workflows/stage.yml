@@ -237,6 +237,7 @@ jobs:
           rm serverless.yml
         env:
           CUSTOMREGION: us-east-1
+          SERVICETYPE: API
 
 
       - name: Serverless ACM cert creation for Front End Applications CORE,APP services
@@ -246,6 +247,7 @@ jobs:
           rm serverless.yml
         env:
           CUSTOMREGION: ${{ env.REGION }}
+          SERVICETYPE: APP
 
        
 

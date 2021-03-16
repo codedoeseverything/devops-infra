@@ -15,8 +15,11 @@ provider:
 
 
 custom:
+  domains:
+    API: 'api.${env:PUBLICZONENAME}'
+    APP: 'app.${env:PUBLICZONENAME}'
   customCertificate:
-      certificateName: 'api.${env:PUBLICZONENAME}'
+      certificateName: '${self:custom.domains.${env:SERVICETYPE}}'
       hostedZoneName: '${env:PUBLICZONENAME}'
       hostedZoneId: '${env:PUBLICZONEID}'
       region: '${env:CUSTOMREGION}'
@@ -24,10 +27,11 @@ custom:
         - '*.${env:PUBLICZONENAME}'
       rewriteRecords: false
 
+
 resources:
   Conditions:
-    APIREGION: !Equals ['${env:CUSTOMREGION}', 'us-east-1']
-    APPREGION: !Not [!Equals ['${env:CUSTOMREGION}','${env:REGION}']]
+    APIREGION: !Equals ['${env:SERVICETYPE}', 'API']
+    APPREGION: !Not [!Equals ['${env:SERVICETYPE}','APP']]
     HasNot: !Equals ['true', 'false']
   Resources:
     NullResource:
