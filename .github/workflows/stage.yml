@@ -20,7 +20,7 @@ jobs:
 
     #Global Env variables declare here
     env:
-      REGION : us-east-1 #ap-southeast-2
+      REGION : ap-southeast-2
       ENV : stage # Valid values are sandbox,stage,live only
       STACK_NAME: beta # Valid values are au,us,uk,p2,lf,nu,alpha,beta,shared only
       SUBDOMAIN: devops-infra
@@ -80,7 +80,7 @@ jobs:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: |
             ~/.npm
-            node_modREGIONules
+            node_modules
             */*/node_modules
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
           restore-keys: |
@@ -90,7 +90,7 @@ jobs:
 
 
       - name: Install dependencies
-        # if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run:  npm install
       
 
