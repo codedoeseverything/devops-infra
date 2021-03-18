@@ -300,9 +300,9 @@ jobs:
 ################################################
 #  2.e P1 AWS ECR POLICY
 ################################################ 
-      - name: P1 Dependency Resource creation using script for ECR Push and Pull access
-        run: |
-          chmod +x cfn-ecr-push-pull-access-p1.sh && ./cfn-ecr-push-pull-access-p1.sh
+      # - name: P1 Dependency Resource creation using script for ECR Push and Pull access
+      #   run: |
+      #     chmod +x cfn-ecr-push-pull-access-p1.sh && ./cfn-ecr-push-pull-access-p1.sh
       
 
      
