@@ -177,7 +177,7 @@ Resources:
   VPCStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/vpc.yml'
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/${CFNS3BucketRegion}/cfn-templates/vpc.yml'
       Parameters:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
@@ -188,7 +188,7 @@ Resources:
     DependsOn: [VPCStack]
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/security-group.yml'
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/${CFNS3BucketRegion}/cfn-templates/security-group.yml'
       Parameters:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
@@ -198,7 +198,7 @@ Resources:
     DependsOn: [VPCStack]
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/sns-slack.yml'
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/${CFNS3BucketRegion}/cfn-templates/sns-slack.yml'
       Parameters:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
@@ -209,7 +209,7 @@ Resources:
     DependsOn: [SNSSlackAlertStack]
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/chatbot.yml'
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/${CFNS3BucketRegion}/cfn-templates/chatbot.yml'
       Parameters:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
@@ -225,7 +225,7 @@ Resources:
     DependsOn: [VPCStack, SecurityGroupStack, SNSSlackAlertStack]
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/bastion.yml'
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/${CFNS3BucketRegion}/cfn-templates/bastion.yml'
       Parameters:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
@@ -239,7 +239,7 @@ Resources:
     DependsOn: [VPCStack]
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway.yml'
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/${CFNS3BucketRegion}/cfn-templates/nat-gateway.yml'
       Parameters:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
@@ -251,7 +251,7 @@ Resources:
     DependsOn: [NATGatewayStack, SNSSlackAlertStack]
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/nat-gateway-alarm.yml'
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/${CFNS3BucketRegion}/cfn-templates/nat-gateway-alarm.yml'
       Parameters:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
@@ -263,7 +263,7 @@ Resources:
     DependsOn: [VPCStack, SecurityGroupStack]
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/vpc-endpoints.yml'
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/${CFNS3BucketRegion}/cfn-templates/vpc-endpoints.yml'
       Parameters:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
@@ -275,7 +275,7 @@ Resources:
     DependsOn: [VPCStack]
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/route53-legacy.yml'
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/${CFNS3BucketRegion}/cfn-templates/route53-legacy.yml'
       Parameters:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
@@ -288,7 +288,7 @@ Resources:
     DependsOn: [VPCStack]
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/route53-public.yml'
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/${CFNS3BucketRegion}/cfn-templates/route53-public.yml'
       Parameters:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
@@ -298,7 +298,7 @@ Resources:
     DependsOn: [VPCStack]
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/cfn-templates/route53-private.yml'
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/${CFNS3BucketRegion}/cfn-templates/route53-private.yml'
       Parameters:
         StackName: !Ref 'StackName'
         Env: !Ref 'Env'
