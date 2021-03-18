@@ -39,7 +39,7 @@ jobs:
       PUBLICZONENAME: testing.internal.p2.practera.com
       PRIVATEZONENAME: local.testing.internal.p2.practera.com
       PUBLICZONEID: NA
-      RUNSECRETJOB: false
+      RUNSECRETJOB: true
 
 
 ################################################
