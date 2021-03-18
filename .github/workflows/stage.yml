@@ -221,7 +221,7 @@ jobs:
 ########################################################## 
       - name: Create or Update cloudformation templates from $STACK_NAME AWS account in $REGION region
         run: |
-          python3 scripts/cfn-deploy.py $STACK_NAME-$SUBDOMAIN-$ENV cfn-templates/s3-cfn.yml config/cfn-params.json config/cfn-tags.json
+          python3 scripts/cfn-deploy.py $STACK_NAME-$SUBDOMAIN-$ENV cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
 
 
 ### ADD-ON SERVICES 
