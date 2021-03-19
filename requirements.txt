@@ -4,4 +4,5 @@ tabulate
 diagrams
 graphviz
 pydot
+pyyaml
 
