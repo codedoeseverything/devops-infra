@@ -36,7 +36,6 @@ for i in $S3KEYNAME ; do
 done
 
 sort -u secret.param | uniq -u > .env
-NoResource=false>> .env
 rm secret.param
 
 
