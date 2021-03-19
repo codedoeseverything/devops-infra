@@ -140,7 +140,7 @@ jobs:
           extra_args: --fail-on-warnings -o json --blacklist-path .cfn_nag_blacklist.yml
 
 
-################################################
+###########################==5.3.1#####################
 #  AWS CLI CONFIGURATION
 ################################################ 
       - name: Configure AWS credentials from $STACK_NAME account in $REGION region
@@ -245,6 +245,8 @@ jobs:
         run: |
           cp serverless-secret-arn-export.yml serverless.yml
           python3 scripts/cfn-secret-arn-export.py .env
+          cat serverless.yml
+          cat .env
           node_modules/.bin/serverless deploy
           rm serverless.yml .env
 

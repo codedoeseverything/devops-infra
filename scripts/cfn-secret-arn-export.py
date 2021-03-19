@@ -35,7 +35,7 @@ with open(filename) as cfn_input_file:
 with open('serverless.yml', 'r') as stream:
     obj = yaml.load(stream,Loader=yaml.FullLoader)
     for x,y in json_dict.items():
-        obj["resources"]["Outputs"][x] = {
+        obj["resources"]["Outputs"][x.replace("-","")] = {
         "Description": "Exporting Secret name "+x,
         "Value": y,
         "Export":{
