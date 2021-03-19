@@ -58,7 +58,7 @@ jobs:
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.8.5
 
 
 ################################################
@@ -234,6 +234,8 @@ jobs:
         if: env.RUNSECRETJOB == 'true'
         run: |
           chmod +x scripts/cfn-secrets.sh && scripts/cfn-secrets.sh
+          cat .env
+          python3 --version
 
 
 ###############################################################
@@ -246,8 +248,8 @@ jobs:
           cp serverless-secret-arn-export.yml serverless.yml
           python3 scripts/cfn-secret-arn-export.py .env
           cat serverless.yml
-          node_modules/.bin/serverless deploy
-          rm serverless.yml .env
+          # node_modules/.bin/serverless deploy
+          # rm serverless.yml .env
 
 
 ##############################################################

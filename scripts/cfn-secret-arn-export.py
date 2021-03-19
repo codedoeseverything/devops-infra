@@ -6,6 +6,7 @@ import yaml
 import os
 
 # Extract input file as variable
+print("Inside python script")
 try:
     filename = sys.argv[1]
 except IndexError as e:
@@ -30,10 +31,10 @@ with open(filename) as cfn_input_file:
             # Insert json key value pair
             json_dict[content[0].strip()]=content[1].strip()
 
+print(json_dict)
 
 with open('serverless.yml', 'r') as stream:
-    obj = yaml.load(stream,Loader=yaml.UnsafeLoader)
-    print(obj)
+    obj = yaml.load(stream,Loader=yaml.FullLoader)
     for x,y in json_dict.items():
         obj["resources"]["Outputs"][x] = {
         "Description": "Exporting Secret name "+x,

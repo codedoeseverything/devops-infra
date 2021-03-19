@@ -1,4 +1,5 @@
 boto3
-pyyaml
+pyyaml=5.3.1
+
 
 
