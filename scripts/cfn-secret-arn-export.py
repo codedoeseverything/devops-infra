@@ -30,13 +30,9 @@ with open(filename) as cfn_input_file:
             # Insert json key value pair
             json_dict[content[0].strip()]=content[1].strip()
 
-       
-# with open('serverless-secret-arn-export.yml', 'r') as stream:
-#   obj = yaml.load(stream,Loader=yaml.BaseLoader)
-# x="1"
-# y="2"
+
 with open('serverless.yml', 'r') as stream:
-    obj = yaml.load(stream,Loader=yaml.FullLoader)
+    obj = yaml.load(stream,Loader=yaml.UnsafeLoader)
     print(obj)
     for x,y in json_dict.items():
         obj["resources"]["Outputs"][x] = {
