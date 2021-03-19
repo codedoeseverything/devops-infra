@@ -245,8 +245,8 @@ jobs:
         run: |
           cp serverless-secret-arn-export.yml serverless.yml
           python3 scripts/cfn-secret-arn-export.py .env
-          # node_modules/.bin/serverless deploy
-          # rm serverless.yml .env
+          node_modules/.bin/serverless deploy
+          rm serverless.yml .env
 
 
 ##############################################################
