@@ -101,6 +101,21 @@ Resources:
       - Name: TopicName
         Value: !GetAtt Topic.TopicName
       TreatMissingData: notBreaching
+  
+  AWSHealthEvent:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: AWSHealth-Events-All
+      Description: “All AWSHealth Events”
+      EventPattern:
+        source:
+        - aws.health
+      State: ENABLED
+      Targets:
+      - Arn: !Ref Topic
+        Id: AWSHealthSNSTopic
+
+
 Outputs:
   StackName:
     Description: 'Stack name.'
