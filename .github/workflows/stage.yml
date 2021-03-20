@@ -41,7 +41,7 @@ jobs:
       PUBLICZONEID: NA
       RUNSECRETJOB: true
       RUNACMCERTJOB: false
-      S3BUCKETFLAGCHECK: beta-thisisemptybucketdeleteme
+      S3BUCKETFLAGCHECK: beta-cfn-empty-resource
 
 
 ################################################
@@ -247,7 +247,8 @@ jobs:
           cp serverless-secret-arn-export.yml serverless.yml
           python3 scripts/cfn-secret-arn-export.py .env
           node_modules/.bin/serverless deploy
-          rm serverless.yml .env && aws s3 rb s3://$S3BUCKETFLAGCHECK --force
+          rm serverless.yml .env
+          aws s3 rb s3://$S3BUCKETFLAGCHECK --force
 
 
 ##############################################################
