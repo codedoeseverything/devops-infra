@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-NAME=AllowECRAccess-$STACK_NAME-$ENV
+NAME=AllowECRAccessTESTING-$STACK_NAME-$ENV
 
 aws ecr get-repository-policy \
     --repository-name $ECR_REPONAME | \
