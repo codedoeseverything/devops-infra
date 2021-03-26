@@ -1,4 +1,4 @@
-#!/usr/bin/env
+#!/usr/bin/env bash
 
 NAME=$STACK_NAME-$ENV
 
