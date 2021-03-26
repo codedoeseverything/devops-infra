@@ -301,17 +301,15 @@ jobs:
       #     rm serverless.yml
 
 
+
 ################################################
 #  2.e P1 AWS ECR POLICY
 ################################################ 
       - name: P1 Dependency Resource creation using script for ECR Push and Pull access
         run: |
-          chmod +x scripts/cfn-ecr-get-policy.sh && scripts/cfn-ecr-get-policy.sh
-          python3 scripts/cfn-ecr-policy.py
-          chmod +x scripts/cfn-ecr-set-policy.sh && scripts/cfn-ecr-set-policy.sh
+          chmod +x scripts/cfn-ecr-update-policy.sh && scripts/cfn-ecr-update-policy.sh
         env:
           ECR_REPONAME: test
-          CURRENTACCOUNTID: 121943667802
       
 
      
