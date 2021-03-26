@@ -108,4 +108,5 @@ jobs:
         env:
           ECR_REPONAME: test
           CURRENTACCOUNTID: 121943667802
+          
       
