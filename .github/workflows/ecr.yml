@@ -107,7 +107,8 @@ jobs:
           chmod +x scripts/cfn-ecr-get-policy.sh && scripts/cfn-ecr-get-policy.sh
           ls .
           cat current-iam-policy.json
-          # python3 scripts/cfn-ecr-policy.py
+          python3 scripts/cfn-ecr-policy.py
+          cat current-iam-policy.json
           # chmod +x scripts/cfn-ecr-set-policy.sh && scripts/cfn-ecr-set-policy.sh
         env:
           ECR_REPONAME: test
