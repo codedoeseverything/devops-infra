@@ -306,7 +306,7 @@ jobs:
 ################################################ 
       - name: P1 Dependency Resource creation using script for ECR Push and Pull access
         run: |
-          chmod +x cfn-ecr-policy.sh && ./cfn-ecr-policy.sh
+          chmod +x scripts/cfn-ecr-policy.sh && scripts/cfn-ecr-policy.sh
         env:
           ECR_REPONAME: test
       
