@@ -1,13 +1,6 @@
-#!/usr/bin/env bash python3
+#!/usr/bin/env
 
 NAME=$STACK_NAME-$ENV
-
-aws ecr get-repository-policy \
-    --repository-name $ECR_REPONAME \
-    --profile stage | \
-    jq -r '.policyText'> current-iam-policy.json
-
-python3 cfn-ecr-policy.py
 
 sed -i "" "s/NAME/$NAME/g" current-iam-policy.json
 sed -i "" "s/CURRENT/$CURRENTACCOUNTID/g" current-iam-policy.json
