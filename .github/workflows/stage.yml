@@ -39,7 +39,7 @@ jobs:
       PUBLICZONENAME: testing.internal.p2.practera.com
       PRIVATEZONENAME: local.testing.internal.p2.practera.com
       PUBLICZONEID: NA
-      RUNSECRETJOB: true
+      RUNSECRETJOB: false
       RUNACMCERTJOB: false
       S3BUCKETFLAGCHECK: beta-cfn-empty-resource
 
@@ -221,9 +221,9 @@ jobs:
 ##########################################################
 #  CLOUDFORMATION DEPLOYMENT
 ########################################################## 
-      - name: Create or Update cloudformation templates from $STACK_NAME AWS account in $REGION region
-        run: |
-          python3 scripts/cfn-deploy.py $STACK_NAME-$SUBDOMAIN-$ENV cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
+      # - name: Create or Update cloudformation templates from $STACK_NAME AWS account in $REGION region
+      #   run: |
+      #     python3 scripts/cfn-deploy.py $STACK_NAME-$SUBDOMAIN-$ENV cfn-templates/main.yml config/cfn-params.json config/cfn-tags.json
 
 
 ### ADD-ON SERVICES 
@@ -266,13 +266,13 @@ jobs:
 #  2.b ROUTE53 NS RECORD UPDATE in P1
 #  CLOUDFORMATION EXPORT IF ISZONEEXIST FALSE
 ######################################################
-      - name: Export CFN output values only if ISZONEEXIST is false
-        if: env.ISZONEEXIST == 'false'
-        run: |
-          export ZONEID=$STACK_NAME-PublicHostedZoneId-$ENV
-          export NSRECORD=$STACK_NAME-PublicHostedZoneNSRecord-$ENV
-          echo "PUBLICZONEID="$(aws cloudformation list-exports --query "Exports[?Name==\`$ZONEID\`].Value" --no-paginate --output text) >> $GITHUB_ENV
-          echo "PUBLICZONENSRECORD="$(aws cloudformation list-exports --query "Exports[?Name==\`$NSRECORD\`].Value" --no-paginate --output text) >> $GITHUB_ENV
+      # - name: Export CFN output values only if ISZONEEXIST is false
+      #   if: env.ISZONEEXIST == 'false'
+      #   run: |
+      #     export ZONEID=$STACK_NAME-PublicHostedZoneId-$ENV
+      #     export NSRECORD=$STACK_NAME-PublicHostedZoneNSRecord-$ENV
+      #     echo "PUBLICZONEID="$(aws cloudformation list-exports --query "Exports[?Name==\`$ZONEID\`].Value" --no-paginate --output text) >> $GITHUB_ENV
+      #     echo "PUBLICZONENSRECORD="$(aws cloudformation list-exports --query "Exports[?Name==\`$NSRECORD\`].Value" --no-paginate --output text) >> $GITHUB_ENV
 
 
 
@@ -280,12 +280,12 @@ jobs:
 #  2.c P1 AWS ACCESS
 #  AWS CLI CONFIGURATION - P1 MAIN ACCOUNT
 ################################################ 
-      - name: Configure AWS credentials from P1 AU account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.INTERNAL_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.INTERNAL_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-southeast-2
+      # - name: Configure AWS credentials from P1 AU account
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.INTERNAL_AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.INTERNAL_AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: ap-southeast-2
 
 
 
@@ -293,20 +293,22 @@ jobs:
 #  2.d P1 AWS RESOURCE UPDATION
 #  SERVERLESS TO UPDATE RESOURCES IN P1 MAIN ACCOUNT
 ################################################ 
-      - name: P1 Dependency Resource creation using Serverless
-        if: env.ISZONEEXIST == 'false'
-        run: |
-          cp serverless-p1-dependency.yml serverless.yml
-          node_modules/.bin/serverless deploy
-          rm serverless.yml
+      # - name: P1 Dependency Resource creation using Serverless
+      #   if: env.ISZONEEXIST == 'false'
+      #   run: |
+      #     cp serverless-p1-dependency.yml serverless.yml
+      #     node_modules/.bin/serverless deploy
+      #     rm serverless.yml
 
 
 ################################################
 #  2.e P1 AWS ECR POLICY
 ################################################ 
-      # - name: P1 Dependency Resource creation using script for ECR Push and Pull access
-      #   run: |
-      #     chmod +x cfn-ecr-push-pull-access-p1.sh && ./cfn-ecr-push-pull-access-p1.sh
+      - name: P1 Dependency Resource creation using script for ECR Push and Pull access
+        run: |
+          chmod +x cfn-ecr-policy.sh && ./cfn-ecr-policy.sh
+        env:
+          ECR_REPONAME: test
       
 
      
