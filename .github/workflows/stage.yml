@@ -311,6 +311,7 @@ jobs:
           chmod +x scripts/cfn-ecr-set-policy.sh && scripts/cfn-ecr-set-policy.sh
         env:
           ECR_REPONAME: test
+          CURRENTACCOUNTID: 121943667802
       
 
      
