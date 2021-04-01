@@ -248,8 +248,6 @@ jobs:
           python3 scripts/cfn-secret-arn-export.py .env
           node_modules/.bin/serverless deploy
           rm serverless.yml .env
-          aws s3 rm s3://$S3BUCKETFLAGCHECK  --recursive
-          aws s3 rb s3://$S3BUCKETFLAGCHECK --force
 
 
 ##############################################################
