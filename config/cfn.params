@@ -7,10 +7,8 @@ VPCInterfaceServiceName1=sns
 SlackChannelId=C01NPT2PTMG
 SlackWorkspaceId=T01NQ3FPC7M
 CreateChatBotStackCondition=true
-CreateNATGatewayStackCondition=false
+CreateNATGatewayStackCondition=true
 CreateVPCEndpointStackCondition=false
 AllowReadOnlyAndSupportPolicyArns=arn:aws:iam::aws:policy/ReadOnlyAccess,arn:aws:iam::aws:policy/AWSSupportAccess
 AllowLambdaInvokeForChatBot=true
-
-
 
