@@ -221,17 +221,17 @@ Resources:
         AllowLambdaInvokeForChatBot: !Ref AllowLambdaInvokeForChatBot
 
 
-  # BastionServerStack:
-  #   DependsOn: [VPCStack, SecurityGroupStack, SNSSlackAlertStack]
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/${CFNS3BucketRegion}/cfn-templates/bastion.yml'
-  #     Parameters:
-  #       StackName: !Ref 'StackName'
-  #       Env: !Ref 'Env'
-  #       KeyName: !Ref 'KeyName'
-  #       NumBastionHosts: !Ref 'NumBastionHosts'
-  #       BastionInstanceType: !Ref 'BastionInstanceType'
+  BastionServerStack:
+    DependsOn: [VPCStack, SecurityGroupStack, SNSSlackAlertStack]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://${CFNS3BucketName}.s3.${CFNS3BucketRegion}.amazonaws.com/${StackName}/${CFNS3BucketRegion}/cfn-templates/bastion.yml'
+      Parameters:
+        StackName: !Ref 'StackName'
+        Env: !Ref 'Env'
+        KeyName: !Ref 'KeyName'
+        NumBastionHosts: !Ref 'NumBastionHosts'
+        BastionInstanceType: !Ref 'BastionInstanceType'
 
 
   NATGatewayStack:
