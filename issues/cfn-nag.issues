@@ -101,19 +101,9 @@
   {
     "filename": "cfn-templates/chatbot.yml",
     "file_results": {
-      "failure_count": 1,
+      "failure_count": 0,
       "violations": [
-        {
-          "id": "FATAL",
-          "type": "FAIL",
-          "message": "(<unknown>): mapping values are not allowed in this context at line 159 column 13",
-          "logical_resource_ids": [
 
-          ],
-          "line_numbers": [
-
-          ]
-        }
       ]
     }
   }
