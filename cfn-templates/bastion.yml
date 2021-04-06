@@ -409,18 +409,6 @@ Resources:
             #!/bin/bash -ex
             yum update -y aws-cfn-bootstrap
             sudo amazon-linux-extras install postgresql10
-            sudo yum -y install gcc make # install GCC compiler
-            cd /usr/local/src 
-            sudo wget http://download.redis.io/redis-stable.tar.gz
-            sudo tar xvzf redis-stable.tar.gz
-            sudo rm -f redis-stable.tar.gz
-            cd redis-stable
-            sudo yum groupinstall "Development Tools"
-            sudo make distclean
-            sudo make
-            sudo yum install -y tcl
-            sudo cp src/redis-server /usr/local/bin/
-            sudo cp src/redis-cli /usr/local/bin/ && cd
             trap '/opt/aws/bin/cfn-signal -e 1 --stack ${AWS::StackName} --resource AutoScalingGroup --region ${AWS::Region}' ERR
             /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource LaunchTemplate --region ${AWS::Region}
             /opt/aws/bin/cfn-signal -e 0 --stack ${AWS::StackName} --resource AutoScalingGroup --region ${AWS::Region}
