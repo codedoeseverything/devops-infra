@@ -235,12 +235,7 @@ Resources:
         FromPort: 22
         ToPort: 22
         CidrIp: !Ref DefaultRouteAccess
-        Description: !Sub 'To allow port 22 open to CIDR range , ${DefaultRouteAccess}' 
-      - IpProtocol: icmp
-        FromPort: -1
-        ToPort: -1
-        CidrIp: !Ref DefaultRouteAccess
-        Description: !Sub 'To allow ICMP packets open to CIDR range , ${DefaultRouteAccess}' 
+        Description: !Sub 'To allow port 22 open to CIDR range , ${DefaultRouteAccess}'
       VpcId: {'Fn::ImportValue': !Sub '${StackName}-VPC-${Env}'}
       Tags:
         - Key: Name
