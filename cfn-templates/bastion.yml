@@ -408,6 +408,14 @@ Resources:
           'Fn::Base64': !Sub |
             #!/bin/bash -ex
             yum update -y aws-cfn-bootstrap
+            sudo amazon-linux-extras install postgresql10
+            yum install gcc
+            wget http://download.redis.io/redis-stable.tar.gz
+            tar xvzf redis-stable.tar.gz
+            cd redis-stable
+            make MALLOC=libc
+            chmod a+x src/redis-cli
+            cp src/redis-cli /usr/bin/
             trap '/opt/aws/bin/cfn-signal -e 1 --stack ${AWS::StackName} --resource AutoScalingGroup --region ${AWS::Region}' ERR
             /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource LaunchTemplate --region ${AWS::Region}
             /opt/aws/bin/cfn-signal -e 0 --stack ${AWS::StackName} --resource AutoScalingGroup --region ${AWS::Region}
